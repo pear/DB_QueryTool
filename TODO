@@ -23,6 +23,12 @@ TODO
 - let user choose if he wants to have default PEAR-error handling, so to say throw
   PEAR_Error on failure or let it work as it does now
 - setIndex() and using get() freaks up the results, try it!!!    
+- allow stuff like this
+    $question->autoJoin('answer')
+    $question->setSelect('question,answer'); even though answer is from another table
+    but it could autodetect this and set '_answer_asnwer AS answer'
+    this might be tricky and cause errors, 
+    try to check for not found columns first and handle them intellegently ...
 
 DONE
 - make it work on oracle, the _* doesnt work in oracle - may be the "" around the _table_col 
