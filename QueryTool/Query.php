@@ -172,6 +172,7 @@ class DB_QueryTool_Query
     *   @author     Wolfram Kriesing <wk@visionp.de>
     *   @param      object  db-object
     */
+/*
     function __construct( $dsn=false , $options=array() )
     {
         if (!isset($options['autoConnect'])) {
@@ -192,23 +193,56 @@ class DB_QueryTool_Query
         if ($autoConnect && $dsn) {
             $this->connect($dsn, $options);
         }
-/*  we would need to parse the dsn first ... i dont feel like now :-)
+        //we would need to parse the dsn first ... i dont feel like now :-)
         // oracle has all column names in upper case
 //FIXXXME make the class work only with upper case when we work with oracle
-        if ($this->db->phptype=='oci8' && !$this->primaryCol) {
-            $this->primaryCol = 'ID';
-        }
-*/
+        //if ($this->db->phptype=='oci8' && !$this->primaryCol) {
+        //    $this->primaryCol = 'ID';
+        //}
+
         if ($this->sequenceName == null) {
             $this->sequenceName = $this->table;
         }
     }
-
+*/
 
     /**
-    *   use this method if you want to connect manually
-    *
-    */
+     * @version    2002/04/02
+     * @access     public
+     * @author     Wolfram Kriesing <wk@visionp.de>
+     * @param mixed $dsn DSN string, DSN array or DB object
+     * @param array $options
+     */
+    function DB_QueryTool_Query($dsn=false, $options=array())
+    {
+        //$this->__construct($dsn, $options);
+        if (!isset($options['autoConnect'])) {
+            $autoConnect = true;
+        } else {
+            $autoConnect = $options['autoConnect'];
+        }
+        if (isset($options['errorCallback'])) {
+            $this->setErrorCallback($options['errorCallback']);
+        }
+        if (isset($options['errorSetCallback'])) {
+            $this->setErrorSetCallback($options['errorSetCallback']);
+        }
+        if (isset($options['errorLogCallback'])) {
+            $this->setErrorLogCallback($options['errorLogCallback']);
+        }
+        if ($autoConnect && $dsn) {
+            $this->connect($dsn, $options);
+        }
+        if (is_null($this->sequenceName)) {
+            $this->sequenceName = $this->table;
+        }
+    }
+
+    /**
+     * use this method if you want to connect manually
+     * @param mixed $dsn DSN string, DSN array or MDB object
+     * @param array $options
+     */
     function connect($dsn, $options=array())
     {
         $res = $this->db = DB::connect($dsn, $options);
@@ -218,19 +252,6 @@ class DB_QueryTool_Query
         } else {
             $this->db->setFetchMode(DB_FETCHMODE_ASSOC);
         }
-    }
-
-    /**
-    *
-    *
-    *   @version    2002/04/02
-    *   @access     public
-    *   @author     Wolfram Kriesing <wk@visionp.de>
-    *   @param      object  db-object
-    */
-    function DB_QueryTool_Query( $dsn=false , $options=array() )
-    {
-        $this->__construct( $dsn , $options );
     }
 
     function &getDbInstance()
@@ -1450,7 +1471,7 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
             if (in_array('',$selectAllFromTables)) { // was there a '*' ?
                 // get all the tables that we need to process, depending on if joined or not
                 $tables = $this->getJoin() ?
-                                array_merge($this->getJoin('tables'),$this->table) : // get the joined tables and this->table
+                                array_merge($this->getJoin('tables'), array($this->table)) : // get the joined tables and this->table
                                 array($this->table);        // create an array with only this->table
             } else {
                 $tables = $selectAllFromTables;
