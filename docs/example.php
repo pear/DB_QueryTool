@@ -18,12 +18,13 @@
 // $Id$
 //
 
-ini_set('include_path',realpath(dirname(__FILE__).'/../../../').':'.realpath(dirname(__FILE__).'/../../../../includes').':'.ini_get('include_path'));
+//ini_set('include_path',realpath(dirname(__FILE__).'/../../../').':'.realpath(dirname(__FILE__).'/../../../../includes').':'.ini_get('include_path'));
     require_once 'DB/QueryTool.php';
 
     
     // change this!!!!! and the DSN to your DB
     $DB_BACKEND = 'pgsql';
+    $DB_BACKEND = 'mysql';
 
 
 

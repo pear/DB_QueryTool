@@ -3,6 +3,8 @@
 //  $Id$
 //
 
+!!!!! NOT WORKING YET !!!!
+
 ini_set( 'include_path' , ini_get('include_path').':'.realpath('../../..') );
 
 require_once('vp/Page/Error.php');
