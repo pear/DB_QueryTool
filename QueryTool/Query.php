@@ -279,6 +279,7 @@ class DB_QueryTool_Query
         $queryString = $this->_buildSelectQuery();
 
 // FIXXME, one day this should be unified!!!
+/* this was special for www.visionp.de ... check it before removing
         if ($this->_db->phptype=='oci8' ) {
             if ($from && $count) {
                 if (DB::isError( $queryString = $this->_db->modifyLimitQuery($queryString,$from-1,$count-1))) {
@@ -289,12 +290,12 @@ class DB_QueryTool_Query
                 }
             }
         } else {
-            if ($count) {
-                if ( DB::isError( $queryString = $this->_db->modifyLimitQuery($queryString,$from,$count)) ) {
-                    $this->_errorSet( 'vp_DB_Common::getAll modifyLimitQuery failed '.$queryString->getMessage() );
-                    $this->_errorLog( $queryString->getUserInfo() );
-                    return false;
-                }
+*/
+        if ($count) {
+            if ( DB::isError( $queryString = $this->_db->modifyLimitQuery($queryString,$from,$count)) ) {
+                $this->_errorSet( 'vp_DB_Common::getAll modifyLimitQuery failed '.$queryString->getMessage() );
+                $this->_errorLog( $queryString->getUserInfo() );
+                return false;
             }
         }
 
