@@ -176,6 +176,8 @@ class DB_QueryTool_Query
     {
         if (!isset($options['autoConnect'])) {
             $autoConnect = true;
+        } else {
+            $autoConnect = $options['autoConnect'];
         }
         if (isset($options['errorCallback'])) {
             $this->setErrorCallback($options['errorCallback']);
