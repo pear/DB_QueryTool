@@ -8,7 +8,6 @@ ini_set('include_path',realpath(dirname(__FILE__).'/../../../../').':'.realpath(
 require_once 'DB/QueryTool.php';
 require_once 'PHPUnit.php';
 require_once 'PHPUnit/GUI/HTML.php';
-require_once 'PHPUnit/GUI/SetupDecorator.php';
 
 define(DB_DSN,'mysql://root@localhost/test');
 define(TABLE_USER,      'QueryTool_user');
@@ -31,8 +30,21 @@ foreach ($dbStructure[$querytool->db->phptype]['setup'] as $aQuery) {
 //
 //  run the test suite
 //
-$gui = new PHPUnit_GUI_SetupDecorator(new PHPUnit_GUI_HTML());
-$gui->getSuitesFromDir(dirname(__FILE__),'DB_QueryTool_UnitTest_.*');
+require_once 'DB_QueryTool_UnitTest_Get.php';
+require_once 'DB_QueryTool_UnitTest_GetAll.php';
+require_once 'DB_QueryTool_UnitTest_GetCount.php';
+require_once 'DB_QueryTool_UnitTest_Where.php';
+
+$suites = array();
+$suites[] = new PHPUnit_TestSuite('DB_QueryTool_UnitTest_Get');
+$suites[] = new PHPUnit_TestSuite('DB_QueryTool_UnitTest_GetAll');
+$suites[] = new PHPUnit_TestSuite('DB_QueryTool_UnitTest_GetCount');
+$suites[] = new PHPUnit_TestSuite('DB_QueryTool_UnitTest_Where');
+//require_once 'PHPUnit/GUI/SetupDecorator.php';
+//$gui = new PHPUnit_GUI_SetupDecorator(new PHPUnit_GUI_HTML());
+//$gui->getSuitesFromDir(dirname(__FILE__),'DB_QueryTool_UnitTest_.*');
+$gui = new PHPUnit_GUI_HTML();
+$gui->addSuites($suites);
 $gui->show(false);  // we dont want to see the passed test
 
 //print_r($errors);

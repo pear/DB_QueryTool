@@ -15,7 +15,7 @@ class DB_QueryTool_UnitTest extends PhpUnit_TestCase
             $tableObj->removeAll();
         }
 
-        $this->setOption('looselyTyped',true);
+        $this->setLooselyTyped(true);
     }
 
     function tearDown()
