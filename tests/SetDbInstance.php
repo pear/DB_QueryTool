@@ -31,19 +31,19 @@ class tests_SetDbInstance extends tests_UnitTest
     * Check if the two instances are the same by comparing
     * the fetchMode, since this is the easiest to compare if
     * two objects are the same in PHP4.
-    * We can do that since the querytool sets the fetch mode to 
+    * We can do that since the querytool sets the fetch mode to
     * DB_FETCHMODE_ASSOC.
     * Not very nice but it works.
-    * 
+    *
     */
     function test_default()
     {
         $db =& DB::connect(DB_DSN);
-    
+
         $qt =& new DB_QueryTool();
         $qt->setDbInstance($db);
         $dbActual =& $qt->getDbInstance();
-        $this->assertEquals($db->fetchMode,$dbActual->fetchMode);
+        $this->assertEquals($db->fetchmode,$dbActual->fetchmode);
     }
 
     /**
