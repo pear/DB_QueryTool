@@ -30,10 +30,13 @@ SQL-Statements and execute them.
         <version>0.9.5</version>
         <license>PHP</license>
         <state>stable</state>
-        <date>2003-??-??</date>
+        <date>2003-06-17</date>
         <notes>
-- bug fix when writing log files
-- bug fix in EasyJoin, which added unnecessary conditions        
+- bugfix when writing log files, times were wrong
+- bugfix in EasyJoin, which added unnecessary conditions        
+- bugfix in building column alias which is at the end of the string
+- bugfix in addMultiple() which didnt work without primaryCol
+- bugfix in addHaving and unit test, thanks to Johannes Schäfer
         </notes>
 
         <filelist>
