@@ -48,7 +48,7 @@ class DB_QueryTool_Result
     *   @author     Wolfram Kriesing <wolfram@kriesing.de>
     *   @param      array   the data returned by the result
     */
-    function vp_DB_Result( $data )
+    function DB_QueryTool_Result( $data )
     {
         list($firstElement) = $data;
         if( is_array($firstElement) )               // is the array a collection of rows?
