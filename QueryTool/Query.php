@@ -62,6 +62,11 @@ class DB_QueryTool_Query
     *   var string  the order condition
     */
     var $_order = '';
+    
+    /**
+    *   @var    string  the having definition
+    */
+    var $_having = '';
 
     /**
     *   var array   contains the join content
@@ -369,7 +374,7 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
 */
 
 //FIXXME see comment above if this is absolutely correct!!!
-        if ( $group = $this->getGroup() ) {
+        if ($group = $this->_buildGroup()) {
             $query['select'] = 'count(DISTINCT '.$group.')';
             $query['group'] = '';
         } else {
@@ -780,7 +785,50 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
     {
         return $this->_order;
     }
+    
+    /**
+    *   sets the having definition
+    *
+    *   @version    2003/06/05
+    *   @access     public
+    *   @author     Johannes Schaefer <johnschaefer@gmx.de>
+    *   @param      string  the having definition
+    */
+    function setHaving( $having='' )
+    {
+        $this->_having = $having;
+    }
+    
+    /**
+    *   gets the having definition which is used for the current instance
+    *
+    *   @version    2003/06/05
+    *   @access     public
+    *   @author     Johannes Schaefer <johnschaefer@gmx.de>
+    *   @return     string  the having definition
+    */
+    function getHaving()
+    {
+        return $this->_having;
+    }
 
+    /**
+    *   Extend the current having clause. This is very useful, when you are building
+    *   this clause from different places and dont want to overwrite the currently 
+    *   set having clause, but extend it.
+    *   
+    *   @param string this is a having clause, i.e. 'column' or 'table.column' or 'MAX(column)'
+    *   @param string the connection string, which usually stays the default, which is ',' (a comma)
+    */
+    function addHaving($what='*', $connectString=',')
+    {                        
+        if ($this->_having) {
+            $this->_having = $this->_having.$connectString.$what;
+        } else {
+            $this->_having = $what;
+        }
+    }    
+    
     /**
     *   sets a join-condition
     *
@@ -1025,7 +1073,7 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
     function reset( $what=array() )
     {
         if (sizeof($what) == 0) {
-            $what = array('select','dontSelect','group','where','index','order','join','leftJoin','rightJoin');
+            $what = array('select','dontSelect','group','having','where','index','order','join','leftJoin','rightJoin');
         }
 
         foreach ( $what as $aReset ) {
@@ -1495,39 +1543,55 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
     function _buildOrder()
     {
         $order = $this->getOrder();
-
-        if( $meta = $this->metadata() )
-        {
-            foreach( $meta as $aCol=>$x )
-            {
-                // replace aCol in the order clause, to make the column name unambigiuos
-                // this is highly important if i.e. only a count(*) is requested, then the columns
-                // have no AS clause and ambigious column names might appear, so we prevent that here :-)
+        // replace 'column' by '$this->table.column' if the column is defined for $this->table
+        if ($meta = $this->metadata()) {
+            foreach ($meta as $aCol=>$x) {
                 $order = preg_replace( '/(^\s*|\s+|,)'.$aCol.'\s*(,)?/U' , "$1{$this->table}.$aCol$2" , $order );
             }
         }
-
         return $order;
     }
 
+    /**
+    *   Build the group-clause, replace 'column' by 'table.column'.
+    *
+    *   @access public
+    *   @param void
+    *   @return string the rendered group clause
+    */
     function _buildGroup()
     {
         $group = $this->getGroup();
-
-        if( $meta = $this->metadata() )
-        {
-            foreach( $meta as $aCol=>$x )
-            {
-                // replace aCol in the order clause, to make the column name unambigiuos
-                // this is highly important if i.e. only a count(*) is requested, then the columns
-                // have no AS clause and ambigious column names might appear, so we prevent that here :-)
+        // replace 'column' by '$this->table.column' if the column is defined for $this->table
+        if ($meta = $this->metadata()) {
+            foreach ($meta as $aCol=>$x) {
                 $group = preg_replace( '/(^\s*|\s+|,)'.$aCol.'\s*(,)?/U' , "$1{$this->table}.$aCol$2" , $group );
             }
         }
-
         return $group;
     }
-
+    
+    /**
+    *   
+    *
+    *   @version    2003/06/05
+    *   @access     public
+    *   @author     Johannes Schaefer <johnschaefer@gmx.de>
+    *   @param      
+    *   @return string the having clause   
+    */
+    function _buildHaving()
+    {
+        $having = $this->getHaving();
+        // replace 'column' by '$this->table.column' if the column is defined for $this->table
+        if ($meta = $this->metadata()) {
+            foreach ($meta as $aCol=>$x) {
+                $having = preg_replace( '/(^\s*|\s+|,)'.$aCol.'\s*(,)?/U',"$1{$this->table}.$aCol$2",$having);
+            }
+        }
+        return $having;
+    }
+    
     /**
     *
     *
@@ -1538,6 +1602,7 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
     *                       indexed by their key, which are: 'select','from','where', etc.
     *   @return
     */
+    
     function _buildSelectQuery( $query=array() )
     {
 /*FIXXXME finish this 
@@ -1559,12 +1624,17 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
         if ($group) {
             $group = 'GROUP BY '.$group;
         }
-        $queryString = sprintf( 'SELECT %s FROM %s %s %s %s',
+        $having = isset($query['having']) ? $query['having'] : $this->_buildHaving();
+        if ($having) {
+            $having = 'HAVING '.$having;
+        }
+        $queryString = sprintf( 'SELECT %s FROM %s %s %s %s %s',
                                 isset($query['select']) ? $query['select'] : $this->_buildSelect(),
                                 isset($query['from']) ? $query['from'] : $this->_buildFrom(),
                                 $where,
                                 $group,
-                                $order
+                                $order,
+                                $having
                                 );
         // $query['limit'] has preference!
         $limit = isset($query['limit']) ? $query['limit'] : $this->_limit;
