@@ -19,130 +19,164 @@
 //
 
 /**
-*   this result actually contains the 'data' itself, the number of rows
-*   returned and some additional info
-*   using ZE2 you can also get retreive data from the result doing the following:
-*   <vp_DB_Common-instance>->getAll()->getCount()
-*   or
-*   <vp_DB_Common-instance>->getAll()->getData()
-*
-*
-*   @package    DB_QueryTool
-*   @version    2002/07/11
-*   @access     public
-*   @author     Wolfram Kriesing <wolfram@kriesing.de>
-*/
+ * this result actually contains the 'data' itself, the number of rows
+ * returned and some additional info
+ * using ZE2 you can also get retreive data from the result doing the following:
+ * <vp_DB_Common-instance>->getAll()->getCount()
+ * or
+ * <vp_DB_Common-instance>->getAll()->getData()
+ *
+ *
+ * @package    DB_QueryTool
+ * @version    2002/07/11
+ * @access     public
+ * @author     Wolfram Kriesing <wolfram@kriesing.de>
+ */
 class DB_QueryTool_Result
 {
-
-    var $_data = array();
-    var $_count = 0;
-    // the counter for the methods getFirst, getNext
-    var $_counter = null;
+    // {{{ class vars
 
     /**
-    *   create a new instance of result with the data returned by the query
-    *
-    *   @version    2002/07/11
-    *   @access     public
-    *   @author     Wolfram Kriesing <wolfram@kriesing.de>
-    *   @param      array   the data returned by the result
-    */
-    function DB_QueryTool_Result( $data )
+     * @var array
+     */
+    var $_data = array();
+
+    /**
+     * @var integer
+     */
+    var $_count = 0;
+
+    /**
+     * the counter for the methods getFirst, getNext
+     * @var array
+     */
+    var $_counter = null;
+
+    // }}}
+    // {{{ DB_QueryTool_Result()
+
+    /**
+     * create a new instance of result with the data returned by the query
+     *
+     * @version    2002/07/11
+     * @access     public
+     * @author     Wolfram Kriesing <wolfram@kriesing.de>
+     * @param      array   the data returned by the result
+     */
+    function DB_QueryTool_Result($data)
     {
         list($firstElement) = $data;
-        if( is_array($firstElement) )               // is the array a collection of rows?
-        {
+        if (is_array($firstElement)) { // is the array a collection of rows?
             $this->_count = sizeof($data);
-        }
-        else
-        {
-            if( sizeof($data) > 0 )
+        } else {
+            if (sizeof($data) > 0) {
                 $this->_count = 1;
-            else
+            } else {
                 $this->_count = 0;
+            }
         }
         $this->_data = $data;
     }
 
+    // }}}
+    // {{{ getCount()
+
     /**
-    *   return the number of rows returned
-    *
-    *   @version    2002/07/11
-    *   @access     public
-    *   @author     Wolfram Kriesing <wolfram@kriesing.de>
-    *   @param
-    *   @return
-    */
+     * return the number of rows returned
+     *
+     * @version    2002/07/11
+     * @access     public
+     * @author     Wolfram Kriesing <wolfram@kriesing.de>
+     * @param
+     * @return integer the number of rows returned
+     */
     function getCount()
     {
         return $this->_count;
     }
 
-    /**
-    *   get all the data returned
-    *
-    *   @version    2002/07/11
-    *   @access     public
-    *   @author     Wolfram Kriesing <wolfram@kriesing.de>
-    *   @param
-    *   @return
-    */
-    function getData( $key=null )
-    {
-        if( $key===null )
-            return $this->_data;
+    // }}}
+    // {{{ getData()
 
-        if( $this->_data[$key] )
+    /**
+     * get all the data returned
+     *
+     * @version    2002/07/11
+     * @access     public
+     * @author     Wolfram Kriesing <wolfram@kriesing.de>
+     * @param
+     * @return mixed array or PEAR_Error
+     */
+    function getData($key=null)
+    {
+        if(is_null($key)) {
+            return $this->_data;
+        }
+        if ($this->_data[$key]) {
             return $this->_data[$key];
-        else
-            return new PEAR_Error("there is no element with the key '$key'!");
+        }
+        return new PEAR_Error("there is no element with the key '$key'!");
     }
 
+    // }}}
+    // {{{ getFirst()
+
     /**
-    *   get the first result set
-    *   we are not using next, current, and reset, since those ignore keys
-    *   which are empty or 0
-    *
-    *   @version    2002/07/11
-    *   @access     public
-    *   @author     Wolfram Kriesing <wolfram@kriesing.de>
-    *   @param
-    *   @return
-    */
+     *   get the first result set
+     *   we are not using next, current, and reset, since those ignore keys
+     *   which are empty or 0
+     *
+     *   @version    2002/07/11
+     *   @access     public
+     *   @author     Wolfram Kriesing <wolfram@kriesing.de>
+     *   @param
+     *   @return
+     */
     function getFirst()
     {
-        if( $this->getCount() > 0 )
-        {
+        if ($this->getCount() > 0) {
             $this->_dataKeys = array_keys($this->_data);
             $this->_counter = 0;
             return $this->_data[$this->_dataKeys[$this->_counter]];
         }
-        return new PEAR_Error("there are no elements!");
+        return new PEAR_Error('There are no elements!');
     }
 
+    // }}}
+    // {{{ getNext()
+
+    /**
+     * get next result set
+     * @return
+     */
     function getNext()
     {
-        if( $this->hasMore() )
-        {
+        if ($this->hasMore()) {
             $this->_counter++;
             return $this->_data[$this->_dataKeys[$this->_counter]];
         }
         return new PEAR_Error("there are no more elements!");
     }
 
+    // }}}
+    // {{{ hasMore()
+
+    /**
+     * @return boolean
+     */
     function hasMore()
     {
-        if( $this->_counter+1 < $this->getCount() )
+        if ($this->_counter+1 < $this->getCount()) {
             return true;
+        }
         return false;
     }
+
+    // }}}
 
     #TODO
     #function getPrevious()
     #function getLast()
 
-
 }
-
 ?>
