@@ -42,7 +42,7 @@ class DB_QueryTool_EasyJoin extends DB_QueryTool_Query
     // {{{ class vars
 
     /**
-     * this is the regular expression that shall be used to find a table's shortName
+     * This is the regular expression that shall be used to find a table's shortName
      * in a column name, the string found by using this regular expression will be removed
      * from the column name and it will be checked if it is a table name
      * i.e. the default '/_id$/' would find the table name 'user' from the column name 'user_id'
@@ -52,7 +52,7 @@ class DB_QueryTool_EasyJoin extends DB_QueryTool_Query
     var $_tableNamePreg = '/_id$/';
 
     /**
-     * this is to find the column name that is refered by it, so the default find
+     * This is to find the column name that is referred by it, so the default find
      * from 'user_id' the column 'id' which will be used to refer to the 'user' table
      *
      * @var string regexp
@@ -76,14 +76,16 @@ class DB_QueryTool_EasyJoin extends DB_QueryTool_Query
     // {{{ autoJoin()
 
     /**
-     * join the tables given, using the column names, to find out how to join the tables
-     * this is, if table1 has a column names table2_id this method will join
-     * WHERE table1.table2_id=table2.id
-     * all joins made here are only concatenated via AND
+     * Join the given tables, using the column names, to find out how to join the tables;
+     * i.e., if table1 has a column named &quot;table2_id&quot;, this method will join
+     * &quot;WHERE table1.table2_id=table2.id&quot;.
+     * All joins made here are only concatenated via AND.
+     * @param array $tables
      */
     function autoJoin($tables)
     {
-// FIXXME if $tables is empty autoJoin all available tables that have a relation to $this->table, starting to search in $this->table
+// FIXXME if $tables is empty autoJoin all available tables that have a relation
+// to $this->table, starting to search in $this->table
         settype($tables, 'array');
         // add this->table to the tables array, so we go thru the current table first
         $tables = array_merge(array($this->table), $tables);
@@ -104,7 +106,7 @@ class DB_QueryTool_EasyJoin extends DB_QueryTool_Query
             foreach ($metadata as $aCol => $x) {   // go through each row to check which might be related to $aTable
                 $possibleTableShortName = preg_replace($this->_tableNamePreg,  '' , $aCol);
                 $possibleColumnName     = preg_replace($this->_columnNamePreg, '' , $aCol);
-//print "$aTable.$aCol .... possibleTableShortName=$possibleTableShortName .... possibleColumnName=$possibleColumnName<br>";
+//print "$aTable.$aCol .... possibleTableShortName=$possibleTableShortName .... possibleColumnName=$possibleColumnName<br />";
                 if (isset($shortNameIndexed[$possibleTableShortName])) {
                     // are the tables given in the tableSpec?
                     if (!$shortNameIndexed[$possibleTableShortName]['name'] ||
@@ -113,7 +115,8 @@ class DB_QueryTool_EasyJoin extends DB_QueryTool_Query
                         $this->_errorLog("autoJoin-ERROR: '$aTable' is not given in the tableSpec!<br />");
                     } else {
                         // do only join different table.col combination,
-                        // we should not join stuff like 'question.question=question.question' this would be quite stupid, but it used to be :-(
+                        // we should not join stuff like 'question.question=question.question'
+                        // this would be quite stupid, but it used to be :-(
                         if ($shortNameIndexed[$possibleTableShortName]['name'] != $aTable ||
                             $possibleColumnName != $aCol
                         ) {
