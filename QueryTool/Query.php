@@ -98,6 +98,11 @@ class DB_QueryTool_Query
     var $_useResult = false;
 
     /**
+     * @var    boolean     if to use the DB_QueryTool_Result_Object as a result or not
+     */
+    var $_useResultObject = false;
+
+    /**
      * @var    array       the metadata temporary saved
      */
     var $_metadata = array();
@@ -2111,6 +2116,13 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
             }
             return new DB_QueryTool_Result($result);
         }
+        if ($this->_useResultObject) {
+            if ($result === false) {
+                echo 'HERE';
+                return false;
+            }
+            return new DB_QueryTool_Result_Object($result);
+        }
         return $result;
     }
 
@@ -2227,6 +2239,24 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
         $this->_useResult = $doit;
         if ($doit) {
             require_once 'DB/QueryTool/Result.php';
+        }
+    }
+
+    // }}}
+    // {{{ useResultObject()
+
+    /**
+     *   @version    2004/04/04
+     *   @access     public
+     *   @author     Roman Dostovalov <roman.dostovalov@ctco.lv>
+     *   @param boolean
+     *   @return
+     */
+    function useResultObject($doit=true)
+    {
+        $this->_useResultObject = $doit;
+        if ($doit) {
+            require_once 'DB/QueryTool/Result/Object.php';
         }
     }
 
