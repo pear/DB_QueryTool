@@ -69,7 +69,10 @@ SQL-Statements and execute them.
 
             </dir>
 
-
+            <deps>
+                <!-- there was a change in the API in 1.7 so we have to depend on this :-/ -->
+                <dep type="pkg" rel="eq" version="1.6.7">Log</dep>
+            </deps>
 
         </filelist>
 
