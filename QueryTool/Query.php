@@ -1535,6 +1535,9 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
                 $res[$key]['name'] = $val['COLUMN_NAME'];
             }
         } else {
+            if (!is_object($this->db)) {
+                return false;
+            }
             $res = $this->db->tableinfo($table);
             if (DB::isError($res)) {
                 $this->_errorSet($res->getUserInfo());
