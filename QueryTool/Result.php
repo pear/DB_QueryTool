@@ -27,7 +27,7 @@
 *   <vp_DB_Common-instance>->getAll()->getData()
 *
 *
-*   @package    vp_DB
+*   @package    DB_QueryTool
 *   @version    2002/07/11
 *   @access     public
 *   @author     Wolfram Kriesing <wolfram@kriesing.de>
