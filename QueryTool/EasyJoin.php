@@ -22,7 +22,7 @@ require_once('DB/QueryTool/Query.php');
 
 /**
 *
-*   @package    vp_DB
+*   @package    DB_QueryTool
 *   @version    2002/09/03
 *   @access     public
 *   @author     Wolfram Kriesing <wolfram@kriesing.de>
@@ -70,13 +70,11 @@ class DB_QueryTool_EasyJoin extends DB_QueryTool_Query
         foreach( $tables as $aTable )   // go through $this->table and all the given tables
         {
             if( $metadata = $this->metadata($aTable) )
-            foreach( $metadata as $aCol=>$x )   // go through each row to check which might be related to $aTable
-            {
+            foreach ( $metadata as $aCol=>$x ) {   // go through each row to check which might be related to $aTable
                 $possibleTableShortName = preg_replace( $this->_tableNamePreg, '' ,$aCol );
                 $possibleColumnName = preg_replace( $this->_columnNamePreg, '' ,$aCol );
 //print "$aTable.$aCol .... possibleTableShortName=$possibleTableShortName .... possibleColumnName=$possibleColumnName<br>";
-                if( $shortNameIndexed[$possibleTableShortName] )
-                {
+                if ( isset($shortNameIndexed[$possibleTableShortName]) ) {
                     // are the tables given in the tableSpec?
                     if( !$shortNameIndexed[$possibleTableShortName]['name'] ||
                         !$nameIndexed[$aTable]['name'] )
