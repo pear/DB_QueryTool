@@ -737,10 +737,13 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
     */
     function addWhereSearch($column ,$string ,$condition='AND')
     {                         
-        // if the column doesnt contain a tablename use the current table name
+        // if the column doesnt contain a tablename use the current table name in case it is a defined column
         // to prevent ambigious rows
         if (strpos($column,'.')===false) {
-            $column = $this->table.".$column";
+            $meta = $this->metadata();
+            if (isset($meta[$column])) {
+                $column = $this->table.".$column";
+            }
         }
 
         $string = $this->db->quote('%'.str_replace(' ','%',strtolower($string)).'%');
@@ -852,8 +855,7 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
 // this wouldnt work yet, but for doing so we would need to change the _build methods too!!!
 // because they use getJoin('tables') and this simply returns all the tables in use but dont take care of the mentioned syntax
 
-        if( $table==null || $where==null)           // remove the join if not sufficient parameters are given
-        {
+        if ($table==null || $where==null) {           // remove the join if not sufficient parameters are given
             $this->_join[$joinType] = array();
             return;
         }
@@ -885,6 +887,19 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
         $this->setJoin( $table , $where , 'left' );
     }
 
+    function addLeftJoin($table ,$where ,$type='left' )
+    {
+        // init value, to prevent E_ALL-warning
+        if (!isset($this->_join[$type]) || !$this->_join[$type]) {
+            $this->_join[$type] = array('table'=>array(),'where'=>'');
+        }
+        $this->_join[$type]['table'] = array_merge($this->_join[$type]['table'],$table);
+        if (!is_array($this->_join[$type]['where'])) {
+            settype($this->_join[$type]['where'],'array');
+        }
+        $this->_join[$type]['where'][] = $where;
+    }
+    
     /**
     *   see setLeftJoin for further explaination on what a left/right join is
     *   NOTE: be sure to only use either a right or a left join
@@ -1185,6 +1200,13 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
     */
     function metadata( $table='' )
     {
+        // is there an alias in the table name, then we have something like this: 'user ua'
+        // cut of the alias and return the table name
+        if (strpos($table,' ')!==false) {
+            $split = explode(' ',trim($table));
+            $table = $split[0];
+        }
+    
         $full = false;
         if( $table=='' )
             $table = $this->table;
@@ -1272,33 +1294,39 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
             // use isset to prevent E_ALL warnings
             $joinType = isset($join['left']) && $join['left'] ? 'left' :
                             ( isset($join['right']) && $join['right'] ? 'right' : false );
+// this class can only handle one kind of join at a time ... how stupid :-)
 
-            if ( $joinType ) { // do we have any of the above checked join-types?
-                $from = $from.' '.strtoupper($joinType).' JOIN '.implode(',',$join[$joinType]['table']);
+            if ($joinType) { // do we have any of the above checked join-types?
+                $joinExpr = ' '.strtoupper($joinType).' JOIN ';
+                $tables = $join[$joinType]['table'];
+                settype($tables,'array');
+                $wheres = $join[$joinType]['where'];
+                settype($wheres,'array');
+                foreach ($wheres as $k=>$where) {
+                    $from .= $joinExpr.$tables[$k];
+                    // replace the _TABLENAME_COLUMNNAME by TABLENAME.COLUMNNAME
+                    // since oracle doesnt work with the _TABLENAME_COLUMNNAME which i think is strange
+    // FIXXME i think this should become deprecated since the setWhere should not be used like this: '_table_column' but 'table.column'
+                    $regExp = '/_('.implode('|',$join[$joinType]['table']).')_([^\s]+)/';
+                    $where = preg_replace( $regExp , '$1.$2' , $where );
 
-                $where = $join[$joinType]['where'];
-                // replace the _TABLENAME_COLUMNNAME by TABLENAME.COLUMNNAME
-                // since oracle doesnt work with the _TABLENAME_COLUMNNAME which i think is strange
-// FIXXME i think this should become deprecated since the setWhere should not be used like this: '_table_column' but 'table.column'
-                $regExp = '/_('.implode('|',$join[$joinType]['table']).')_([^\s]+)/';
-                $where = preg_replace( $regExp , '$1.$2' , $where );
-
-                // add the table name before any column that has no table prefix
-                // since this might cause "unambigious column" errors
-                if ( $meta = $this->metadata() ) {
-                    foreach ( $meta as $aCol=>$x ) {
-                        // this covers the LIKE,IN stuff: 'name LIKE "%you%"'  'id IN (2,3,4,5)'
-                        $where = preg_replace( '/\s'.$aCol.'\s/' , " {$this->table}.$aCol " , $where );
-                        // replace also the column names which are behind a '='
-                        // and do this also if the aCol is at the end of the where clause
-                        // that's what the $ is for
-                        $where = preg_replace( '/=\s*'.$aCol.'(\s|$)/' , "={$this->table}.$aCol " , $where );
-                        // replace if colName is first and possibly also if at the beginning of the where-string
-                        $where = preg_replace( '/(^\s*|\s+)'.$aCol.'\s*=/' , "$1{$this->table}.$aCol=" , $where );
+                    // add the table name before any column that has no table prefix
+                    // since this might cause "unambigious column" errors
+                    if ($meta = $this->metadata()) {
+                        foreach ( $meta as $aCol=>$x ) {
+                            // this covers the LIKE,IN stuff: 'name LIKE "%you%"'  'id IN (2,3,4,5)'
+                            $where = preg_replace( '/\s'.$aCol.'\s/' , " {$this->table}.$aCol " , $where );
+                            // replace also the column names which are behind a '='
+                            // and do this also if the aCol is at the end of the where clause
+                            // that's what the $ is for
+                            $where = preg_replace( '/=\s*'.$aCol.'(\s|$)/' , "={$this->table}.$aCol " , $where );
+                            // replace if colName is first and possibly also if at the beginning of the where-string
+                            $where = preg_replace( '/(^\s*|\s+)'.$aCol.'\s*=/' , "$1{$this->table}.$aCol=" , $where );
+                        }
                     }
-                }
 
-                $from = $from.' ON '.$where;
+                    $from .= ' ON '.$where;
+                }
             }
         }
         
