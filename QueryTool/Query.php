@@ -237,25 +237,18 @@ class DB_QueryTool_Query
         $queryString = $this->_buildSelectQuery();
 
 // FIXXME, one day this should be unified!!!
-        if( $this->_db->phptype=='oci8' )
-        {
-            if( $from && $count )
-            {
-                if( DB::isError( $queryString = $this->_db->modifyLimitQuery($queryString,$from-1,$count-1)) )
-                {
+        if ($this->_db->phptype=='oci8' ) {
+            if ($from && $count) {
+                if (DB::isError( $queryString = $this->_db->modifyLimitQuery($queryString,$from-1,$count-1))) {
 //print_r($queryString);
                     $this->_errorSet( 'vp_DB_Common::getAll modifyLimitQuery failed '.$queryString->getMessage() );
                     $this->_errorLog( $queryString->getUserInfo() );
                     return false;
                 }
             }
-        }
-        else
-        {
-            if( $count )
-            {
-                if( DB::isError( $queryString = $this->_db->modifyLimitQuery($queryString,$from,$count)) )
-                {
+        } else {
+            if ($count) {
+                if ( DB::isError( $queryString = $this->_db->modifyLimitQuery($queryString,$from,$count)) ) {
                     $this->_errorSet( 'vp_DB_Common::getAll modifyLimitQuery failed '.$queryString->getMessage() );
                     $this->_errorLog( $queryString->getUserInfo() );
                     return false;
@@ -291,13 +284,12 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
 */
 
 //FIXXME see comment above if this is absolutely correct!!!
-        if( $group = $this->getGroup() )
-        {
+        if ( $group = $this->getGroup() ) {
             $query['select'] = 'count(DISTINCT '.$group.')';
             $query['group'] = '';
-        }
-        else
+        } else {
             $query['select'] = 'count(*)';
+        }
 
         $query['order'] = '';   // order is not of importance and might freak up the special group-handling up there, since the order-col is not be known
 /*# FIXXME use the following line, but watch out, then it has to be used in every method, or this
@@ -324,8 +316,7 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
         $ret = array();
         // here we read all the columns from the DB and initialize them
         // with '' to prevent PHP-warnings in case we use error_reporting=E_ALL
-        foreach( $this->metadata() as $aCol=>$x )
-        {
+        foreach ( $this->metadata() as $aCol=>$x ) {
             $ret[$aCol] = '';
         }
         return $ret;
@@ -385,7 +376,7 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
 
         $newData = $this->_checkColumns($newData,'update');
 
-        $values = array();                        
+        $values = array();
         $raw = $this->getOption('raw');
         foreach( $newData as $key=>$aData )         // quote the data
             $values[] = "$key=". ( $raw ? $aData : $this->_db->quote($aData) );
@@ -485,16 +476,13 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
     {
         $raw = $this->getOption('raw');
 
-        if( is_array($data) )
-        {
+        if (is_array($data)) {
 //FIXXME check $data if it only contains columns that really exist in the table
             $wheres = array();
             foreach( $data as $key=>$val )
                 $wheres[] = $key.'='. ( $raw ? $val : $this->_db->quote($val) );
             $whereClause = implode(' AND ',$wheres);
-        }
-        else
-        {
+        } else {
             if( $whereCol=='' )
                 $whereCol = $this->primaryCol;
             $whereClause = $whereCol.'='. ( $raw ? $data : $this->_db->quote($data) );
@@ -646,7 +634,13 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
     *   @param      string  the string to search for
     */
     function addWhereSearch( $column , $string )
-    {
+    {                         
+        // if the column doesnt contain a tablename use the current table name
+        // to prevent ambigious rows
+        if (strpos($column,'.')===false) {
+            $column = $this->table.".$column";
+        }
+
         $string = $this->_db->quote('%'.str_replace(' ','%',strtolower($string)).'%');
         $this->addWhere( "LOWER($column) LIKE $string" );
     }
@@ -697,7 +691,7 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
 
         if( $table==null || $where==null)           // remove the join if not sufficient parameters are given
         {
-            unset($this->_join[$joinType]);
+            $this->_join[$joinType] = array();
             return;
         }
 
@@ -766,7 +760,7 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
                 $ret = array();
                 foreach( $this->_join as $aJoin )
                 {
-                    if( sizeof($aJoin['table']) )
+                    if( isset($aJoin['table']) && sizeof($aJoin['table']) )
                         $ret = array_merge( $ret , $aJoin['table'] );
                 }
                 break;
@@ -785,7 +779,7 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
     *   you can also call
     *       setJoin(table1,'<where clause1>')
     *       addJoin(table2,'<where clause2>')
-    *   or where it makes more sense is to build a query which is build out of a
+    *   or where it makes more sense is to build a query which is made out of a
     *   left join and a standard join
     *       setLeftJoin(table1,'<where clause1>')
     *       // results in ... FROM $this->table LEFT JOIN table ON <where clause1>
@@ -799,7 +793,12 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
     */
     function addJoin( $table , $where , $type='default' )
     {
-        settype($table,'array');
+        settype($table,'array');                   
+                                                                   
+        // init value, to prevent E_ALL-warning
+        if (!isset($this->_join[$type]) || !$this->_join[$type]) {
+            $this->_join[$type] = array('table'=>array(),'where'=>'');
+        }
         $this->_join[$type]['table'] = array_merge($this->_join[$type]['table'],$table);
         $this->_join[$type]['where'] .= trim($this->_join[$type]['where']) ? ' AND '.$where : $where;
     }
@@ -883,10 +882,11 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
     function addSelect( $what='*' , $connectString=',' )
     {                        
         // if the select string is not empty add the string, otherwise simply set it
-        if( $this->_select )
+        if ($this->_select) {
             $this->_select = $this->_select.$connectString.$what;
-        else
+        } else {
             $this->_select = $what;
+        }
     }
 
     function getSelect()
@@ -914,17 +914,17 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
     */
     function reset( $what=array() )
     {
-        if( sizeof($what) == 0 )
+        if (sizeof($what) == 0) {
             $what = array('select','dontSelect','group','where','index','order','join','leftJoin','rightJoin');
+        }
 
-        foreach( $what as $aReset )
-        {
+        foreach ( $what as $aReset ) {
             $this->{'set'.ucfirst($aReset)}();
         }
     }
 
     /**
-    *   set mode the class shall work in          
+    *   set mode the class shall work in
     *   currently we have the modes:
     *   'raw'   does not quote the data before building the query
     *
@@ -965,8 +965,7 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
     */
     function _quoteArray( $data )
     {
-        if( !$this->getOption('raw') )
-        {
+        if (!$this->getOption('raw')) {
             foreach( $data as $key=>$val )
                 $data[$key] = $this->_db->quote($val);
         }
@@ -986,24 +985,22 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
     */
     function _checkColumns( $newData , $method='unknown' )
     {
-        if( !$meta = $this->metadata() )    // if no metadata available, return data as given
+        if ( !$meta = $this->metadata() ) {   // if no metadata available, return data as given
             return $newData;
+        }
 
-        foreach( $newData as $colName=>$x )
-        {
-            if( !isset($meta[$colName]) )
-            {
+        foreach ($newData as $colName=>$x) {
+            if ( !isset($meta[$colName]) ) {
                 $this->_errorLog("$method, column {$this->table}.$colName doesnt exist, value was removed before '$method'",__LINE__);
                 unset($newData[$colName]);
-            }
-            else    // if the current column exists, check the length too, not to write content that is too long
-            // prevent DB-errors here
-            {
+            } else {
+                // if the current column exists, check the length too, not to write content that is too long
+                // prevent DB-errors here
                 // do only check the data length if this field is given
 // FIXXME use PEAR-defined field for 'DATA_LENGTH'
-                if( isset($meta[$colName]['DATA_LENGTH']) &&
-                    ($oldLength=strlen($newData[$colName])) > $meta[$colName]['DATA_LENGTH'] )
-                {
+                if ( isset($meta[$colName]['DATA_LENGTH']) &&
+                    ($oldLength=strlen($newData[$colName])) > $meta[$colName]['DATA_LENGTH'] ) {
+
                     $this->_errorLog("_checkColumns, had to trim column '$colName' from $oldLength to ".
                                         $meta[$colName]['DATA_LENGTH'].' characters.',__LINE__);
                     $newData[$colName] = substr($newData[$colName],0,$meta[$colName]['DATA_LENGTH']);
@@ -1045,8 +1042,9 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
             $table = $this->table;
 
         // to prevent multiple selects for the same metadata
-        if( $this->_metadata[$table] )
+        if ( isset($this->_metadata[$table]) ) {
             return $this->_metadata[$table];
+        }
 
 // FIXXXME use oci8 implementation of newer PEAR::DB-version
         if( $this->_db->phptype=='oci8' )
@@ -1080,19 +1078,18 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
             }
             foreach( $res as $key=>$val )
                 $res[$key]['name'] = $val['COLUMN_NAME'];
-        }
-        else
-        {                              
+        } else {
             $res=$this->_db->tableinfo($table);
             if( DB::isError($res) )
                 return false;
-        }
+        }           
+
 
         $ret = array();
         foreach( $res as $key=>$val )
             $ret[$val['name']] = $val;
 
-        $this->_metadata = $ret;
+        $this->_metadata[$table] = $ret;
         return $ret;
     }  // end of method
 
@@ -1113,19 +1110,20 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
     function _buildFrom()
     {
         $from = $this->table;
-
+                                      
         if( $join = $this->getJoin() )   // is join set?
         {
             // handle the standard join thingy
-            if( $join['default'] )
-            {
+            if ( $join['default'] ) {
                 $from .= ','.implode(',',$join['default']['table']);
             }
 
             // if we also have a left join, add the 'LEFT JOIN table ON condition'
-            $joinType = $join['left']?'left':($join['right']?'right':false);
-            if( $joinType ) // do we have any of the above checked join-types?
-            {
+            // use isset to prevent E_ALL warnings
+            $joinType = isset($join['left']) && $join['left'] ? 'left' :
+                            ( isset($join['right']) && $join['right'] ? 'right' : false );
+
+            if ( $joinType ) { // do we have any of the above checked join-types?
                 $from = $from.' '.strtoupper($joinType).' JOIN '.implode(',',$join[$joinType]['table']);
 
                 $where = $join[$joinType]['where'];
@@ -1137,9 +1135,8 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
 
                 // add the table name before any column that has no table prefix
                 // since this might cause "unambigious column" errors
-                if( $meta = $this->metadata() )
-                    foreach( $meta as $aCol=>$x )
-                    {
+                if ( $meta = $this->metadata() ) {
+                    foreach ( $meta as $aCol=>$x ) {
                         // this covers the LIKE,IN stuff: 'name LIKE "%you%"'  'id IN (2,3,4,5)'
                         $where = preg_replace( '/\s'.$aCol.'\s/' , " {$this->table}.$aCol " , $where );
                         // replace also the column names which are behind a '='
@@ -1149,14 +1146,15 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
                         // replace if colName is first and possibly also if at the beginning of the where-string
                         $where = preg_replace( '/(^\s*|\s+)'.$aCol.'\s*=/' , "$1{$this->table}.$aCol=" , $where );
                     }
+                }
 
                 $from = $from.' ON '.$where;
             }
         }
-
+        
         return $from;
     }
-              
+
     /**
     *   this method gets the short name for a table
     *
@@ -1253,26 +1251,28 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
             else
             {
                 $tables = $selectAllFromTables;
-            }                                                       
+            }
 
             $cols = array();
             foreach( $tables as $aTable )       // go thru all the tables and get all columns for each, and handle 'dontSelect'
-            {                            
-                if( $meta = $this->metadata($aTable) )
-                foreach( $meta as $colName=>$x )
-                {
-                    // handle the dontSelect's
-                    if( in_array($colName,$dontSelect) || in_array("$aTable.$colName",$dontSelect) )
-                        continue;
+            {
+                if ($meta = $this->metadata($aTable)) {
+                    foreach ($meta as $colName=>$x) {
+                        // handle the dontSelect's
+                        if (in_array($colName,$dontSelect) || in_array("$aTable.$colName",$dontSelect)) {
+                            continue;
+                        }
 
-                    if( $aTable == $this->table )
-                        $cols[$aTable][] = $this->table.".$colName AS $colName";
-                    else
-                        $cols[$aTable][] = "$aTable.$colName AS _".$this->getTableShortName($aTable)."_$colName";
+                        if ($aTable == $this->table) {
+                            $cols[$aTable][] = $this->table.".$colName AS $colName";
+                        } else {
+                            $cols[$aTable][] = "$aTable.$colName AS _".$this->getTableShortName($aTable)."_$colName";
+                        }
+                    }
                 }
             }
 
-            // put the extracted select back in the $what  
+            // put the extracted select back in the $what
             // that means replace 'table.*' by the i.e. 'table.id AS _table_id'
             // or if it is the table of this class replace 'table.id AS id'
             if( in_array('',$selectAllFromTables) )
@@ -1459,8 +1459,8 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
             $group = 'GROUP BY '.$group;
 
         $queryString = sprintf( 'SELECT %s FROM %s %s %s %s',
-                                $query['select'] ? $query['select'] : $this->_buildSelect(),
-                                $query['from'] ? $query['from'] : $this->_buildFrom(),
+                                isset($query['select']) ? $query['select'] : $this->_buildSelect(),
+                                isset($query['from']) ? $query['from'] : $this->_buildFrom(),
                                 $where,
                                 $group,
                                 $order
@@ -1694,6 +1694,8 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
             return;
         }
 */
+                                                                               
+        $msg = get_class($this)."::$msg ($line)";
 
         $logOrSet = ucfirst($logOrSet);
         $callback = &PEAR::getStaticProperty('DB_QueryTool','_error'.$logOrSet.'Callback');
