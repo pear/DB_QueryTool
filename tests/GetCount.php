@@ -10,13 +10,13 @@ class tests_GetCount extends tests_UnitTest
         $this->user = new tests_Common(TABLE_USER);
         switch ($mode) {
             case '6':
-                $this->user->add(array('name'=>'x'));       
-                $this->user->add(array('name'=>'y'));       
-                $this->user->add(array('name'=>'z'));       
+                $this->user->add(array('name'=>'x'));
+                $this->user->add(array('name'=>'y'));
+                $this->user->add(array('name'=>'z'));
             case '3':
-                $this->user->add(array('name'=>'x'));       
-                $this->user->add(array('name'=>'y'));       
-                $this->user->add(array('name'=>'z'));       
+                $this->user->add(array('name'=>'x'));
+                $this->user->add(array('name'=>'y'));
+                $this->user->add(array('name'=>'z'));
                 break;
         }
     }
@@ -26,7 +26,7 @@ class tests_GetCount extends tests_UnitTest
         $this->_setup(3);
         $this->assertEquals(3,$this->user->getCount(),'Wrong count after inserting 3 rows');
     }
-            
+
     function test_getCount6()
     {
         $this->_setup(6);
@@ -43,7 +43,7 @@ class tests_GetCount extends tests_UnitTest
     function test_getCountGrouped2()
     {
         $this->_setup(6);
-        $this->user->setWhere('name="z"');
+        $this->user->setWhere("name='z'");
         $this->assertEquals(2,$this->user->getCount(),'setWhere and setGroup should have resulted in two');
     }
 
@@ -51,7 +51,7 @@ class tests_GetCount extends tests_UnitTest
     {
         $this->_setup(6);
         $this->user->setGroup('name');
-        $this->user->setWhere('name="z"');
+        $this->user->setWhere("name='z'");
         $this->assertEquals(1,$this->user->getCount(),'setWhere and setGroup should have resulted in one');
     }
 
@@ -59,7 +59,7 @@ class tests_GetCount extends tests_UnitTest
     {
         $this->_setup(6);
         $this->user->setGroup('name');
-        $this->user->setWhere('name="xxx"');
+        $this->user->setWhere("name='xxx'");
         $this->assertEquals(0,$this->user->getCount(),'setWhere and setGroup should have resulted in one');
     }
 
