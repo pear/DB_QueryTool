@@ -243,15 +243,19 @@ class DB_QueryTool_Query
             $autoConnect = true;
         } else {
             $autoConnect = $options['autoConnect'];
+            unset($options['autoConnect']);
         }
         if (isset($options['errorCallback'])) {
             $this->setErrorCallback($options['errorCallback']);
+            unset($options['errorCallback']);
         }
         if (isset($options['errorSetCallback'])) {
             $this->setErrorSetCallback($options['errorSetCallback']);
+            unset($options['errorSetCallback']);
         }
         if (isset($options['errorLogCallback'])) {
             $this->setErrorLogCallback($options['errorLogCallback']);
+            unset($options['errorLogCallback']);
         }
         if ($autoConnect && $dsn) {
             $this->connect($dsn, $options);
@@ -655,7 +659,6 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
         if (!sizeof($data)) {
             return false;
         }
-
         // the inserted ids which will be returned or if no primaryCol is given
         // we return true by default
         $retIds = $this->primaryCol ? array() : true;
