@@ -1441,13 +1441,12 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
                 // if the current column exists, check the length too, not to write content that is too long
                 // prevent DB-errors here
                 // do only check the data length if this field is given
-// FIXXME use PEAR-defined field for 'DATA_LENGTH'
-                if (isset($meta[$colName]['DATA_LENGTH']) &&
-                    ($oldLength=strlen($newData[$colName])) > $meta[$colName]['DATA_LENGTH']) {
-
+                if (isset($meta[$colName]['len']) && ($meta[$colName]['len'] != -1) &&
+                    ($oldLength=strlen($newData[$colName])) > $meta[$colName]['len']
+                ) {
                     $this->_errorLog("_checkColumns, had to trim column '$colName' from $oldLength to ".
                                         $meta[$colName]['DATA_LENGTH'].' characters.', __LINE__);
-                    $newData[$colName] = substr($newData[$colName], 0, $meta[$colName]['DATA_LENGTH']);
+                    $newData[$colName] = substr($newData[$colName], 0, $meta[$colName]['len']);
                 }
             }
         }
@@ -1961,8 +1960,8 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
                                 isset($query['from']) ? $query['from'] : $this->_buildFrom(),
                                 $where,
                                 $group,
-                                $order,
-                                $having
+                                $having,
+                                $order
                                 );
         // $query['limit'] has preference!
         $limit = isset($query['limit']) ? $query['limit'] : $this->_limit;

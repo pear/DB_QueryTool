@@ -36,10 +36,13 @@ SQL-Statements and execute them.
         <version>0.11.2</version>
         <license>PHP</license>
         <state>stable</state>
-        <date>2005-01-27</date>
+        <date>2005-02-25</date>
         <notes>
 * fixed bug #3290, getCount() method returns zero when using an offset
   (patch by kubo at isite dot co dot jp)
+* strings lenghtier than the column max size are truncated
+  to prevent db errors
+* using setOrder() with setGroup()+setHaving() could cause a malformed query
         </notes>
         <filelist>
             <dir name="/" baseinstalldir="DB">
