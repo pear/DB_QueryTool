@@ -2296,7 +2296,7 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
     }
 
     // }}}
-    // {{{ _errorLog()
+    // {{{ _errorSet()
 
     /**
      * @param      string
@@ -2308,7 +2308,7 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
     }
 
     // }}}
-    // {{{ _errorLog()
+    // {{{ _errorHandler()
 
     /**
      * @param
