@@ -22,7 +22,7 @@ TODO
     $obj->setWhere('t.id=5 AND t1.id=4 AND t2.id=6');
 - let user choose if he wants to have default PEAR-error handling, so to say throw
   PEAR_Error on failure or let it work as it does now
-    
+- setIndex() and using get() freaks up the results, try it!!!    
 
 DONE
 - make it work on oracle, the _* doesnt work in oracle - may be the "" around the _table_col 
