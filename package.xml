@@ -36,12 +36,14 @@ SQL-Statements and execute them.
         <version>0.10.2</version>
         <license>PHP</license>
         <state>stable</state>
-        <date>2004-06-11</date>
+        <date>2004-07-31</date>
         <notes>
 * allow class usage without instanciating a db object
   (to use the class as a simple query builder)
 * unset non-specific PEAR::DB options before calling connect()
   (bug #1614)
+* allow reuse of existing connection (bug #2007),
+  thanks to eln at gmx dot net
         </notes>
         <filelist>
             <dir name="/" baseinstalldir="DB">
