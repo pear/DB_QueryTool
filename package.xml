@@ -27,19 +27,13 @@ SQL-Statements and execute them.
     </maintainers>
 
     <release>
-        <version>0.9.4</version>
+        <version>0.9.5</version>
         <license>PHP</license>
         <state>stable</state>
-        <date>2003-06-06</date>
+        <date>2003-??-??</date>
         <notes>
-- added set/getLimit(), which set the limit globally, 
-  getAll() and getCol() can still overwrite this temporarily
-- added addOrder()
-- added *Having() methods by Johannes Schaefer
-- added log functionality
-- added condition param to addWhereSearch()
-- fix bug in building group clause for getCount()
-- bug fix in building join
+- bug fix when writing log files
+- bug fix in EasyJoin, which added unnecessary conditions        
         </notes>
 
         <filelist>
@@ -79,6 +73,23 @@ SQL-Statements and execute them.
     </release>
 
     <changelog>
+        <release>
+        <version>0.9.4</version>
+        <license>PHP</license>
+        <state>stable</state>
+        <date>2003-06-06</date>
+        <notes>
+- added set/getLimit(), which set the limit globally, 
+  getAll() and getCol() can still overwrite this temporarily
+- added addOrder()
+- added *Having() methods by Johannes Schaefer
+- added log functionality
+- added condition param to addWhereSearch()
+- fix bug in building group clause for getCount()
+- bug fix in building join
+        </notes>
+        </release>
+        
         <release>
         <version>0.9.3</version>
         <license>PHP</license>
