@@ -401,7 +401,7 @@ class DB_QueryTool_Query
 /* the following query works on mysql
 SELECT count(DISTINCT image.id) FROM image2tree
 RIGHT JOIN image ON image.id = image2tree.image_id
-the reason why this is needed - i jsut wanted to get the number of rows that do exist if the result is grouped by image.id
+the reason why this is needed - i just wanted to get the number of rows that do exist if the result is grouped by image.id
 the following query is what i tried first, but that returns the number of rows that have been grouped together
 for each image.id
 SELECT count(*) FROM image2tree
@@ -412,10 +412,10 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
 
 //FIXXME see comment above if this is absolutely correct!!!
         if ($group = $this->_buildGroup()) {
-            $query['select'] = 'count(DISTINCT '.$group.')';
+            $query['select'] = 'COUNT(DISTINCT '.$group.')';
             $query['group'] = '';
         } else {
-            $query['select'] = 'count(*)';
+            $query['select'] = 'COUNT(*)';
         }
 
         $query['order'] = '';   // order is not of importance and might freak up the special group-handling up there, since the order-col is not be known
@@ -465,7 +465,11 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
     */
     function getQueryString()
     {
-        return $this->_buildSelectQuery();
+        $ret = $this->_buildSelectQuery();
+        if (is_string($ret)) {
+            $ret = trim($ret);
+        }
+        return $ret;
     }
 
     /**
@@ -543,8 +547,8 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
 
         if ($this->primaryCol) {                    // do only use the sequence if a primary column is given
                                                     // otherwise the data are written as given
-            $id = $this->db->nextId( $this->sequenceName );
-            $newData[$this->primaryCol] = $this->getOption('raw') ? $id : $this->db->quote($id);
+            $id = $this->db->nextId($this->sequenceName);
+            $newData[$this->primaryCol] = (int)$id;
         } else {
             // if no primary col is given return true on success
             $id = true;
@@ -1522,16 +1526,18 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
 
         if ($this->getJoin()) {
             // replace all 'column' by '$this->table.column' to prevent ambigious errors
-            foreach ($this->metadata() as $aCol=>$x) {
-                // handle ',id as xid,MAX(id),id' etc.
+            $metadata = $this->metadata();
+            if (is_array($metadata)) {
+                foreach ($metadata as $aCol => $x) {
+                    // handle ',id as xid,MAX(id),id' etc.
 // FIXXME do this better!!!
-                $what = preg_replace(   "/(^|,|\()(\s*)$aCol(\)|\s|,|as|$)/i",
-                                        // $2 is actually just to keep the spaces, is not really
-                                        // necessary, but this way the test works independent of this functionality here
-                                        "$1$2{$this->table}.$aCol$3",
-                                        $what);
+                    $what = preg_replace(   "/(^|,|\()(\s*)$aCol(\)|\s|,|as|$)/i",
+                                            // $2 is actually just to keep the spaces, is not really
+                                            // necessary, but this way the test works independent of this functionality here
+                                            "$1$2{$this->table}.$aCol$3",
+                                            $what);
+                }
             }
-
             // replace all 'joinedTable.columnName' by '_joinedTable_columnName'
             // this actually only has an effect if there was no 'table.*' for 'table'
             // if that was there, then it has already been done before
