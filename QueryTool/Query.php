@@ -519,7 +519,8 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
         $values = array();
         $raw = $this->getOption('raw');
         foreach($newData as $key=>$aData) {         // quote the data
-            $values[] = "{$this->table}.$key=". ( $raw ? $aData : $this->db->quote($aData) );
+            //$values[] = "{$this->table}.$key=". ( $raw ? $aData : $this->db->quote($aData) );
+            $values[] = "$key=". ($raw ? $aData : $this->db->quote($aData));
         }
 
         $query['set'] = implode(',',$values);
