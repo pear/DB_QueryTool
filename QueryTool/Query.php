@@ -870,7 +870,7 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
     *   @author     Wolfram Kriesing <wk@visionp.de>
     *   @return     string  the table name
     */
-    function getTable($table)
+    function getTable()
     {
         return $this->table;
     }
