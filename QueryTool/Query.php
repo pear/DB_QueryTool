@@ -498,6 +498,9 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
                                                     // otherwise the data are written as given
             $id = $this->db->nextId( $this->sequenceName );
             $newData[$this->primaryCol] = $this->getOption('raw') ? $id : $this->db->quote($id);
+        } else {
+            // if no primary col is given return true on success
+            $id = true;
         }
 
         $query = sprintf(   'INSERT INTO %s (%s) VALUES (%s)',
@@ -528,7 +531,7 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
         // we return true by default
         $retIds = $this->primaryCol ? array() : true;   
         $allData = array();                         // each row that will be inserted
-        foreach ($data as $aData) {
+        foreach ($data as $key=>$aData) {
             unset($aData[$this->primaryCol]);       // we are adding a new data set, so be sure there is no value for the primary col
             $aData = $this->_checkColumns($aData,'add');
             $aData = $this->_quoteArray( $aData );
@@ -545,7 +548,7 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
 
         $query = sprintf(   'INSERT INTO %s (%s) VALUES %s',
                             $this->table ,
-                            implode(',',array_keys($data[0])) ,
+                            implode(',',array_keys($aData)) ,// use the keys of the last element built
                             implode(',',$allData)
                         );
         return $this->execute($query,'query') ? $retIds : false;
