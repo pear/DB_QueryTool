@@ -1802,8 +1802,7 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
             $endTime = split(" ",microtime());
             $endTime = $endTime[1]+$endTime[0];
             $text = 'time over all: '.(($endTime - $this->_logData['startTime'])).' seconds';
-            $this->writeLog($text);
-            $this->_logObject->writeOut();
+            $this->_logObject->log($text);
         }    
     }
     

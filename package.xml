@@ -27,16 +27,12 @@ SQL-Statements and execute them.
     </maintainers>
 
     <release>
-        <version>0.9.6</version>
+        <version>0.9.7</version>
         <license>PHP</license>
         <state>stable</state>
-        <date>2003-09-12</date>
+        <date>2003-09-15</date>
         <notes>
-- bugfix in addMultiple()
-- addWhereSearch now only prefixes known columns as it is supposed to be, 
-  otherwise it would also prefix aliases with the table name, which is bull...
-- quirk in the addLeftJoin() method ... not nice, but v1.0 will be, unit tests pass but thats still not enough proof
-- make setLimit also work to unset it
+* use Log 1.7 API        
         </notes>
 
         <filelist>
@@ -71,8 +67,7 @@ SQL-Statements and execute them.
             </dir>
 
             <deps>
-                <!-- there was a change in the API in 1.7 so we have to depend on this :-/ -->
-                <dep type="pkg" rel="eq" version="1.6.7">Log</dep>
+                <dep type="pkg" rel="ge" version="1.7">Log</dep>
             </deps>
 
         </filelist>
@@ -80,6 +75,20 @@ SQL-Statements and execute them.
     </release>
 
     <changelog>
+        <release>
+        <version>0.9.6</version>
+        <license>PHP</license>
+        <state>stable</state>
+        <date>2003-09-12</date>
+        <notes>
+- bugfix in addMultiple()
+- addWhereSearch now only prefixes known columns as it is supposed to be, 
+  otherwise it would also prefix aliases with the table name, which is bull...
+- quirk in the addLeftJoin() method ... not nice, but v1.0 will be, unit tests pass but thats still not enough proof
+- make setLimit also work to unset it
+        </notes>
+        </release>
+        
         <release>
         <version>0.9.5</version>
         <license>PHP</license>
