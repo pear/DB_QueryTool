@@ -163,7 +163,7 @@ class DB_QueryTool_Query
     }
 
     /**
-    *   get the data of a single entry         
+    *   get the data of a single entry
     *   if the second parameter is only one column the result will be returned
     *   directly not as an array!
     *
@@ -556,18 +556,16 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
         $argCounter = 2;    // we have 2 parameters that need to be given at least
         // func_get_arg returns false and a warning if there are no more parameters, so
         // we suppress the warning and check for false
-        while( $object=@func_get_arg($argCounter++) )
-        {
-            if( !$object->remove( $id , $colName ) )
-            {
-                $this->_errorSet('Fehler beim Löschen. Bitte erneut versuchen!');
+        while ($object=@func_get_arg($argCounter++)) {
+//FIXXXME let $object also simply be a table name
+            if (!$object->remove( $id , $colName )) {
+//FIXXXME do this better
+                $this->_errorSet("Error removing '$colName=$id' from table {$object->table}.");
                 return false;
             }
         }
 
-        if( !$this->remove($id) )
-        {
-            $this->_errorSet('Fehler beim Löschen. Bitte erneut versuchen!');
+        if (!$this->remove($id)) {
             return false;
         }
         return true;
@@ -1355,7 +1353,7 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
         {
             // only those where conditions in the default-join have to be added here
             // left-join conditions are added behind 'ON', the '_buildJoin()' does that
-            if( strlen($join['default']['where']) > 0 )
+            if( @strlen($join['default']['where']) > 0 )
             {
                 // we have to add this join-where clause here
                 // since at least in mysql a query like: select * from tableX JOIN tableY ON ...
