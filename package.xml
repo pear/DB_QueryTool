@@ -24,6 +24,12 @@ SQL-Statements and execute them.
             <email>wolfram@kriesing.de</email>
             <role>lead</role>
         </maintainer>
+        <maintainer>
+            <user>quipo</user>
+            <name>Lorenzo Alberton</name>
+            <email>l.alberton@quipo.it</email>
+            <role>lead</role>
+        </maintainer>
     </maintainers>
 
     <release>
@@ -38,8 +44,10 @@ SQL-Statements and execute them.
 * fixed bug #284 (Log::factory() needs to return a reference)
 * fixed bug #298 (reset() does not reset limit)
 * fixed bug #322 (undefined var $autoConnect)
-* added useResultObject() method; use it to return objects instead of arrays
-  (thanks to Roman Dostovalov)
+* changed useResult() method; now it accepts a $type parameter, use it to return
+  'array' results or 'object' results (thanks to Roman Dostovalov).
+  Please note that BC is maintained, useResult(true) will default to
+  useResult('array'), and useResult(false) will default to useResult('none').
 * fixed problems with useResult(true) and empty results
 * when using useResult(true), if the user doesn't call getFirst() on the first
   iteration, the class does so automatically
