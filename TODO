@@ -1,0 +1,7 @@
+TODO
+- use varibales for the table names, to shorten the queries
+  such as SELECT * FROM tableX a1, tableY a2 ...
+- implement primaryCol to be capable of using multiple columns   
+
+
+DONE
