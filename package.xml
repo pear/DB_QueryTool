@@ -33,26 +33,13 @@ SQL-Statements and execute them.
     </maintainers>
 
     <release>
-        <version>0.10.1</version>
+        <version>0.10.2</version>
         <license>PHP</license>
         <state>stable</state>
-        <date>2004-05-05</date>
+        <date>2004-06-11</date>
         <notes>
-* on UPDATE, field names are no more prefixed by the table name
-  (it didn't work with PostgreSQL)
-* added an $options parameter to connect()
-* fixed bug #284 (Log::factory() needs to return a reference)
-* fixed bug #298 (reset() does not reset limit)
-* fixed bug #322 (undefined var $autoConnect)
-* changed useResult() method; now it accepts a $type parameter, use it to return
-  'array' results or 'object' results (thanks to Roman Dostovalov).
-  Please note that BC is maintained, useResult(true) will default to
-  useResult('array'), and useResult(false) will default to useResult('none').
-* fixed problems with useResult(true) and empty results
-* when using useResult(true), if the user doesn't call getFirst() on the first
-  iteration, the class does so automatically
-* PHP 5 fixes
-* fixes to the testsuite
+* allow class usage without instanciating a db object
+  (to use the class as a simple query builder)
         </notes>
         <filelist>
             <dir name="/" baseinstalldir="DB">
@@ -98,6 +85,29 @@ SQL-Statements and execute them.
     </release>
 
     <changelog>
+      <release>
+        <version>0.10.1</version>
+        <license>PHP</license>
+        <state>stable</state>
+        <date>2004-05-05</date>
+        <notes>
+* on UPDATE, field names are no more prefixed by the table name
+  (it didn't work with PostgreSQL)
+* added an $options parameter to connect()
+* fixed bug #284 (Log::factory() needs to return a reference)
+* fixed bug #298 (reset() does not reset limit)
+* fixed bug #322 (undefined var $autoConnect)
+* changed useResult() method; now it accepts a $type parameter, use it to return
+  'array' results or 'object' results (thanks to Roman Dostovalov).
+  Please note that BC is maintained, useResult(true) will default to
+  useResult('array'), and useResult(false) will default to useResult('none').
+* fixed problems with useResult(true) and empty results
+* when using useResult(true), if the user doesn't call getFirst() on the first
+  iteration, the class does so automatically
+* PHP 5 fixes
+* fixes to the testsuite
+        </notes>
+      </release>
       <release>
         <version>0.9.8</version>
         <license>PHP</license>
