@@ -821,7 +821,7 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
     *   @param string this is a having clause, i.e. 'column' or 'table.column' or 'MAX(column)'
     *   @param string the connection string, which usually stays the default, which is ',' (a comma)
     */
-    function addHaving($what='*', $connectString=',')
+    function addHaving($what='*', $connectString=' AND ')
     {                        
         if ($this->_having) {
             $this->_having = $this->_having.$connectString.$what;
