@@ -14,7 +14,7 @@ as setWhere, setOrder, setGroup, setJoin, etc. to easily build queries.
 It also provides an easy to learn interface that interacts nicely with HTML-forms using
 arrays that contain the column data, that shall be updated/added in a DB.
 This package bases on an SQL-Builder which lets you easily build
-SQL-Statements and execute them.                           
+SQL-Statements and execute them.
     </description>
 
     <maintainers>
@@ -27,6 +27,64 @@ SQL-Statements and execute them.
     </maintainers>
 
     <release>
+        <version>0.9.9</version>
+        <license>PHP</license>
+        <state>stable</state>
+        <date>2004-04-01</date>
+        <notes>
+* on UPDATE, field names are no more prefixed by the table name
+* added an $options parameter to connect()
+* fix bug #284 (Log::factory() needs to return a reference)
+* fix bug #298 (reset() does not reset limit)
+* fix bug #322 (undefined var $autoConnect)
+* PHP 5 fixes
+* fixes to the testsuite
+        </notes>
+
+        <filelist>
+            <dir name="/" baseinstalldir="DB">
+                <file role="php" name="QueryTool.php" />
+
+                <dir name="QueryTool" role="php">
+                    <file name="Query.php" />
+                    <file name="EasyJoin.php" />
+                    <file name="Result.php" />
+                </dir>
+
+                <dir name="docs" role="doc">
+                    <file name="example.php" />
+                    <file name="mysql.sql" />
+                    <file name="pgsql.sql" />
+                </dir>
+
+                <dir name="tests" role="test">
+                    <file name="Common.php" />
+                    <file name="Get.php" />
+                    <file name="GetAll.php" />
+                    <file name="GetCount.php" />
+                    <file name="GetQueryString.php" />
+                    <file name="index.php" />
+                    <file name="Having.php" />
+                    <file name="Limit.php" />
+                    <file name="sql.php" />
+                    <file name="UnitTest.php" />
+                    <file name="Where.php" />
+                    <file name="SetDbInstance.php" />
+                </dir>
+
+            </dir>
+
+            <deps>
+                <dep type="pkg" rel="has">DB</dep>
+                <dep type="pkg" rel="ge" version="1.7">Log</dep>
+            </deps>
+
+        </filelist>
+
+    </release>
+
+    <changelog>
+      <release>
         <version>0.9.8</version>
         <license>PHP</license>
         <state>stable</state>
@@ -36,94 +94,52 @@ SQL-Statements and execute them.
 * added setDbInstance() which lets you supply an existing DB-instance to work with
   using this you dont need to pass a DSN to the constructor!
         </notes>
-
-        <filelist>
-            <dir name="/" baseinstalldir="DB">
-                <file role="php" name="QueryTool.php" />
-
-                <dir name="QueryTool">
-                    <file role="php" name="Query.php" />
-                    <file role="php" name="EasyJoin.php" />
-                    <file role="php" name="Result.php" />
-                </dir>
-
-                <dir name="docs">
-                    <file role="doc" name="example.php" />
-                    <file role="doc" name="mysql.sql" />
-                    <file role="doc" name="pgsql.sql" />
-                </dir>
-
-                <dir name="tests">
-                    <file role="doc" name="Common.php" />
-                    <file role="doc" name="Get.php" />
-                    <file role="doc" name="GetAll.php" />
-                    <file role="doc" name="GetCount.php" />
-                    <file role="doc" name="GetQueryString.php" />
-                    <file role="doc" name="index.php" />
-                    <file role="doc" name="Having.php" />
-                    <file role="doc" name="Limit.php" />
-                    <file role="doc" name="sql.php" />
-                    <file role="doc" name="UnitTest.php" />
-                    <file role="doc" name="Where.php" />
-                    <file role="doc" name="SetDbInstance.php" />
-                </dir>
-
-            </dir>
-
-            <deps>
-                <dep type="pkg" rel="ge" version="1.7">Log</dep>
-            </deps>
-
-        </filelist>
-
-    </release>
-
-    <changelog>
-        <release>
+      </release>
+      <release>
         <version>0.9.7</version>
         <license>PHP</license>
         <state>stable</state>
         <date>2003-09-15</date>
         <notes>
-* use Log 1.7 API        
+* use Log 1.7 API
         </notes>
-        </release>
-        
-        <release>
+      </release>
+
+      <release>
         <version>0.9.6</version>
         <license>PHP</license>
         <state>stable</state>
         <date>2003-09-12</date>
         <notes>
 - bugfix in addMultiple()
-- addWhereSearch now only prefixes known columns as it is supposed to be, 
+- addWhereSearch now only prefixes known columns as it is supposed to be,
   otherwise it would also prefix aliases with the table name, which is bull...
 - quirk in the addLeftJoin() method ... not nice, but v1.0 will be, unit tests pass but thats still not enough proof
 - make setLimit also work to unset it
         </notes>
-        </release>
-        
-        <release>
+      </release>
+
+      <release>
         <version>0.9.5</version>
         <license>PHP</license>
         <state>stable</state>
         <date>2003-06-17</date>
         <notes>
 - bugfix when writing log files, times were wrong
-- bugfix in EasyJoin, which added unnecessary conditions        
+- bugfix in EasyJoin, which added unnecessary conditions
 - bugfix in building column alias which is at the end of the string
 - bugfix in addMultiple() which didnt work without primaryCol
 - bugfix in addHaving and unit test, thanks to Johannes Schäfer
         </notes>
-        </release>
-        
-        <release>
+      </release>
+
+      <release>
         <version>0.9.4</version>
         <license>PHP</license>
         <state>stable</state>
         <date>2003-06-06</date>
         <notes>
-- added set/getLimit(), which set the limit globally, 
+- added set/getLimit(), which set the limit globally,
   getAll() and getCol() can still overwrite this temporarily
 - added addOrder()
 - added *Having() methods by Johannes Schaefer
@@ -132,9 +148,9 @@ SQL-Statements and execute them.
 - fix bug in building group clause for getCount()
 - bug fix in building join
         </notes>
-        </release>
-        
-        <release>
+      </release>
+
+      <release>
         <version>0.9.3</version>
         <license>PHP</license>
         <state>stable</state>
@@ -152,8 +168,8 @@ SQL-Statements and execute them.
               now Oracle should work and also reserved keywords can be used as column names (Uwe Dörl)
             - some bugfixes and more CS issues
         </notes>
-        </release>
-        <release>
+      </release>
+      <release>
         <version>0.9.2</version>
             <license>PHP</license>
             <state>stable</state>
@@ -164,8 +180,8 @@ SQL-Statements and execute them.
                 - enhancing the constructor to take the error/log callbacks
                 - some cleaning up
             </notes>
-        </release>
-        <release>
+      </release>
+      <release>
             <version>0.9.1</version>
             <license>PHP</license>
             <state>stable</state>
@@ -173,8 +189,8 @@ SQL-Statements and execute them.
             <notes>
                 maintanence release, fix a lot E_ALL issues and CS issues
             </notes>
-        </release>
-        <release>
+      </release>
+      <release>
             <version>0.9</version>
             <license>PHP</license>
             <state>stable</state>
@@ -182,7 +198,7 @@ SQL-Statements and execute them.
             <notes>
                 - initial release in PEAR
             </notes>
-        </release>
+      </release>
     </changelog>
 
 
