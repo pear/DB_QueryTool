@@ -93,7 +93,6 @@ class DB_QueryTool_Result
 	/**
 	 * return the number of rows returned. This is an alias for getCount().
 	 *
-	 * @param
 	 * @access    public
 	 * @return    integer
 	 */
@@ -111,7 +110,6 @@ class DB_QueryTool_Result
      * @version    2002/07/11
      * @access     public
      * @author     Wolfram Kriesing <wolfram@kriesing.de>
-     * @param
      * @return integer the number of rows returned
      */
     function getCount()
@@ -128,7 +126,7 @@ class DB_QueryTool_Result
      * @version    2002/07/11
      * @access     public
      * @author     Wolfram Kriesing <wolfram@kriesing.de>
-     * @param
+     * @param      string $key
      * @return mixed array or PEAR_Error
      */
     function getData($key=null)
@@ -146,14 +144,14 @@ class DB_QueryTool_Result
     // {{{ getFirst()
 
     /**
-     *   get the first result set
-     *   we are not using next, current, and reset, since those ignore keys
-     *   which are empty or 0
+     * get the first result set
+     * we are not using next, current, and reset, since those ignore keys
+     * which are empty or 0
      *
-     *   @version    2002/07/11
-     *   @access     public
-     *   @author     Wolfram Kriesing <wolfram@kriesing.de>
-     *   @return mixed
+     * @version    2002/07/11
+     * @access     public
+     * @author     Wolfram Kriesing <wolfram@kriesing.de>
+     * @return mixed
      */
     function getFirst()
     {
@@ -172,6 +170,7 @@ class DB_QueryTool_Result
      * Get next result set. If getFirst() has never been called before,
      * it calls that method.
      * @return mixed
+     * @access public
      */
     function getNext()
     {
@@ -182,14 +181,17 @@ class DB_QueryTool_Result
             $this->_counter++;
             return $this->_data[$this->_dataKeys[$this->_counter]];
         }
-        return new PEAR_Error("there are no more elements!");
+        return new PEAR_Error('there are no more elements!');
     }
 
     // }}}
     // {{{ hasMore()
 
     /**
+     * check if there are other rows
+     *
      * @return boolean
+     * @access public
      */
     function hasMore()
     {
@@ -203,8 +205,8 @@ class DB_QueryTool_Result
 	// {{{ fetchRow
 
 	/**
-	 * This function emulates PEAR_DB function FetchRow
-	 * With this function DB_QueryTool can transparently replace PEAR_DB
+	 * This function emulates PEAR::DB fetchRow() method.
+	 * With this method, DB_QueryTool can transparently replace PEAR_DB
 	 *
 	 * @todo implement fetchmode support?
 	 * @access    public
