@@ -750,6 +750,24 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
     }
 
     /**
+    *   Add a order parameter to the query.
+    *
+    *   @version    2003/05/28
+    *   @access     public
+    *   @author     Wolfram Kriesing <wk@visionp.de>
+    *   @param      string  the where condition, this can be complete like 'X=7 AND Y=8'
+    */
+    function addOrder( $orderCondition='' , $desc=false )
+    {
+        $order = $orderCondition .( $desc ? ' DESC' : '' );
+        if ($this->_order) {
+            $this->_order = $this->_order.','.$order;
+        } else {
+            $this->_order = $order;
+        }
+    }
+    
+    /**
     *   gets the order condition which is used for the current instance
     *
     *   @version    2002/05/16
