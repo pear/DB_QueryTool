@@ -1251,13 +1251,13 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
         {
             $what = $this->getSelect();
         }
-                                                                                                 
+
         //
         // replace all the '*' by the real column names, and take care of the dontSelect-columns!
         //
         $dontSelect = $this->getDontSelect();
         $dontSelect = $dontSelect ? explode(',',$dontSelect) : array(); // make sure dontSelect is an array
-                                                                                              
+
         // here we will replace all the '*' and 'table.*' by all the columns that this table
         // contains. we do this so we can easily apply the 'dontSelect' values.
         // and so we can also handle queries like: 'SELECT *,count() FROM ' and 'SELECT table.*,x FROM ' too
@@ -1269,21 +1269,17 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
 //print "$what ... ";print_r( $res );print "<br>";
             $selectAllFromTables = array_unique($res[1]); // make the table names unique, so we do it all just once for each table
             $tables = array();
-            if( in_array('',$selectAllFromTables) ) // was there a '*' ?
-            {
+            if (in_array('',$selectAllFromTables)) { // was there a '*' ?
                 // get all the tables that we need to process, depending on if joined or not
                 $tables = $this->getJoin() ?
                                 array_merge($this->getJoin('tables'),$this->table) : // get the joined tables and this->table
                                 array($this->table);        // create an array with only this->table
-            }
-            else
-            {
+            } else {
                 $tables = $selectAllFromTables;
             }
 
             $cols = array();
-            foreach( $tables as $aTable )       // go thru all the tables and get all columns for each, and handle 'dontSelect'
-            {
+            foreach ($tables as $aTable) {      // go thru all the tables and get all columns for each, and handle 'dontSelect'
                 if ($meta = $this->metadata($aTable)) {
                     foreach ($meta as $colName=>$x) {
                         // handle the dontSelect's
@@ -1291,10 +1287,14 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
                             continue;
                         }
 
+                        // build the AS clauses
+                        // put " around them to enable use of reserved words, i.e. SELECT table.option as option FROM...
+                        // and 'option' actually is a reserved word, at least in mysql
+                        // put double quotes around them, since pgsql doesnt work with single quotes
                         if ($aTable == $this->table) {
-                            $cols[$aTable][] = $this->table.".$colName AS $colName";
+                            $cols[$aTable][] = $this->table.".$colName AS \"$colName\"";
                         } else {
-                            $cols[$aTable][] = "$aTable.$colName AS _".$this->getTableShortName($aTable)."_$colName";
+                            $cols[$aTable][] = "$aTable.$colName AS \"_".$this->getTableShortName($aTable)."_$colName\"";
                         }
                     }
                 }
@@ -1303,28 +1303,25 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
             // put the extracted select back in the $what
             // that means replace 'table.*' by the i.e. 'table.id AS _table_id'
             // or if it is the table of this class replace 'table.id AS id'
-            if( in_array('',$selectAllFromTables) )
-            {
+            if (in_array('',$selectAllFromTables)) {
                 $allCols = '';
-                foreach( $cols as $aTable )
+                foreach ($cols as $aTable) {
                     $allCols[] = implode(',',$aTable);
+                }
                 $what = preg_replace( '/(^|,)\*($|,)/' , '$1'.implode(',',$allCols).'$2' , $what );
                 // remove all the 'table.*' since we have selected all anyway (because there was a '*' in the select)
                 $what = preg_replace( '/[^,]*(\.)?\*\s*(,|$)/U' , '' , $what );
-            }
-            else
-            {
-                foreach( $cols as $tableName=>$aTable )
-                {
-                    if( is_array($aTable) && sizeof($aTable) )
+            } else {
+                foreach ($cols as $tableName=>$aTable) {
+                    if (is_array($aTable) && sizeof($aTable)) {
                         // replace all the 'table.*' by their select of each column
                         $what = preg_replace( '/(^|,)\s*'.$tableName.'\.\*\s*($|,)/' , '$1'.implode(',',$aTable).'$2' , $what );
+                    }
                 }
             }
         }
 
-        if( $this->getJoin() )
-        {
+        if ($this->getJoin()) {
             // replace all 'column' by '$this->table.column' to prevent ambigious errors
             foreach( $this->metadata() as $aCol=>$x )
             {
