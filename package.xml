@@ -27,12 +27,14 @@ SQL-Statements and execute them.
     </maintainers>
 
     <release>
-        <version>0.9.7</version>
+        <version>0.9.8</version>
         <license>PHP</license>
         <state>stable</state>
-        <date>2003-09-15</date>
+        <date>2003-09-23</date>
         <notes>
-* use Log 1.7 API        
+* added new method getQueryString() which returns the rendered query
+* added setDbInstance() which lets you supply an existing DB-instance to work with
+  using this you dont need to pass a DSN to the constructor!
         </notes>
 
         <filelist>
@@ -56,12 +58,14 @@ SQL-Statements and execute them.
                     <file role="doc" name="Get.php" />
                     <file role="doc" name="GetAll.php" />
                     <file role="doc" name="GetCount.php" />
+                    <file role="doc" name="GetQueryString.php" />
                     <file role="doc" name="index.php" />
                     <file role="doc" name="Having.php" />
                     <file role="doc" name="Limit.php" />
                     <file role="doc" name="sql.php" />
                     <file role="doc" name="UnitTest.php" />
                     <file role="doc" name="Where.php" />
+                    <file role="doc" name="SetDbInstance.php" />
                 </dir>
 
             </dir>
@@ -75,6 +79,16 @@ SQL-Statements and execute them.
     </release>
 
     <changelog>
+        <release>
+        <version>0.9.7</version>
+        <license>PHP</license>
+        <state>stable</state>
+        <date>2003-09-15</date>
+        <notes>
+* use Log 1.7 API        
+        </notes>
+        </release>
+        
         <release>
         <version>0.9.6</version>
         <license>PHP</license>
