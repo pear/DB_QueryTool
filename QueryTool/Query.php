@@ -275,7 +275,11 @@ class DB_QueryTool_Query
      */
     function connect($dsn, $options=array())
     {
-        $res = $this->db = DB::connect($dsn, $options);
+        if (is_object($dsn)) {
+            $res = $this->db =& $dsn;
+        } else {
+            $res = $this->db = DB::connect($dsn, $options);
+        }
         if (DB::isError($res)) {
 // FIXXME what shall we do here?
             $this->_errorLog($res->getUserInfo());
