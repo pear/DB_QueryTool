@@ -190,7 +190,7 @@ class DB_QueryTool_Query
         }
 
         if ($autoConnect && $dsn) {
-            $this->connect($dsn);
+            $this->connect($dsn, $options);
         }
 /*  we would need to parse the dsn first ... i dont feel like now :-)
         // oracle has all column names in upper case
@@ -209,9 +209,9 @@ class DB_QueryTool_Query
     *   use this method if you want to connect manually
     *
     */
-    function connect($dsn)
+    function connect($dsn, $options=array())
     {
-        $res = $this->db = DB::connect($dsn);
+        $res = $this->db = DB::connect($dsn, $options);
         if (DB::isError($res)) {
 // FIXXME what shall we do here?
             $this->_errorLog($res->getUserInfo());
@@ -1237,9 +1237,9 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
         }
 
         $full = false;
-        if( $table=='' )
+        if (empty($table)) {
             $table = $this->table;
-
+        }
         // to prevent multiple selects for the same metadata
         if ( isset($this->_metadata[$table]) ) {
             return $this->_metadata[$table];
@@ -1481,8 +1481,8 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
             // put the extracted select back in the $what
             // that means replace 'table.*' by the i.e. 'table.id AS _table_id'
             // or if it is the table of this class replace 'table.id AS id'
-            if (in_array('',$selectAllFromTables)) {
-                $allCols = '';
+            if (in_array('', $selectAllFromTables)) {
+                $allCols = array();
                 foreach ($cols as $aTable) {
                     $allCols[] = implode(',',$aTable);
                 }
@@ -1747,7 +1747,7 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
     function execute( $query=null , $method='getAll' )
     {
         $this->writeLog();
-        if ($query==null) {
+        if (is_null($query)) {
             $query = $this->_buildSelectQuery();
         }
         $this->writeLog('query built: '.$query);
@@ -1794,7 +1794,7 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
             return;
         }
         if (!$this->_logObject) {
-            $this->_logObject = Log::factory('file',$this->options['logfile']);
+            $this->_logObject =& Log::factory('file',$this->options['logfile']);
         }
 
         if ($text==='start query' || $text==='end query') {
@@ -1843,11 +1843,11 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
     */
     function returnResult( &$result )
     {
-        if( $this->_useResult )
-        {
-            if( $result==false )
+        if ($this->_useResult) {
+            if ($result === false) {
                 return false;
-            return new DB_QueryTool_Result( $result );
+            }
+            return new DB_QueryTool_Result($result);
         }
         return $result;
     }
