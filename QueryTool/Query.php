@@ -199,7 +199,7 @@ class DB_QueryTool_Query
     *   @author     Wolfram Kriesing <wk@visionp.de>
     *   @param      object  db-object
     */
-    function DB_QueryTool_Query( $dsn , $options )
+    function DB_QueryTool_Query( $dsn , $options=array() )
     {
         $this->__construct( $dsn , $options );
     }
