@@ -197,7 +197,7 @@ SQL-Statements and execute them.
 - bugfix in EasyJoin, which added unnecessary conditions
 - bugfix in building column alias which is at the end of the string
 - bugfix in addMultiple() which didnt work without primaryCol
-- bugfix in addHaving and unit test, thanks to Johannes Schäfer
+- bugfix in addHaving and unit test, thanks to Johannes Sch&auml;fer
         </notes>
       </release>
 
@@ -231,9 +231,9 @@ SQL-Statements and execute them.
               added a _buildUpdateQuery() for that too
             - added umbrello-uml class diagram
             - fixing some typos, esp. for making the useResult() work
-            - bugfix in update, use fully qualified table name (Uwe Dörl)
+            - bugfix in update, use fully qualified table name (Uwe D&ouml;rl)
             - bugfix in _buildSelectQuery, enclose column names by ""
-              now Oracle should work and also reserved keywords can be used as column names (Uwe Dörl)
+              now Oracle should work and also reserved keywords can be used as column names (Uwe D&ouml;rl)
             - some bugfixes and more CS issues
         </notes>
       </release>
