@@ -109,6 +109,8 @@ class DB_QueryTool_Query
                             ,'verbose'   =>  true       // set this to false in a productive environment
                                                         // it will produce error-logs if set to true
                             ,'useCache' =>  false
+                            
+                            ,'logFile'  =>  false
                         );
 
     /**
@@ -141,6 +143,17 @@ class DB_QueryTool_Query
     */
     var $_queryCache = array();
 
+    /**
+    *   The object that contains the log-instance
+    */
+    var $_logObject = null;
+    
+    /**
+    *   Some internal data the logging needs
+    */
+    var $_logData = array();
+    
+    
     /**
     *   this is the constructor, as it will be implemented in ZE2 (php5)
     *
@@ -1584,30 +1597,94 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
     *   @return
     */
     function execute( $query=null , $method='getAll' )
-    {
-        if( $query==null )
+    {    
+        $this->writeLog();
+        if ($query==null) {
             $query = $this->_buildSelectQuery();
+        }
+        $this->writeLog('query built: '.$query);
 
 // FIXXME on ORACLE this doesnt work, since we return joined columns as _TABLE_COLNAME and the _ in front
 // doesnt work on oracle, add a letter before it!!!
         $this->_lastQuery = $query;
 
         $this->debug($query);
+        $this->writeLog('start query');
         if( DB::isError( $res = $this->db->$method($query) ) )
-        {                   
-            if( $this->getOption('verbose') )
+        {   
+            $this->writeLog('end query (failed)');                
+            if ($this->getOption('verbose')) {
                 $this->_errorSet( $res->getMessage() );
-            else
+            } else {
                 $this->_errorLog( $res->getMessage() );
-
+            }
             $this->_errorLog( $res->getUserInfo() , __LINE__ );
             return false;
+        } else {
+            $this->writeLog('end query');
         }
-
         $res = $this->_makeIndexed($res);
         return $res;
     }
+    
+    /**
+    *   Write events to the logfile.
+    *
+    *   It does some additional work, like time measuring etc. to 
+    *   see some additional info
+    *
+    */
+    function writeLog($text='START')
+    {
+//its still really a quicky.... 'refactor' (nice word) that    
+        if (!$this->options['logfile']) {
+            return;
+        }
+        
+        include_once 'Log.php';
+        if (!class_exists('Log')) {
+            return;
+        }
+        if (!$this->_logObject) {
+            $this->_logObject = Log::factory('file',$this->options['logfile']);
+        }
 
+        if ($text=='start query' || $text=='end query') {
+            $bytesSent = $this->db->getAll("SHOW STATUS like 'Bytes_sent'");
+            $bytesSent = $bytesSent[0]['Value'];
+        }
+        if ($text=='START') {
+            $startTime = split(" ",microtime());
+            $this->_logData['startTime'] = $startTime[1]+$startTime[0];
+        }
+        if ($text=='start query') {
+            $this->_logData['startBytesSent'] = $bytesSent;
+            $startTime = split(" ",microtime());
+            $this->_logData['startQueryTime'] = $startTime[1]+$startTime[0];
+            return;
+        }
+        if ($text=='end query') {
+            $text .= ' result size: '.((int)$bytesSent-(int)$this->_logData['startBytesSent']).' bytes';            
+            $endTime = split(" ",microtime());
+            $endTime = $endTime[1]+$endTime[0];
+            $text .= ', took: '.(($endTime - $this->_logData['startQueryTime'])*100).' seconds';
+        }
+        if (strpos($text,'query built')===0) {
+            $endTime = split(" ",microtime());
+            $endTime = $endTime[1]+$endTime[0];
+            $this->writeLog('query building took: '.(($endTime - $this->_logData['startTime'])*100).' seconds');
+        }
+        $this->_logObject->log($text);
+    
+        if (strpos($text,'end query')===0) {
+            $endTime = split(" ",microtime());
+            $endTime = $endTime[1]+$endTime[0];
+            $text = 'time over all: '.(($endTime - $this->_logData['startTime'])*100).' seconds';
+            $this->writeLog($text);
+            $this->_logObject->writeOut();
+        }    
+    }
+    
     /**
     *
     *
