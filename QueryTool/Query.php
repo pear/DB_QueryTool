@@ -1721,8 +1721,13 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
                         // put " around them to enable use of reserved words, i.e. SELECT table.option as option FROM...
                         // and 'option' actually is a reserved word, at least in mysql
                         // put double quotes around them, since pgsql doesnt work with single quotes
+                        // but don't do this for ibase because it doesn't work!
                         if ($aTable == $this->table) {
-                            $cols[$aTable][] = $this->table.".$colName AS \"$colName\"";
+                            if ($this->db->phptype == 'ibase') {
+                                $cols[$aTable][] = $this->table. '.' .$colName . ' AS '. $colName;
+                            } else {
+                                $cols[$aTable][] = $this->table. '.' .$colName . ' AS "'. $colName .'"';
+                            }
                         } else {
                             $cols[$aTable][] = "$aTable.$colName AS \"_".$this->getTableShortName($aTable)."_$colName\"";
                         }
@@ -2364,8 +2369,9 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
 
         $logOrSet = ucfirst($logOrSet);
         $callback = &PEAR::getStaticProperty('DB_QueryTool','_error'.$logOrSet.'Callback');
-        if ($callback)
-            call_user_func($callback, $msg);
+        //var_dump($callback);
+        //if ($callback)
+        //    call_user_func($callback, $msg);
 //        else
 //          ?????
 
