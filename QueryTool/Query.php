@@ -82,6 +82,11 @@ class DB_QueryTool_Query
     var $_group = '';
 
     /**
+    *   @var    array   the limit 
+    */
+    var $_limit = array();
+    
+    /**
     *   @var    boolean     if to use the DB_QueryTool_Result as a result or not
     */
     var $_useResult = false;
@@ -298,31 +303,11 @@ class DB_QueryTool_Query
     */
     function getAll($from=0,$count=0,$method='getAll')
     {
-        //$this->setSelect('*');
-        $queryString = $this->_buildSelectQuery();
-
-// FIXXME, one day this should be unified!!!
-/* this was special for www.visionp.de ... check it before removing
-        if ($this->db->phptype=='oci8' ) {
-            if ($from && $count) {
-                if (DB::isError( $queryString = $this->db->modifyLimitQuery($queryString,$from-1,$count-1))) {
-//print_r($queryString);
-                    $this->_errorSet( 'vp_DB_Common::getAll modifyLimitQuery failed '.$queryString->getMessage() );
-                    $this->_errorLog( $queryString->getUserInfo() );
-                    return false;
-                }
-            }
-        } else {
-*/
+        $query = array();
         if ($count) {
-            if ( DB::isError( $queryString = $this->db->modifyLimitQuery($queryString,$from,$count)) ) {
-                $this->_errorSet( 'DB_QueryTool::getAll modifyLimitQuery failed '.$queryString->getMessage() );
-                $this->_errorLog( $queryString->getUserInfo() );
-                return false;
-            }
+            $query = array('limit'=>array($from,$count));
         }
-
-        return $this->returnResult( $this->execute($queryString,$method) );
+        return $this->returnResult($this->execute($this->_buildSelectQuery($query),$method));
     }
 
     /**
@@ -346,22 +331,17 @@ class DB_QueryTool_Query
     */
     function getCol($column=null,$from=0,$count=0)
     {
-        if ($column==null) {
-            $queryString = $this->_buildSelectQuery();
-        } else {
+        $query = array();
+        if ($column!=null) {
             // by using _buildSelect() i can be sure that the table name will not be ambigious
             // i.e. in a join, where all the joined tables have a col 'id' 
             // _buildSelect() will put the proper table name in front in case there is none
-            $queryString = $this->_buildSelectQuery(array('select'=>$this->_buildSelect($column)));
+            $query['select'] = $this->_buildSelect($column);
         }
         if ($count) {
-            if ( DB::isError( $queryString = $this->db->modifyLimitQuery($queryString,$from,$count)) ) {
-                $this->_errorSet( 'DB_QueryTool::getAll modifyLimitQuery failed '.$queryString->getMessage() );
-                $this->_errorLog( $queryString->getUserInfo() );
-                return false;
-            }
+            $query['limit'] = array($from,$count);
         }
-        return $this->returnResult( $this->execute($queryString,'getCol') );
+        return $this->returnResult($this->execute($this->_buildSelectQuery($query),'getCol') );
     }
     
     /**
@@ -674,6 +654,16 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
         return true;
     }
 
+    function setLimit($from,$count)
+    {
+        $this->_limit = array($from,$count);
+    }
+    
+    function getLimit()
+    {
+        return $this->_limit;
+    }
+    
     /**
     *   sets the where condition which is used for the current instance
     *
@@ -1539,17 +1529,17 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
         }
 */
         $where = isset($query['where']) ? $query['where'] : $this->_buildWhere();
-        if( $where )
+        if ($where) {
             $where = 'WHERE '.$where;
-
+        }
         $order = isset($query['order']) ? $query['order'] : $this->_buildOrder();
-        if( $order )
+        if ($order) {
             $order = 'ORDER BY '.$order;
-
+        }
         $group = isset($query['group']) ? $query['group'] : $this->_buildGroup();
-        if( $group )
+        if ($group) {
             $group = 'GROUP BY '.$group;
-
+        }
         $queryString = sprintf( 'SELECT %s FROM %s %s %s %s',
                                 isset($query['select']) ? $query['select'] : $this->_buildSelect(),
                                 isset($query['from']) ? $query['from'] : $this->_buildFrom(),
@@ -1557,6 +1547,16 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
                                 $group,
                                 $order
                                 );
+        // $query['limit'] has preference!
+        $limit = isset($query['limit']) ? $query['limit'] : $this->_limit;
+        if (@$limit[1]) {    // is there a count set?
+            $queryString=$this->db->modifyLimitQuery($queryString,$limit[0],$limit[1]);
+            if (DB::isError($queryString)) {
+                $this->_errorSet( 'DB_QueryTool::db::modifyLimitQuery failed '.$queryString->getMessage() );
+                $this->_errorLog( $queryString->getUserInfo() );
+                return false;
+            }
+        }
 //        $this->_queryCache[$cacheKey] = $queryString;
         return $queryString;
     }
