@@ -18,7 +18,7 @@
 // $Id$
 //
 
-require_once('DB/QueryTool/Query.php');
+require_once 'DB/QueryTool/Query.php';
 
 /**
 *
@@ -67,8 +67,7 @@ class DB_QueryTool_EasyJoin extends DB_QueryTool_Query
 
         $joinTables = array();
         $joinConditions = array();
-        foreach( $tables as $aTable )   // go through $this->table and all the given tables
-        {
+        foreach( $tables as $aTable ) {             // go through $this->table and all the given tables
             if( $metadata = $this->metadata($aTable) )
             foreach ( $metadata as $aCol=>$x ) {   // go through each row to check which might be related to $aTable
                 $possibleTableShortName = preg_replace( $this->_tableNamePreg, '' ,$aCol );
@@ -77,13 +76,10 @@ class DB_QueryTool_EasyJoin extends DB_QueryTool_Query
                 if ( isset($shortNameIndexed[$possibleTableShortName]) ) {
                     // are the tables given in the tableSpec?
                     if( !$shortNameIndexed[$possibleTableShortName]['name'] ||
-                        !$nameIndexed[$aTable]['name'] )
-                    {
+                        !$nameIndexed[$aTable]['name'] ) {
                         // its an error of the developer, so log the error, dont show it to the end user
                         $this->_errorLog("autoJoin-ERROR: '$aTable' is not given in the tableSpec!<br>");
-                    }
-                    else
-                    {
+                    } else {
                         $joinTables[] = $nameIndexed[$aTable]['name'];
                         $joinTables[] = $shortNameIndexed[$possibleTableShortName]['name'];
                         $joinConditions[] = $shortNameIndexed[$possibleTableShortName]['name'].".$possibleColumnName=$aTable.$aCol";
@@ -92,12 +88,13 @@ class DB_QueryTool_EasyJoin extends DB_QueryTool_Query
             }
         }
 
-        if( sizeof( $joinTables ) && sizeof( $joinConditions ) )
-        {
+        if (sizeof($joinTables) && sizeof($joinConditions)) {
             $joinTables = array_unique($joinTables);
-            foreach( $joinTables as $key=>$val )
-                if( $val == $this->table )
+            foreach( $joinTables as $key=>$val ) {
+                if( $val == $this->table ) {
                     unset($joinTables[$key]);
+                }
+            }
 //FIXXME set tables only when they are not already in the join!!!!!
                     
 //print_r($joinTables); print '$this->addJoin('.implode(' AND ',$joinConditions).');<br>';
