@@ -82,7 +82,7 @@ class DB_QueryTool_Query
     var $_group = '';
 
     /**
-    *   @var    boolean     if to use the vp_DB_Result as a result or not
+    *   @var    boolean     if to use the DB_QueryTool_Result as a result or not
     */
     var $_useResult = false;
 
@@ -274,10 +274,11 @@ class DB_QueryTool_Query
     *   @author     Wolfram Kriesing <wk@visionp.de>
     *   @param      int     to start from
     *   @param      int     the number of rows to show
+    *   @param      string  the DB-method to use, i dont know if we should leave this param here ...
     *   @return     mixed   an array of the retreived data, or false in case of failure
     *                       when failing an error is set in $this->_error
     */
-    function getAll( $from=0 , $count=0  )
+    function getAll($from=0,$count=0,$method='getAll')
     {
         //$this->setSelect('*');
         $queryString = $this->_buildSelectQuery();
@@ -297,15 +298,54 @@ class DB_QueryTool_Query
 */
         if ($count) {
             if ( DB::isError( $queryString = $this->_db->modifyLimitQuery($queryString,$from,$count)) ) {
-                $this->_errorSet( 'vp_DB_Common::getAll modifyLimitQuery failed '.$queryString->getMessage() );
+                $this->_errorSet( 'DB_QueryTool::getAll modifyLimitQuery failed '.$queryString->getMessage() );
                 $this->_errorLog( $queryString->getUserInfo() );
                 return false;
             }
         }
 
-        return $this->returnResult( $this->execute($queryString) );
+        return $this->returnResult( $this->execute($queryString,$method) );
     }
 
+    /**
+    *   this method only returns one column, so the result will be a one dimensional array
+    *   this does also mean that using setSelect() should be set to *one* column, the one you want to 
+    *   have returned a most common use case for this could be:
+    *       $table->setSelect('id');
+    *       $ids = $table->getCol();
+    *   OR
+    *       $ids = $table->getCol('id');   
+    *   so ids will ba an array with all the id's
+    *
+    *   @version    2003/02/25
+    *   @access     public
+    *   @author     Wolfram Kriesing <wk@visionp.de>
+    *   @param      string  the column that shall be retreived
+    *   @param      int     to start from
+    *   @param      int     the number of rows to show
+    *   @return     mixed   an array of the retreived data, or false in case of failure
+    *                       when failing an error is set in $this->_error
+    */
+    function getCol($column=null,$from=0,$count=0)
+    {
+        if ($column==null) {
+            $queryString = $this->_buildSelectQuery();
+        } else {
+            // by using _buildSelect() i can be sure that the table name will not be ambigious
+            // i.e. in a join, where all the joined tables have a col 'id' 
+            // _buildSelect() will put the proper table name in front in case there is none
+            $queryString = $this->_buildSelectQuery(array('select'=>$this->_buildSelect($column)));
+        }
+        if ($count) {
+            if ( DB::isError( $queryString = $this->_db->modifyLimitQuery($queryString,$from,$count)) ) {
+                $this->_errorSet( 'DB_QueryTool::getAll modifyLimitQuery failed '.$queryString->getMessage() );
+                $this->_errorLog( $queryString->getUserInfo() );
+                return false;
+            }
+        }
+        return $this->returnResult( $this->execute($queryString,'getCol') );
+    }
+    
     /**
     *   get the number of entries
     *
@@ -371,6 +411,7 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
     
     /**
     *   this is just for BC
+    *   @deprecated
     */
     function getEmptyElement()
     {
@@ -414,27 +455,23 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
     */
     function update( $newData )
     {
-        if (!isset($newData[$this->primaryCol])) {
-            $this->_errorSet('Error updating the new member.');
-            return false;
+        $query = array();
+        // do only set the 'where' part in $query, if a primary column is given
+        // if not the default 'where' clause is used
+        if (isset($newData[$this->primaryCol])) {
+            $query['where'] = $this->primaryCol.'='.$newData[$this->primaryCol];
         }
-        $id = $newData[$this->primaryCol];
-        unset($newData[$this->primaryCol]);
-
         $newData = $this->_checkColumns($newData,'update');
-
         $values = array();
         $raw = $this->getOption('raw');
         foreach($newData as $key=>$aData) {         // quote the data
             $values[] = "{$this->table}.$key=". ( $raw ? $aData : $this->_db->quote($aData) );
         }
 
-        $query = sprintf(   'UPDATE %s SET %s WHERE %s=%s',
-                            $this->table,
-                            implode(',',$values),
-                            $this->primaryCol,$id
-                        );
-        return $this->execute($query,'query') ? true : false;
+        $query['set'] = implode(',',$values);
+        $updateString = $this->_buildUpdateQuery($query);
+//print '$updateString= '.$updateString;
+        return $this->execute($updateString,'query') ? true : false;
     }
 
     /**
@@ -1372,27 +1409,26 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
     */
     function _buildWhere( $where='' )
     {
-        if( $this->getWhere() )
-        {
-            if( $where )
+        if ($this->getWhere()) {
+            if ($where) {
                 $where = $this->getWhere().' AND '.$where;
-            else
+            } else {
                 $where = $this->getWhere();
+            }
         }
 
-        if( $join = $this->getJoin() )   // is join set?
-        {
+        if ($join = $this->getJoin()) {             // is join set?
             // only those where conditions in the default-join have to be added here
             // left-join conditions are added behind 'ON', the '_buildJoin()' does that
-            if( @strlen($join['default']['where']) > 0 )
-            {
+            if (@strlen($join['default']['where']) > 0) {
                 // we have to add this join-where clause here
                 // since at least in mysql a query like: select * from tableX JOIN tableY ON ...
                 // doesnt work, may be that's even SQL-standard...
-                if( trim($where) )
+                if (trim($where)) {
                     $where = $join['default']['where'].' AND '.$where;
-                else
+                } else {
                     $where = $join['default']['where'];
+                }
             }
             // replace the _TABLENAME_COLUMNNAME by TABLENAME.COLUMNNAME
             // since oracle doesnt work with the _TABLENAME_COLUMNNAME which i think is strange
@@ -1401,9 +1437,8 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
             $where = preg_replace( $regExp , '$1.$2' , $where );
             // add the table name before any column that has no table prefix
             // since this might cause "unambigious column" errors
-            if( $meta = $this->metadata() )
-                foreach( $meta as $aCol=>$x )
-                {
+            if ($meta = $this->metadata()) {
+                foreach( $meta as $aCol=>$x ) {
                     // this covers the LIKE,IN stuff: 'name LIKE "%you%"'  'id IN (2,3,4,5)'
                     $where = preg_replace( '/\s'.$aCol.'\s/' , " {$this->table}.$aCol " , $where );
                     // replace also the column names which are behind a '='
@@ -1413,7 +1448,7 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
                     // replace if colName is first and possibly also if at the beginning of the where-string
                     $where = preg_replace( '/(^\s*|\s+)'.$aCol.'\s*([=<>])/' , "$1{$this->table}.$aCol$2" , $where );
                 }
-
+            }
         }
         return $where;
     }
@@ -1506,6 +1541,32 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
     }
 
     /**
+    *   this simply builds an update query.
+    *
+    *   @param  array   the parameter array might contain the following indexes
+    *           'where'     the where clause to be added, i.e.
+    *                       UPDATE table SET x=1 WHERE y=0
+    *                       here the 'where' part simply would be 'y=0'
+    *           'set'       the actual data to be updated
+    *                       in the example above, that would be 'x=1'
+    *   @return string the resulting query
+    */
+    function _buildUpdateQuery($query=array())
+    {
+        $where = isset($query['where']) ? $query['where'] : $this->_buildWhere();
+        if ($where) {
+            $where = 'WHERE '.$where;
+        }
+
+        $updateString = sprintf( 'UPDATE %s SET %s %s',
+                                $this->table,
+                                $query['set'],
+                                $where
+                            );
+        return $updateString;
+    }
+    
+    /**
     *
     *
     *   @version    2002/07/11
@@ -1554,7 +1615,7 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
         {
             if( $result==false )
                 return false;
-            return new vp_DB_Result( $result );
+            return new DB_QueryTool_Result( $result );
         }
         return $result;
     }
