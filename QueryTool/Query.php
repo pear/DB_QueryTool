@@ -1369,11 +1369,14 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
 
         if ($this->getJoin()) {
             // replace all 'column' by '$this->table.column' to prevent ambigious errors
-            foreach( $this->metadata() as $aCol=>$x )
-            {
+            foreach ($this->metadata() as $aCol=>$x) {
                 // handle ',id as xid,MAX(id),id' etc.
 // FIXXME do this better!!!
-                $what = preg_replace("/(^|,|\()\s*$aCol(\)|\s*|,|as)/i","$1{$this->table}.$aCol$2",$what);
+                $what = preg_replace(   "/(^|,|\()(\s*)$aCol(\)|\s|,|as)/i",
+                                        // $2 is actually just to keep the spaces, is not really
+                                        // necessary, but this way the test works independent of this functionality here
+                                        "$1$2{$this->table}.$aCol$3",
+                                        $what);                                                                                                                      
             }
 
             // replace all 'joinedTable.columnName' by '_joinedTable_columnName'
