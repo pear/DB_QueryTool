@@ -1,5 +1,6 @@
 TODO
-- make it work on oracle, the _* doesnt work in oracle
+- make it work on oracle, the _* doesnt work in oracle - may be the "" around the _table_col 
+  did already solve it, check it 
 - use varibales for the table names, to shorten the queries
   such as SELECT * FROM tableX a1, tableY a2 ...
 - implement primaryCol to be capable of using multiple columns
@@ -21,6 +22,8 @@ TODO
   table 2 and 3 are other joined tables use 't1' and 't2' for them
   so allow the use of table names such as
     $obj->setWhere('t.id=5 AND t1.id=4 AND t2.id=6');
-
+- let user choose if he wants to have default PEAR-error handling, so to say throw
+  PEAR_Error on failure or let it work as it does now
+    
 
 DONE
