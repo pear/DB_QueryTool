@@ -33,18 +33,12 @@ SQL-Statements and execute them.
     </maintainers>
 
     <release>
-        <version>1.0.0</version>
+        <version>1.0.1</version>
         <license>PHP</license>
         <state>stable</state>
-        <date>2005-03-03</date>
+        <date>2005-03-26</date>
         <notes>
-* fixed bug #3290, getCount() method returns zero when using an offset
-  (patch by kubo at isite dot co dot jp)
-* strings lenghtier than the column max size are truncated
-  to prevent db errors
-* using setOrder() with setGroup()+setHaving() could cause a malformed query
-* fully tested with MySQL, PostgreSQL and Firebird/Interbase
-  (added a new testsuite using SimpleTest)
+* fixed bug #3902, now non-integer primaryCol are supported
         </notes>
         <filelist>
           <dir name="/" baseinstalldir="DB">
@@ -109,6 +103,30 @@ SQL-Statements and execute them.
     </release>
 
     <changelog>
+      <release>
+        <version>1.0.1</version>
+        <license>PHP</license>
+        <state>stable</state>
+        <date>2005-03-26</date>
+        <notes>
+* fixed bug #3902, now non-integer primaryCol are supported
+        </notes>
+      </release>
+      <release>
+        <version>1.0.0</version>
+        <license>PHP</license>
+        <state>stable</state>
+        <date>2005-03-03</date>
+        <notes>
+* fixed bug #3290, getCount() method returns zero when using an offset
+  (patch by kubo at isite dot co dot jp)
+* strings lenghtier than the column max size are truncated
+  to prevent db errors
+* using setOrder() with setGroup()+setHaving() could cause a malformed query
+* fully tested with MySQL, PostgreSQL and Firebird/Interbase
+  (added a new testsuite using SimpleTest)
+        </notes>
+      </release>
       <release>
         <version>0.11.1</version>
         <license>PHP</license>
