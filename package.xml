@@ -33,23 +33,13 @@ SQL-Statements and execute them.
     </maintainers>
 
     <release>
-        <version>0.11.1</version>
+        <version>0.11.2</version>
         <license>PHP</license>
         <state>stable</state>
-        <date>2004-10-18</date>
+        <date>2005-01-27</date>
         <notes>
-* allow multiple left|right join clauses.
-  NB: getJoin($type) now returns
-    array(
-       $joinTable1 => $joinOnClause1,
-       $joinTable2 => $joinOnClause2,
-    )
-* allow class usage without instanciating a db object
-  (to use the class as a simple query builder)
-* unset non-specific PEAR::DB options before calling connect()
-  (bug #1614)
-* allow reuse of existing connection (bug #2007),
-  thanks to eln at gmx dot net
+* fixed bug #3290, getCount() method returns zero when using an offset
+  (patch by kubo at isite dot co dot jp)
         </notes>
         <filelist>
             <dir name="/" baseinstalldir="DB">
@@ -95,6 +85,26 @@ SQL-Statements and execute them.
     </release>
 
     <changelog>
+      <release>
+        <version>0.11.1</version>
+        <license>PHP</license>
+        <state>stable</state>
+        <date>2004-10-18</date>
+        <notes>
+* allow multiple left|right join clauses.
+  NB: getJoin($type) now returns
+    array(
+       $joinTable1 => $joinOnClause1,
+       $joinTable2 => $joinOnClause2,
+    )
+* allow class usage without instanciating a db object
+  (to use the class as a simple query builder)
+* unset non-specific PEAR::DB options before calling connect()
+  (bug #1614)
+* allow reuse of existing connection (bug #2007),
+  thanks to eln at gmx dot net
+        </notes>
+      </release>
       <release>
         <version>0.10.1</version>
         <license>PHP</license>

@@ -63,6 +63,16 @@ class tests_GetCount extends tests_UnitTest
         $this->assertEquals(0,$this->user->getCount(),'setWhere and setGroup should have resulted in one');
     }
 
+    function test_getCountWithOffset()
+    {
+        $this->_setup(6);
+        $this->user->setLimit(0, 5);
+        $this->assertEquals(6, $this->user->getCount(),'setLimit and setGroup should have resulted in one');
+
+        $this->user->setLimit(5, 5);
+        $this->assertEquals(6, $this->user->getCount(),'setLimit and setGroup should have resulted in one');
+    }
+
 }
 
 ?>

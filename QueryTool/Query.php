@@ -480,10 +480,10 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
         $query['order'] = '';   // order is not of importance and might freak up the special group-handling up there, since the order-col is not be known
 /*# FIXXME use the following line, but watch out, then it has to be used in every method, or this
 # value will be used always, simply try calling getCount and getAll afterwards, getAll will return the count :-)
-# if getAll doenst use setSelect!!!
+# if getAll doesn't use setSelect!!!
 */
         //$this->setSelect('count(*)');
-        $queryString = $this->_buildSelectQuery($query);
+        $queryString = $this->_buildSelectQuery($query, true);
 
         return ($res = $this->execute($queryString, 'getOne')) ? $res : 0;
     }
@@ -1928,9 +1928,10 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
      * @author     Wolfram Kriesing <wk@visionp.de>
      * @param      array   this array contains the elements of the query,
      *                       indexed by their key, which are: 'select','from','where', etc.
+     * @param      boolean whether this method is called via getCount() or not.
      * @return
      */
-    function _buildSelectQuery($query=array())
+    function _buildSelectQuery($query=array(), $isCalledViaGetCount = false)
     {
 /*FIXXXME finish this
         $cacheKey = md5(serialize(????));
@@ -1965,7 +1966,7 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
                                 );
         // $query['limit'] has preference!
         $limit = isset($query['limit']) ? $query['limit'] : $this->_limit;
-        if (@$limit[1]) {    // is there a count set?
+        if (!$isCalledViaGetCount && @$limit[1]) {    // is there a count set?
             $queryString=$this->db->modifyLimitQuery($queryString,$limit[0],$limit[1]);
             if (DB::isError($queryString)) {
                 $this->_errorSet('DB_QueryTool::db::modifyLimitQuery failed '.$queryString->getMessage());
