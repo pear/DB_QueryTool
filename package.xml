@@ -5,7 +5,7 @@
 <package version="1.0">
     <name>DB_QueryTool</name>
     <summary>
-An OO-interface for easily retreiving and modifying data in a DB.
+An OO-interface for easily retrieving and modifying data in a DB.
     </summary>
 
     <description>
@@ -36,7 +36,7 @@ SQL-Statements and execute them.
         <version>0.11.1</version>
         <license>PHP</license>
         <state>stable</state>
-        <date>2004-10-13</date>
+        <date>2004-10-18</date>
         <notes>
 * allow multiple left|right join clauses.
   NB: getJoin($type) now returns
