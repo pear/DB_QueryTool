@@ -554,7 +554,7 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
      */
     function save($data)
     {
-        if (isset($data[$this->primaryCol]) && $data[$this->primaryCol]) {
+        if (!empty($data[$this->primaryCol])) {
             return $this->update($data);
         }
         return $this->add($data);
@@ -610,19 +610,25 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
      */
     function add($newData)
     {
-        unset($newData[$this->primaryCol]);
+        // if no primary col is given, get next sequence value
+        if (empty($newData[$this->primaryCol])) {
+            //echo $this->sequenceName;
+            if ($this->primaryCol) {    // do only use the sequence if a primary column is given
+                                        // otherwise the data are written as given
+                $id = $this->db->nextId($this->sequenceName);
+                $newData[$this->primaryCol] = (int)$id;
+            } else {
+                // if no primary col is given return true on success
+                $id = true;
+            }
+        } else {
+            $id = $newData[$this->primaryCol];
+        }
+
+        //unset($newData[$this->primaryCol]);
 
         $newData = $this->_checkColumns($newData, 'add');
         $newData = $this->_quoteArray($newData);
-
-        if ($this->primaryCol) {    // do only use the sequence if a primary column is given
-                                    // otherwise the data are written as given
-            $id = $this->db->nextId($this->sequenceName);
-            $newData[$this->primaryCol] = (int)$id;
-        } else {
-            // if no primary col is given return true on success
-            $id = true;
-        }
 
         $query = sprintf(   'INSERT INTO %s (%s) VALUES (%s)',
                             $this->table,
