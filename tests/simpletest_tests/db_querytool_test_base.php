@@ -32,10 +32,26 @@ class TestOfDB_QueryTool extends UnitTestCase
         if (PEAR::isError($this->qt->db)) {
             $this->assertTrue(false, $this->qt->db->getUserInfo());
         }
+        $this->qt->table = TABLE_USER;
         $this->qt->removeAll();
+        $this->qt->table = TABLE_QUESTION;
+        $this->qt->removeAll();
+        $this->qt->table = TABLE_ANSWER;
+        $this->qt->removeAll();
+        $this->qt->db->dropSequence(TABLE_USER);
+        $this->qt->db->dropSequence(TABLE_QUESTION);
+        $this->qt->db->dropSequence(TABLE_ANSWER);
     }
     function tearDown() {
+        $this->qt->table = TABLE_USER;
         $this->qt->removeAll();
+        $this->qt->table = TABLE_QUESTION;
+        $this->qt->removeAll();
+        $this->qt->table = TABLE_ANSWER;
+        $this->qt->removeAll();
+        $this->qt->db->dropSequence(TABLE_USER);
+        $this->qt->db->dropSequence(TABLE_QUESTION);
+        $this->qt->db->dropSequence(TABLE_ANSWER);
         unset($this->qt);
     }
     function _getSampleData($row, $id = null) {

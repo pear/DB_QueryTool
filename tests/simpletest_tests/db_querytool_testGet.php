@@ -12,10 +12,30 @@ class TestOfDB_QueryTool_Get extends TestOfDB_QueryTool
 
     function setUp() {
         $this->qt =& new DB_QueryTool(DB_DSN, $GLOBALS['DB_OPTIONS']);
+        $this->qt->table = TABLE_TRANSLATION;
         $this->qt->removeAll();
+        $this->qt->table = TABLE_USER;
+        $this->qt->removeAll();
+        $this->qt->table = TABLE_QUESTION;
+        $this->qt->removeAll();
+        $this->qt->table = TABLE_ANSWER;
+        $this->qt->removeAll();
+        $this->qt->db->dropSequence(TABLE_USER);
+        $this->qt->db->dropSequence(TABLE_QUESTION);
+        $this->qt->db->dropSequence(TABLE_ANSWER);
     }
     function tearDown() {
+        $this->qt->table = TABLE_TRANSLATION;
         $this->qt->removeAll();
+        $this->qt->table = TABLE_USER;
+        $this->qt->removeAll();
+        $this->qt->table = TABLE_QUESTION;
+        $this->qt->removeAll();
+        $this->qt->table = TABLE_ANSWER;
+        $this->qt->removeAll();
+        $this->qt->db->dropSequence(TABLE_USER);
+        $this->qt->db->dropSequence(TABLE_QUESTION);
+        $this->qt->db->dropSequence(TABLE_ANSWER);
         unset($this->qt);
     }
     function test_AddGet() {
@@ -24,8 +44,6 @@ class TestOfDB_QueryTool_Get extends TestOfDB_QueryTool
 
         $newData = $this->_getSampleData(1);
         $id      = $this->qt->add($newData);
-//echo '<pre>';var_dump($this->qt->getQueryString());echo '</pre>';
-//echo '<pre>';var_dump($this->qt->db->query($this->qt->getQueryString()));echo '</pre>';
         $this->assertTrue($id != false);
 
         $newData['id'] = $id;
@@ -38,16 +56,33 @@ class TestOfDB_QueryTool_Get extends TestOfDB_QueryTool
         $newData['id'] = $id;
         $this->assertEqual($newData, $this->qt->get($id));
     }
+    
+    function test_AddGetPKNotInteger() {
+        $this->qt =& new DB_QT(TABLE_TRANSLATION);
+        $this->qt->table = TABLE_TRANSLATION;
+        $this->qt->primaryCol = 'string';
+
+        $newData = array('string' => 'aaa', 'translation' => 'AAA');
+        $id      = $this->qt->add($newData);
+        $this->assertTrue($id != false);
+
+        $this->assertEqual($newData, $this->qt->get($id));
+
+        $newData = array('string' => 'bbb', 'translation' => 'BBB');
+        $id      = $this->qt->add($newData);
+        $this->assertTrue($id != false);
+
+        $this->assertEqual($newData, $this->qt->get($id));
+    }
 
     // test if column==table works, using the table TABLE_QUESTION
     function test_tableEqualsColumn() {
         unset($this->qt);
         $this->qt =& new DB_QT(TABLE_QUESTION);
         //$this->qt->table = TABLE_QUESTION;
-//echo '<pre>'; var_dump($this->qt);exit;
+        
         $newData  = array(TABLE_QUESTION => 'Why does this not work?');
         $id       = $this->qt->add($newData);
-//echo '<pre>'; print_r($this->qt->table);exit;
         $this->assertTrue($id != false);
 
         $newData['id'] = $id;
@@ -64,7 +99,7 @@ class TestOfDB_QueryTool_Get extends TestOfDB_QueryTool
         $newData['id'] = $id;
         $data = $this->qt->getAll();
         // assertEquals doesn't sort arrays recursively, so we have to extract the data :-(
-        // we cant do this:
+        // we can't do this:
         $this->assertEqual(array($newData), $this->qt->getAll());
         //$this->assertEqual($newData, $data[0]);
     }
@@ -98,8 +133,8 @@ class TestOfDB_QueryTool_Get extends TestOfDB_QueryTool
                             '_answer_question_id' => $qid,
                             'id' => $qid,
                             'question' => $theQuestion);
-        // assertEquals doesnt sort arrays recursively, so we have to extract the data :-(
-        // we cant do this:     $this->assertEquals(array($newData),$question->getAll());
+        // assertEquals doesn't sort arrays recursively, so we have to extract the data :-(
+        // we can't do this:     $this->assertEquals(array($newData),$question->getAll());
         $this->assertEqual($expected, $data[0]);
     }
 

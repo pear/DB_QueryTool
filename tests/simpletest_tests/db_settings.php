@@ -13,6 +13,7 @@ define('TABLE_USER',     'querytool_user');
 define('TABLE_ADDRESS',  'querytool_address');
 define('TABLE_QUESTION', 'question');
 define('TABLE_ANSWER',   'answer');
+define('TABLE_TRANSLATION',  'tr');
 
 switch ($dbtype) {
     case 'pgsql':

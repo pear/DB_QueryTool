@@ -15,6 +15,14 @@ class DB_QT extends DB_QueryTool
             'name'      => TABLE_ANSWER,
             'shortName' => TABLE_ANSWER
         ),
+        array(
+            'name'      => TABLE_USER,
+            'shortName' => TABLE_USER
+        ),
+        array(
+            'name'      => TABLE_TRANSLATION,
+            'shortName' => TABLE_TRANSLATION
+        ),
     );
 
     function DB_QT($table = null)

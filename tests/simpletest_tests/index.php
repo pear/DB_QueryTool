@@ -20,7 +20,7 @@ $tests = array(
 );
 ?>
 
-<h1>MDB_QueryTool tests</h1>
+<h1>DB_QueryTool tests</h1>
 
 <ul>
 
