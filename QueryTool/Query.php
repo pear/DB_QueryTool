@@ -358,7 +358,7 @@ class DB_QueryTool_Query
         // build the query directly
         // if $column is '' then _buildSelect selects '*' anyway, so that's the same behaviour as before
         $query['select'] = $this->_buildSelect($column);
-        $query['where']  = $this->_buildWhere($this->table.'.'.$this->primaryCol.'='.$id);
+        $query['where']  = $this->_buildWhere($this->table.'.'.$this->primaryCol.'='.$this->db->quoteSmart($id));
         $queryString = $this->_buildSelectQuery($query);
 
         return $this->returnResult($this->execute($queryString,$getMethod));
@@ -600,7 +600,7 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
         // do only set the 'where' part in $query, if a primary column is given
         // if not the default 'where' clause is used
         if (isset($newData[$this->primaryCol])) {
-            $query['where'] = $this->primaryCol.'='.$newData[$this->primaryCol];
+            $query['where'] = $this->primaryCol.'='.$this->db->quoteSmart($newData[$this->primaryCol]);
         }
         $newData = $this->_checkColumns($newData, 'update');
         $values = array();
@@ -650,11 +650,12 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
         $newData = $this->_checkColumns($newData, 'add');
         $newData = $this->_quoteArray($newData);
 
-        $query = sprintf(   'INSERT INTO %s (%s) VALUES (%s)',
-                            $this->table,
-                            implode(', ', array_keys($newData)),
-                            implode(', ', $newData)
-                       );
+        $query = sprintf(
+            'INSERT INTO %s (%s) VALUES (%s)',
+            $this->table,
+            implode(', ', array_keys($newData)),
+            implode(', ', $newData)
+        );
         return $this->execute($query, 'query') ? $id : false;
     }
 
