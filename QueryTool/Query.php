@@ -56,16 +56,19 @@ class DB_QueryTool_Query
 
     /**
      * @var string  the where condition
+     * @access private
      */
     var $_where = '';
 
     /**
-     *   var string  the order condition
+     * @var string  the order condition
+     * @access private
      */
     var $_order = '';
 
     /**
      * @var    string  the having definition
+     * @access private
      */
     var $_having = '';
 
@@ -74,46 +77,56 @@ class DB_QueryTool_Query
      *              the key is the join type, for now we have 'default' and 'left'
      *              inside each key 'table' contains the table
      *                          key 'where' contains the where clause for the join
+     * @access private
      */
     var $_join = array();
 
     /**
      * @var    string  which column to index the result by
+     * @access private
      */
     var $_index = null;
 
     /**
      * @var    string  the group-by clause
+     * @access private
      */
     var $_group = '';
 
     /**
      * @var    array   the limit
+     * @access private
      */
     var $_limit = array();
 
     /**
-     * @var    boolean     if to use the DB_QueryTool_Result as a result or not
+     * @var    string  type of result to return
+     * @access private
      */
-    var $_useResult = false;
+    var $_resultType = 'none';
 
     /**
-     * @var    boolean     if to use the DB_QueryTool_Result_Object as a result or not
-     */
-    var $_useResultObject = false;
-
-    /**
-     * @var    array       the metadata temporary saved
+     * @var    array   the metadata temporary saved
+     * @access private
      */
     var $_metadata = array();
 
+    /**
+     * @var    string
+     * @access private
+     */
     var $_lastQuery = null;
 
     /**
-     * the rows that shall be selected
+     * @var    string   the rows that shall be selected
+     * @access private
      */
     var $_select = '*';
 
+    /**
+     * @var    string   the rows that shall not be selected
+     * @access private
+     */
     var $_dontSelect = '';
 
     /**
@@ -2101,29 +2114,27 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
     // {{{ returnResult()
 
     /**
+     * Return the chosen result type
      *
-     * @version    2002/07/11
+     * @version    2004/04/28
      * @access     public
-     * @author     Wolfram Kriesing <wk@visionp.de>
-     * @param
-     * @return
+     * @param object reference
+     * @return mixed
      */
     function returnResult(&$result)
     {
-        if ($this->_useResult) {
-            if ($result === false) {
-                return false;
-            }
-            return new DB_QueryTool_Result($result);
+        if ($this->_resultType == 'none') {
+            return $result;
         }
-        if ($this->_useResultObject) {
-            if ($result === false) {
-                echo 'HERE';
-                return false;
-            }
-            return new DB_QueryTool_Result_Object($result);
+        if ($result === false) {
+            return false;
         }
-        return $result;
+        //what about allowing other (custom) result types?
+        switch (strtolower($this->_resultType)) {
+            case 'object':  return new DB_QueryTool_Result_Object($result);
+            case 'array':
+            default:        return new DB_QueryTool_Result($result);
+        }
     }
 
     // }}}
@@ -2134,8 +2145,8 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
      * @version    2002/07/11
      * @access     public
      * @author     Wolfram Kriesing <wk@visionp.de>
-     * @param
-     * @return
+     * @param      mixed
+     * @return     mixed
      */
     function &_makeIndexed(&$data)
     {
@@ -2227,34 +2238,32 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
     // {{{ useResult()
 
     /**
+     * Choose the type of the returned result
      *
-     * @version    2002/07/11
+     * @version    2004/04/28
      * @access     public
-     * @author     Wolfram Kriesing <wk@visionp.de>
-     * @param
-     * @return
+     * @param string $type  ['array' | 'object' | 'none']
+     *             For BC reasons, $type=true is equal to 'array',
+     *             $type=false is equal to 'none'
      */
-    function useResult($doit=true)
+    function useResult($type='array')
     {
-        $this->_useResult = $doit;
-        if ($doit) {
-            require_once 'DB/QueryTool/Result.php';
+        if ($type === true) {
+            $type = 'array';
+        } elseif ($type === false) {
+            $type = 'none';
         }
-    }
-
-    // }}}
-    // {{{ useResultObject()
-
-    /**
-     * @author Roman Dostovalov <roman.dostovalov@ctco.lv>
-     * @param boolean
-     * @access public
-     */
-    function useResultObject($doit=true)
-    {
-        $this->_useResultObject = $doit;
-        if ($doit) {
-            require_once 'DB/QueryTool/Result/Object.php';
+        switch (strtolower($type)) {
+            case 'array':
+                $this->_resultType = 'array';
+                require_once 'DB/QueryTool/Result.php';
+                break;
+            case 'object':
+                $this->_resultType = 'object';
+                require_once 'DB/QueryTool/Result/Object.php';
+                break;
+            default:
+                $this->_resultType = 'none';
         }
     }
 
