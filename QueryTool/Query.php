@@ -1150,8 +1150,7 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
     function getTableShortName( $table )
     {
         $tableSpec = $this->getTableSpec( false );
-        if( $tableSpec[$table]['shortName'] )
-        {
+        if (isset($tableSpec[$table]['shortName']) && $tableSpec[$table]['shortName']) {
 //print "$table ... ".$tableSpec[$table]['shortName'].'<br>';
             return $tableSpec[$table]['shortName'];
         }
