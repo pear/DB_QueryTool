@@ -349,8 +349,9 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
     */
     function save( $data )
     {
-        if( isset($data[$this->primaryCol]) && $data[$this->primaryCol] )
-            return $this->update( $data );
+        if (isset($data[$this->primaryCol]) && $data[$this->primaryCol]) {
+            return $this->update( $data );                                
+        }
         return $this->add( $data );
     }
 
@@ -366,8 +367,7 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
     */
     function update( $newData )
     {
-        if( !isset($newData[$this->primaryCol]) )
-        {
+        if (!isset($newData[$this->primaryCol])) {
             $this->_errorSet('Error updating the new member.');
             return false;
         }
@@ -378,8 +378,9 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
 
         $values = array();
         $raw = $this->getOption('raw');
-        foreach( $newData as $key=>$aData )         // quote the data
+        foreach($newData as $key=>$aData) {         // quote the data
             $values[] = "$key=". ( $raw ? $aData : $this->_db->quote($aData) );
+        }
 
         $query = sprintf(   'UPDATE %s SET %s WHERE %s=%s',
                             $this->table,
@@ -405,8 +406,8 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
         $newData = $this->_checkColumns($newData,'add');
         $newData = $this->_quoteArray( $newData );
 
-        if( $this->primaryCol )                     // do only use the sequence if a primary column is given
-        {                                           // otherwise the data are written as given
+        if ($this->primaryCol) {                    // do only use the sequence if a primary column is given
+                                                    // otherwise the data are written as given
             $id = $this->_db->nextId( $this->table );
             $newData[$this->primaryCol] = $this->getOption('raw') ? $id : $this->_db->quote($id);
         }
@@ -431,20 +432,20 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
     */
     function addMultiple( $data )
     {
-        if( !sizeof($data) )
-            return false;
+        if (!sizeof($data)) {
+            return false;    
+        }
 
         $retIds = array();                          // the inserted ids which will be returned
         $allData = array();                         // each row that will be inserted
-        foreach( $data as $aData )
-        {
+        foreach ($data as $aData) {
             unset($aData[$this->primaryCol]);       // we are adding a new data set, so be sure there is no value for the primary col
             $aData = $this->_checkColumns($aData,'add');
             $aData = $this->_quoteArray( $aData );
 
             if( $this->primaryCol )                     // do only use the sequence if a primary column is given
             {                                           // otherwise the data are written as given
-                $id = $this->_db->nextId( $this->table );     
+                $id = $this->_db->nextId( $this->table );
                 $aData[$this->primaryCol] = $this->getOption('raw') ? $id : $this->_db->quote($id);
 
                 $retIds[] = $id;
@@ -941,21 +942,6 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
     function getOption( $option )
     {
         return $this->options[strtolower($option)];
-    }
-
-    /**
-    *   @deprecated
-    */
-    function setMode( $mode )
-    {
-        $this->setOption( $mode );
-    }
-    /**
-    *   @deprecated
-    */
-    function getMode( $mode )
-    {
-        return $this->getOption( $mode );
     }
 
     /**
