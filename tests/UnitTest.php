@@ -28,6 +28,13 @@ class tests_UnitTest extends PhpUnit_TestCase
         }
 */        
     }
+    
+    function assertStringEquals($expected,$actual,$msg='')
+    {
+        $expected = '~^\s*'.preg_replace('~\s+~','\s*',trim(preg_quote($expected))).'\s*$~i';
+        $this->assertRegExp($expected,$actual,$msg);
+    }    
+
 }
 
 ?>
