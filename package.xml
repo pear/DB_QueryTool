@@ -30,13 +30,19 @@ SQL-Statements and execute them.
         <version>0.9.9</version>
         <license>PHP</license>
         <state>stable</state>
-        <date>2004-04-01</date>
+        <date>2004-04-28</date>
         <notes>
 * on UPDATE, field names are no more prefixed by the table name
+  (it didn't work with PostgreSQL)
 * added an $options parameter to connect()
-* fix bug #284 (Log::factory() needs to return a reference)
-* fix bug #298 (reset() does not reset limit)
-* fix bug #322 (undefined var $autoConnect)
+* fixed bug #284 (Log::factory() needs to return a reference)
+* fixed bug #298 (reset() does not reset limit)
+* fixed bug #322 (undefined var $autoConnect)
+* added useResultObject() method; use it to return objects instead of arrays
+  (thanks to Roman Dostovalov)
+* fixed problems with useResult(true) and empty results
+* when using useResult(true), if the user doesn't call getFirst() on the first
+  iteration, the class does so automatically
 * PHP 5 fixes
 * fixes to the testsuite
         </notes>
@@ -49,6 +55,7 @@ SQL-Statements and execute them.
                     <file name="Query.php" />
                     <file name="EasyJoin.php" />
                     <file name="Result.php" />
+                    <file name="Result/Object.php" />
                 </dir>
 
                 <dir name="docs" role="doc">
