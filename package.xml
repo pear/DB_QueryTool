@@ -40,6 +40,8 @@ SQL-Statements and execute them.
         <notes>
 * allow class usage without instanciating a db object
   (to use the class as a simple query builder)
+* unset non-specific PEAR::DB options before calling connect()
+  (bug #1614)
         </notes>
         <filelist>
             <dir name="/" baseinstalldir="DB">
