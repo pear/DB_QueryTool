@@ -33,10 +33,10 @@ SQL-Statements and execute them.
     </maintainers>
 
     <release>
-        <version>0.9.9</version>
+        <version>0.10.1</version>
         <license>PHP</license>
         <state>stable</state>
-        <date>2004-04-28</date>
+        <date>2004-05-05</date>
         <notes>
 * on UPDATE, field names are no more prefixed by the table name
   (it didn't work with PostgreSQL)
@@ -54,7 +54,6 @@ SQL-Statements and execute them.
 * PHP 5 fixes
 * fixes to the testsuite
         </notes>
-
         <filelist>
             <dir name="/" baseinstalldir="DB">
                 <file role="php" name="QueryTool.php" />
@@ -66,7 +65,7 @@ SQL-Statements and execute them.
                     <file name="Result/Object.php" />
                 </dir>
 
-                <dir name="docs" role="doc">
+                <dir name="docs/examples" role="doc">
                     <file name="example.php" />
                     <file name="mysql.sql" />
                     <file name="pgsql.sql" />
