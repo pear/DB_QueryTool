@@ -45,7 +45,7 @@ $suites[] = new PHPUnit_TestSuite('DB_QueryTool_UnitTest_Where');
 //$gui->getSuitesFromDir(dirname(__FILE__),'DB_QueryTool_UnitTest_.*');
 $gui = new PHPUnit_GUI_HTML();
 $gui->addSuites($suites);
-$gui->show(false);  // we dont want to see the passed test
+$gui->show();
 
 //print_r($errors);
 
