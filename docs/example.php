@@ -40,10 +40,11 @@ ini_set('include_path',realpath(dirname(__FILE__).'/../../../').':'.realpath(dir
         define ('TABLE_USER',   'uuser');     // user is a reserved word in postgres
     }
 
-
+                            
     class user extends DB_QueryTool
     {
         var $table =        TABLE_USER;
+        var $sequenceName = TABLE_USER;
 
         // this is default, but to demonstrate it here ...
         var $primaryCol =   'id';
