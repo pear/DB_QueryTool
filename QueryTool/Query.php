@@ -108,6 +108,7 @@ class DB_QueryTool_Query
     var $options = array(   'raw'       =>  false
                             ,'verbose'   =>  true       // set this to false in a productive environment
                                                         // it will produce error-logs if set to true
+                            ,'useCache' =>  false
                         );
 
     /**
@@ -134,8 +135,11 @@ class DB_QueryTool_Query
 
 
 
-
-
+    /**
+    *   var     array   this array caches queries that have already been built once
+    *                   to reduce the execution time
+    */
+    var $_queryCache = array();
 
     /**
     *   this is the constructor, as it will be implemented in ZE2 (php5)
@@ -422,7 +426,7 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
         $values = array();
         $raw = $this->getOption('raw');
         foreach($newData as $key=>$aData) {         // quote the data
-            $values[] = "$key=". ( $raw ? $aData : $this->_db->quote($aData) );
+            $values[] = "{$this->table}.$key=". ( $raw ? $aData : $this->_db->quote($aData) );
         }
 
         $query = sprintf(   'UPDATE %s SET %s WHERE %s=%s',
@@ -1471,6 +1475,13 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
     */
     function _buildSelectQuery( $query=array() )
     {
+/*FIXXXME finish this 
+        $cacheKey = md5(serialize(????));
+        if (isset($this->_queryCache[$cacheKey])) {
+            $this->_errorLog('using cached query',__LINE__);
+            return $this->_queryCache[$cacheKey];
+        }
+*/
         $where = isset($query['where']) ? $query['where'] : $this->_buildWhere();
         if( $where )
             $where = 'WHERE '.$where;
@@ -1490,6 +1501,7 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
                                 $group,
                                 $order
                                 );
+//        $this->_queryCache[$cacheKey] = $queryString;
         return $queryString;
     }
 
@@ -1692,7 +1704,7 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
     */
     function _errorLog( $msg , $line='unknown' )
     {
-        $this->_errorHandler( 'log' , $msg , $line='unknown' );
+        $this->_errorHandler( 'log' , $msg , $line );
 /*
         if( $this->getOption('verbose') == true )
         {
@@ -1707,7 +1719,7 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
 
     function _errorSet( $msg , $line='unknown' )
     {
-        $this->_errorHandler( 'set' , $msg , $line='unknown' );
+        $this->_errorHandler( 'set' , $msg , $line );
     }
 
     function _errorHandler( $logOrSet , $msg , $line='unknown' )
