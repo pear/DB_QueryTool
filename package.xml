@@ -33,7 +33,7 @@ SQL-Statements and execute them.
     </maintainers>
 
     <release>
-        <version>0.11.2</version>
+        <version>1.0.0</version>
         <license>PHP</license>
         <state>stable</state>
         <date>2005-02-25</date>
@@ -43,45 +43,66 @@ SQL-Statements and execute them.
 * strings lenghtier than the column max size are truncated
   to prevent db errors
 * using setOrder() with setGroup()+setHaving() could cause a malformed query
+* fully tested with MySQL, PostgreSQL and Firebird/Interbase
+  (added a new testsuite using SimpleTest)
         </notes>
         <filelist>
-            <dir name="/" baseinstalldir="DB">
-                <file role="php" name="QueryTool.php" />
+          <dir name="/" baseinstalldir="DB">
+            <file role="php" name="QueryTool.php" />
 
-                <dir name="QueryTool" role="php">
-                    <file name="Query.php" />
-                    <file name="EasyJoin.php" />
-                    <file name="Result.php" />
-                    <file name="Result/Object.php" />
-                </dir>
-
-                <dir name="docs/examples" role="doc">
-                    <file name="example.php" />
-                    <file name="mysql.sql" />
-                    <file name="pgsql.sql" />
-                </dir>
-
-                <dir name="tests" role="test">
-                    <file name="Common.php" />
-                    <file name="Get.php" />
-                    <file name="GetAll.php" />
-                    <file name="GetCount.php" />
-                    <file name="GetQueryString.php" />
-                    <file name="index.php" />
-                    <file name="Having.php" />
-                    <file name="Limit.php" />
-                    <file name="sql.php" />
-                    <file name="UnitTest.php" />
-                    <file name="Where.php" />
-                    <file name="SetDbInstance.php" />
-                </dir>
-
+            <dir name="QueryTool" role="php">
+              <file name="Query.php" />
+              <file name="EasyJoin.php" />
+              <file name="Result.php" />
+              <file name="Result/Object.php" />
             </dir>
 
-            <deps>
-                <dep type="pkg" rel="has">DB</dep>
-                <dep type="pkg" rel="ge" version="1.7">Log</dep>
-            </deps>
+            <dir name="docs/examples" role="doc">
+              <file name="example.php" />
+              <file name="mysql.sql" />
+              <file name="pgsql.sql" />
+            </dir>
+
+            <dir name="tests" role="test">
+              <file name="Common.php" />
+              <file name="Get.php" />
+              <file name="GetAll.php" />
+              <file name="GetCount.php" />
+              <file name="GetQueryString.php" />
+              <file name="index.php" />
+              <file name="Having.php" />
+              <file name="Limit.php" />
+              <file name="sql.php" />
+              <file name="UnitTest.php" />
+              <file name="Where.php" />
+              <file name="SetDbInstance.php" />
+
+              <dir name="simpletest_tests" role="test">
+                <file name="all_tests.php"/>
+                <file name="db_querytool_include.php"/>
+                <file name="db_querytool_test_base.php"/>
+                <file name="db_querytool_testDbInstance.php"/>
+                <file name="db_querytool_testGet.php"/>
+                <file name="db_querytool_testGetAll.php"/>
+                <file name="db_querytool_testGetCount.php"/>
+                <file name="db_querytool_testGetQueryString.php"/>
+                <file name="db_querytool_testHaving.php"/>
+                <file name="db_querytool_testLimit.php"/>
+                <file name="db_querytool_tests_get.php"/>
+                <file name="db_querytool_tests_usage.php"/>
+                <file name="db_querytool_testWhere.php"/>
+                <file name="db_settings.php"/>
+                <file name="index.php"/>
+                <file name="readme.txt"/>
+                <file name="simple_include.php"/>
+              </dir>
+            </dir>
+          </dir>
+
+          <deps>
+            <dep type="pkg" rel="has">DB</dep>
+            <dep type="pkg" rel="ge" version="1.7">Log</dep>
+          </deps>
 
         </filelist>
 
