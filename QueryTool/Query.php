@@ -451,7 +451,7 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
     *                       the id has to be given in the field with the key 'ID'
     *   @return     mixed   true on success, or false otherwise
     */
-    function update( $newData )
+    function update($newData)
     {
         $query = array();
         // do only set the 'where' part in $query, if a primary column is given
@@ -467,8 +467,9 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
         }
 
         $query['set'] = implode(',',$values);
+//FIXXXME _buildUpdateQuery() seems to take joins into account, whcih is bullshit here
         $updateString = $this->_buildUpdateQuery($query);
-//print '$updateString= '.$updateString;
+#print '$updateString= '.$updateString;
         return $this->execute($updateString,'query') ? true : false;
     }
 
@@ -604,7 +605,7 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
     *   @param      array   the ids to remove
     *   @return
     */
-    function removeMultiple( $ids , $colName='' )
+    function removeMultiple($ids ,$colName='' )
     {
         if( $colName=='' )
             $colName = $this->primaryCol;
