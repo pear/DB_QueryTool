@@ -39,12 +39,14 @@ require_once 'DB_QueryTool_UnitTest_Get.php';
 require_once 'DB_QueryTool_UnitTest_GetAll.php';
 require_once 'DB_QueryTool_UnitTest_GetCount.php';
 require_once 'DB_QueryTool_UnitTest_Where.php';
+require_once 'DB_QueryTool_UnitTest_Limit.php';
 
 $suites = array();
 $suites[] = new PHPUnit_TestSuite('DB_QueryTool_UnitTest_Get');
 $suites[] = new PHPUnit_TestSuite('DB_QueryTool_UnitTest_GetAll');
 $suites[] = new PHPUnit_TestSuite('DB_QueryTool_UnitTest_GetCount');
 $suites[] = new PHPUnit_TestSuite('DB_QueryTool_UnitTest_Where');
+$suites[] = new PHPUnit_TestSuite('DB_QueryTool_UnitTest_Limit');
 $gui = new PHPUnit_GUI_HTML();
 $gui->addSuites($suites);
 $gui->show();
