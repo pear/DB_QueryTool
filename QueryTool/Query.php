@@ -51,7 +51,7 @@ class DB_QueryTool_Query
     /**
     *   var object  the db-object, a PEAR::Db-object instance
     */
-    var $_db = null;
+    var $db = null;
 
     /**
     *   var string  the where condition
@@ -170,7 +170,7 @@ class DB_QueryTool_Query
 /*  we would need to parse the dsn first ... i dont feel like now :-)
         // oracle has all column names in upper case
 //FIXXXME make the class work only with upper case when we work with oracle
-        if ($this->_db->phptype=='oci8' && !$this->primaryCol) {
+        if ($this->db->phptype=='oci8' && !$this->primaryCol) {
             $this->primaryCol = 'ID';
         }
 */
@@ -186,12 +186,12 @@ class DB_QueryTool_Query
     */
     function connect($dsn)
     {
-        $res = $this->_db = DB::connect($dsn);
+        $res = $this->db = DB::connect($dsn);
         if (DB::isError($res)) {
 // FIXXME what shall we do here?
             $this->_errorLog($res->getUserInfo());
         } else {
-            $this->_db->setFetchMode(DB_FETCHMODE_ASSOC);
+            $this->db->setFetchMode(DB_FETCHMODE_ASSOC);
         }
     }
 
@@ -208,6 +208,11 @@ class DB_QueryTool_Query
         $this->__construct( $dsn , $options );
     }
 
+    function &getDbInstance()
+    {
+        return $this->db;
+    }
+    
     /**
     *   get the data of a single entry
     *   if the second parameter is only one column the result will be returned
@@ -285,9 +290,9 @@ class DB_QueryTool_Query
 
 // FIXXME, one day this should be unified!!!
 /* this was special for www.visionp.de ... check it before removing
-        if ($this->_db->phptype=='oci8' ) {
+        if ($this->db->phptype=='oci8' ) {
             if ($from && $count) {
-                if (DB::isError( $queryString = $this->_db->modifyLimitQuery($queryString,$from-1,$count-1))) {
+                if (DB::isError( $queryString = $this->db->modifyLimitQuery($queryString,$from-1,$count-1))) {
 //print_r($queryString);
                     $this->_errorSet( 'vp_DB_Common::getAll modifyLimitQuery failed '.$queryString->getMessage() );
                     $this->_errorLog( $queryString->getUserInfo() );
@@ -297,7 +302,7 @@ class DB_QueryTool_Query
         } else {
 */
         if ($count) {
-            if ( DB::isError( $queryString = $this->_db->modifyLimitQuery($queryString,$from,$count)) ) {
+            if ( DB::isError( $queryString = $this->db->modifyLimitQuery($queryString,$from,$count)) ) {
                 $this->_errorSet( 'DB_QueryTool::getAll modifyLimitQuery failed '.$queryString->getMessage() );
                 $this->_errorLog( $queryString->getUserInfo() );
                 return false;
@@ -337,7 +342,7 @@ class DB_QueryTool_Query
             $queryString = $this->_buildSelectQuery(array('select'=>$this->_buildSelect($column)));
         }
         if ($count) {
-            if ( DB::isError( $queryString = $this->_db->modifyLimitQuery($queryString,$from,$count)) ) {
+            if ( DB::isError( $queryString = $this->db->modifyLimitQuery($queryString,$from,$count)) ) {
                 $this->_errorSet( 'DB_QueryTool::getAll modifyLimitQuery failed '.$queryString->getMessage() );
                 $this->_errorLog( $queryString->getUserInfo() );
                 return false;
@@ -465,7 +470,7 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
         $values = array();
         $raw = $this->getOption('raw');
         foreach($newData as $key=>$aData) {         // quote the data
-            $values[] = "{$this->table}.$key=". ( $raw ? $aData : $this->_db->quote($aData) );
+            $values[] = "{$this->table}.$key=". ( $raw ? $aData : $this->db->quote($aData) );
         }
 
         $query['set'] = implode(',',$values);
@@ -492,8 +497,8 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
 
         if ($this->primaryCol) {                    // do only use the sequence if a primary column is given
                                                     // otherwise the data are written as given
-            $id = $this->_db->nextId( $this->sequenceName );
-            $newData[$this->primaryCol] = $this->getOption('raw') ? $id : $this->_db->quote($id);
+            $id = $this->db->nextId( $this->sequenceName );
+            $newData[$this->primaryCol] = $this->getOption('raw') ? $id : $this->db->quote($id);
         }
 
         $query = sprintf(   'INSERT INTO %s (%s) VALUES (%s)',
@@ -529,8 +534,8 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
 
             if( $this->primaryCol )                     // do only use the sequence if a primary column is given
             {                                           // otherwise the data are written as given
-                $id = $this->_db->nextId( $this->sequenceName );
-                $aData[$this->primaryCol] = $this->getOption('raw') ? $id : $this->_db->quote($id);
+                $id = $this->db->nextId( $this->sequenceName );
+                $aData[$this->primaryCol] = $this->getOption('raw') ? $id : $this->db->quote($id);
 
                 $retIds[] = $id;
             }
@@ -565,12 +570,12 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
 //FIXXME check $data if it only contains columns that really exist in the table
             $wheres = array();
             foreach( $data as $key=>$val )
-                $wheres[] = $key.'='. ( $raw ? $val : $this->_db->quote($val) );
+                $wheres[] = $key.'='. ( $raw ? $val : $this->db->quote($val) );
             $whereClause = implode(' AND ',$wheres);
         } else {
             if( $whereCol=='' )
                 $whereCol = $this->primaryCol;
-            $whereClause = $whereCol.'='. ( $raw ? $data : $this->_db->quote($data) );
+            $whereClause = $whereCol.'='. ( $raw ? $data : $this->db->quote($data) );
         }
 
         $query = sprintf(   'DELETE FROM %s WHERE %s',
@@ -696,9 +701,9 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
     */
     function addWhere( $where , $condition='AND' )
     {
-        if( $this->getWhere() )
+        if ($this->getWhere()) {
             $where = $this->getWhere().' '.$condition.' '.$where;
-
+        }
         $this->setWhere( $where );
     }
 
@@ -724,7 +729,7 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
             $column = $this->table.".$column";
         }
 
-        $string = $this->_db->quote('%'.str_replace(' ','%',strtolower($string)).'%');
+        $string = $this->db->quote('%'.str_replace(' ','%',strtolower($string)).'%');
         $this->addWhere( "LOWER($column) LIKE $string" );
     }
 
@@ -1035,7 +1040,7 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
     {
         if (!$this->getOption('raw')) {
             foreach( $data as $key=>$val )
-                $data[$key] = $this->_db->quote($val);
+                $data[$key] = $this->db->quote($val);
         }
         return $data;
     }
@@ -1115,7 +1120,7 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
         }
 
 // FIXXXME use oci8 implementation of newer PEAR::DB-version
-        if( $this->_db->phptype=='oci8' )
+        if( $this->db->phptype=='oci8' )
         {
             $count = 0;
             $id    = 0;
@@ -1123,11 +1128,11 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
 
             //# This is a RIGHT OUTER JOIN: "(+)", if you want to see, what
             //# this query results try the following:
-            //// $table = new Table; $this->_db = new my_DB_Sql; // you have to make
+            //// $table = new Table; $this->db = new my_DB_Sql; // you have to make
             ////                                          // your own class
-            //// $table->show_results($this->_db->query(see query vvvvvv))
+            //// $table->show_results($this->db->query(see query vvvvvv))
             ////
-            $res=$this->_db->getAll("SELECT T.column_name,T.table_name,T.data_type,".
+            $res=$this->db->getAll("SELECT T.column_name,T.table_name,T.data_type,".
                 "T.data_length,T.data_precision,T.data_scale,T.nullable,".
                 "T.char_col_decl_length,I.index_name".
                 " FROM ALL_TAB_COLUMNS T,ALL_IND_COLUMNS I".
@@ -1147,7 +1152,7 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
             foreach( $res as $key=>$val )
                 $res[$key]['name'] = $val['COLUMN_NAME'];
         } else {
-            $res=$this->_db->tableinfo($table);
+            $res=$this->db->tableinfo($table);
             if (DB::isError($res)) {
                 $this->_errorSet($res->getUserInfo());
                 return false;
@@ -1585,7 +1590,7 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
         $this->_lastQuery = $query;
 
         $this->debug($query);
-        if( DB::isError( $res = $this->_db->$method($query) ) )
+        if( DB::isError( $res = $this->db->$method($query) ) )
         {                   
             if( $this->getOption('verbose') )
                 $this->_errorSet( $res->getMessage() );
