@@ -27,16 +27,16 @@ SQL-Statements and execute them.
     </maintainers>
 
     <release>
-        <version>0.9.5</version>
+        <version>0.9.6</version>
         <license>PHP</license>
         <state>stable</state>
-        <date>2003-06-17</date>
+        <date>2003-09-12</date>
         <notes>
-- bugfix when writing log files, times were wrong
-- bugfix in EasyJoin, which added unnecessary conditions        
-- bugfix in building column alias which is at the end of the string
-- bugfix in addMultiple() which didnt work without primaryCol
-- bugfix in addHaving and unit test, thanks to Johannes Schäfer
+- bugfix in addMultiple()
+- addWhereSearch now only prefixes known columns as it is supposed to be, 
+  otherwise it would also prefix aliases with the table name, which is bull...
+- quirk in the addLeftJoin() method ... not nice, but v1.0 will be, unit tests pass but thats still not enough proof
+- make setLimit also work to unset it
         </notes>
 
         <filelist>
@@ -61,6 +61,7 @@ SQL-Statements and execute them.
                     <file role="doc" name="GetAll.php" />
                     <file role="doc" name="GetCount.php" />
                     <file role="doc" name="index.php" />
+                    <file role="doc" name="Having.php" />
                     <file role="doc" name="Limit.php" />
                     <file role="doc" name="sql.php" />
                     <file role="doc" name="UnitTest.php" />
@@ -79,6 +80,20 @@ SQL-Statements and execute them.
     </release>
 
     <changelog>
+        <release>
+        <version>0.9.5</version>
+        <license>PHP</license>
+        <state>stable</state>
+        <date>2003-06-17</date>
+        <notes>
+- bugfix when writing log files, times were wrong
+- bugfix in EasyJoin, which added unnecessary conditions        
+- bugfix in building column alias which is at the end of the string
+- bugfix in addMultiple() which didnt work without primaryCol
+- bugfix in addHaving and unit test, thanks to Johannes Schäfer
+        </notes>
+        </release>
+        
         <release>
         <version>0.9.4</version>
         <license>PHP</license>
