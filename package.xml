@@ -30,10 +30,16 @@ SQL-Statements and execute them.
         <version>0.9.4</version>
         <license>PHP</license>
         <state>stable</state>
-        <date>2003-??-??1</date>
+        <date>2003-06-06</date>
         <notes>
-            - new methods set/getLimit(), which set the limit globally, 
-                getAll() and getCol() can still overwrite this temporarily
+- added set/getLimit(), which set the limit globally, 
+  getAll() and getCol() can still overwrite this temporarily
+- added addOrder()
+- added *Having() methods by Johannes Schaefer
+- added log functionality
+- added condition param to addWhereSearch()
+- fix bug in building group clause for getCount()
+- bug fix in building join
         </notes>
 
         <filelist>
@@ -50,6 +56,18 @@ SQL-Statements and execute them.
                     <file role="doc" name="example.php" />
                     <file role="doc" name="mysql.sql" />
                     <file role="doc" name="pgsql.sql" />
+                </dir>
+
+                <dir name="tests">
+                    <file role="doc" name="Common.php" />
+                    <file role="doc" name="Get.php" />
+                    <file role="doc" name="GetAll.php" />
+                    <file role="doc" name="GetCount.php" />
+                    <file role="doc" name="index.php" />
+                    <file role="doc" name="Limit.php" />
+                    <file role="doc" name="sql.php" />
+                    <file role="doc" name="UnitTest.php" />
+                    <file role="doc" name="Where.php" />
                 </dir>
 
             </dir>
