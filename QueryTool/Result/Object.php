@@ -31,8 +31,8 @@ require_once 'DB/QueryTool/Result.php';
 class DB_QueryTool_Result_Row
 {
 	/**
-	 * create object properties form array
-	 * @param $arr
+	 * create object properties from the array
+	 * @param array
 	 */
 	function DB_QueryTool_Result_Row($arr)
 	{
