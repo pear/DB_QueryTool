@@ -1,6 +1,4 @@
 TODO
-- make it work on oracle, the _* doesnt work in oracle - may be the "" around the _table_col 
-  did already solve it, check it 
 - use varibales for the table names, to shorten the queries
   such as SELECT * FROM tableX a1, tableY a2 ...
 - implement primaryCol to be capable of using multiple columns
@@ -27,3 +25,6 @@ TODO
     
 
 DONE
+- make it work on oracle, the _* doesnt work in oracle - may be the "" around the _table_col 
+  did already solve it, check it - should work since 0.9.3, since var-names are surrounded by ""
+  such as  ' table.col AS "_table_col" '   (Uwe Dörl)

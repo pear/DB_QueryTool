@@ -30,16 +30,19 @@ SQL-Statements and execute them.
         <version>0.9.3</version>
         <license>PHP</license>
         <state>stable</state>
-        <date>2003-0?-??</date>
+        <date>2003-03-11</date>
         <notes>
             - new method getCol() which lets you retreive just one column
             - getAll() takes an additional optional parameter, where you can define
               the method that should be used for firing the query
-            - update() does also consider the value of setWhere() now when no primary column is given
+            - update() does also consider the value of setWhere() when no primary column is given
               added a _buildUpdateQuery() for that too
             - added umbrello-uml class diagram
             - fixing some typos, esp. for making the useResult() work
-            - some more CS issues
+            - bugfix in update, use fully qualified table name (Uwe Dörl)
+            - bugfix in _buildSelectQuery, enclose column names by ""
+              now Oracle should work and also reserved keywords can be used as column names (Uwe Dörl)
+            - some bugfixes and more CS issues
         </notes>
 
         <filelist>
