@@ -17,7 +17,9 @@
 //
 // $Id$
 //
-
+/**
+ * Load DB_QueryTool_Query class
+ */
 require_once 'DB/QueryTool/Query.php';
 
 /**
@@ -29,6 +31,16 @@ require_once 'DB/QueryTool/Query.php';
 */
 class DB_QueryTool_EasyJoin extends DB_QueryTool_Query
 {
+
+    /**
+     * call parent constructor
+     * @param mixed $dsn DSN string, DSN array or DB object
+     * @param array $options
+     */
+    function __construct($dsn=false, $options=array())
+    {
+        parent::DB_QueryTool_Query($dsn, $options);
+    }
 
     /**
     *   this is the regular expression that shall be used to find a table's shortName
@@ -80,7 +92,7 @@ class DB_QueryTool_EasyJoin extends DB_QueryTool_Query
                         // its an error of the developer, so log the error, dont show it to the end user
                         $this->_errorLog("autoJoin-ERROR: '$aTable' is not given in the tableSpec!<br>");
                     } else {
-                        // do only join different table.col combination, 
+                        // do only join different table.col combination,
                         // we shoul not join stuff like 'question.question=question.question' this would be quite stupid, but it used to be :-(
                         if ($shortNameIndexed[$possibleTableShortName]['name'].$possibleColumnName!=$aTable.$aCol) {
                             $joinTables[] = $nameIndexed[$aTable]['name'];
@@ -100,11 +112,11 @@ class DB_QueryTool_EasyJoin extends DB_QueryTool_Query
                 }
             }
 //FIXXME set tables only when they are not already in the join!!!!!
-                    
-//print_r($joinTables); print '$this->addJoin('.implode(' AND ',$joinConditions).');<br>';
+
+//print_r($joinTables); echo '$this->addJoin('.implode(' AND ',$joinConditions).');<br />';
             $this->addJoin($joinTables,implode(' AND ',$joinConditions));
         }
-//print '<br><br><br>';
+//print '<br /><br /><br />';
     }
 
 }

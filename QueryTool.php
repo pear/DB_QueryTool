@@ -23,10 +23,10 @@ require_once 'DB/QueryTool/EasyJoin.php';
 
 /**
 *   this class should be extended
-*   This class is here to make it easy using the base 
+*   This class is here to make it easy using the base
 *   class of the package by it's package name.
 *   Since I tried to seperate the functionality a bit inside the
-*   really working classes i decided to have this class here just to 
+*   really working classes i decided to have this class here just to
 *   provide the name, since the functionality inside the other
 *   classes might be restructured a bit but this name always stays.
 *
@@ -37,6 +37,14 @@ require_once 'DB/QueryTool/EasyJoin.php';
 */
 class DB_QueryTool extends DB_QueryTool_EasyJoin
 {
+    /**
+     * call parent constructor
+     * @param mixed $dsn DSN string, DSN array or DB object
+     * @param array $options
+     */
+    function DB_QueryTool($dsn=false, $options=array())
+    {
+        parent::__construct($dsn, $options);
+    }
 }
-
 ?>
