@@ -340,9 +340,9 @@ class DB_QueryTool_Query
      * @version    2002/03/05
      * @access     public
      * @author     Wolfram Kriesing <wk@visionp.de>
-     * @param      integer the id of the element to retreive
+     * @param      integer the id of the element to retrieve
      * @param      string  if this is given only one row shall be returned, directly, not an array
-     * @return     mixed   (1) an array of the retreived data
+     * @return     mixed   (1) an array of the retrieved data
      *                     (2) if the second parameter is given and its only one column,
      *                         only this column's data will be returned
      *                     (3) false in case of failure
@@ -429,7 +429,7 @@ class DB_QueryTool_Query
      *      $ids = $table->getCol();
      * OR
      *      $ids = $table->getCol('id');
-     * so ids will ba an array with all the id's
+     * so ids will be an array with all the id's
      *
      * @version    2003/02/25
      * @access     public
@@ -714,7 +714,7 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
      * @access     public
      * @author     Wolfram Kriesing <wk@visionp.de>
      * @param      mixed   integer/string - the value of the column that shall be removed
-     *                       array   - multiple columns that shall be matched, the second parameter will be ommited
+     *                       array   - multiple columns that shall be matched, the second parameter will be ignored
      * @param      string  the column to match the data against, only if $data is not an array
      * @return     boolean
      */
@@ -905,7 +905,7 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
     }
 
     // }}}
-    // {{{ addWhere()
+    // {{{ addWhereSearch()
 
     /**
      * add a where-like clause which works like a search for the given string
@@ -923,8 +923,8 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
      */
     function addWhereSearch($column, $string, $condition='AND')
     {
-        // if the column doesnt contain a tablename use the current table name in case it is a defined column
-        // to prevent ambigious rows
+        // if the column doesn't contain a tablename use the current table name
+        // in case it is a defined column to prevent ambiguous rows
         if (strpos($column, '.') === false) {
             $meta = $this->metadata();
             if (isset($meta[$column])) {
@@ -1028,7 +1028,7 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
 
     /**
      * Extend the current having clause. This is very useful, when you are building
-     * this clause from different places and dont want to overwrite the currently
+     * this clause from different places and don't want to overwrite the currently
      * set having clause, but extend it.
      *
      * @param string this is a having clause, i.e. 'column' or 'table.column' or 'MAX(column)'
