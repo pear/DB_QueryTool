@@ -612,7 +612,6 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
     {
         // if no primary col is given, get next sequence value
         if (empty($newData[$this->primaryCol])) {
-            //echo $this->sequenceName;
             if ($this->primaryCol) {    // do only use the sequence if a primary column is given
                                         // otherwise the data are written as given
                 $id = $this->db->nextId($this->sequenceName);
