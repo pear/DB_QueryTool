@@ -702,7 +702,7 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
     *   @param      string  the condition for how to concatenate the new where clause
     *                       to the existing one
     */
-    function addWhere( $where , $condition='AND' )
+    function addWhere($where ,$condition='AND' )
     {
         if ($this->getWhere()) {
             $where = $this->getWhere().' '.$condition.' '.$where;
@@ -724,7 +724,7 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
     *   @param      string  the column to search in for
     *   @param      string  the string to search for
     */
-    function addWhereSearch( $column , $string )
+    function addWhereSearch($column ,$string ,$condition='AND')
     {                         
         // if the column doesnt contain a tablename use the current table name
         // to prevent ambigious rows
@@ -733,7 +733,7 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
         }
 
         $string = $this->db->quote('%'.str_replace(' ','%',strtolower($string)).'%');
-        $this->addWhere( "LOWER($column) LIKE $string" );
+        $this->addWhere("LOWER($column) LIKE $string", $condition);
     }
 
     /**
