@@ -36,7 +36,7 @@ SQL-Statements and execute them.
         <version>0.10.2</version>
         <license>PHP</license>
         <state>stable</state>
-        <date>2004-07-31</date>
+        <date>2004-08-17</date>
         <notes>
 * allow class usage without instanciating a db object
   (to use the class as a simple query builder)
@@ -44,6 +44,8 @@ SQL-Statements and execute them.
   (bug #1614)
 * allow reuse of existing connection (bug #2007),
   thanks to eln at gmx dot net
+* extra empty condition in addLeftJoin() if no left join was previously set
+  (bug #2133), thanks to julien dot huang at netavenir dot fr
         </notes>
         <filelist>
             <dir name="/" baseinstalldir="DB">
