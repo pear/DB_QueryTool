@@ -73,16 +73,20 @@ class DB_QueryTool_EasyJoin extends DB_QueryTool_Query
                 $possibleTableShortName = preg_replace( $this->_tableNamePreg, '' ,$aCol );
                 $possibleColumnName = preg_replace( $this->_columnNamePreg, '' ,$aCol );
 //print "$aTable.$aCol .... possibleTableShortName=$possibleTableShortName .... possibleColumnName=$possibleColumnName<br>";
-                if ( isset($shortNameIndexed[$possibleTableShortName]) ) {
+                if (isset($shortNameIndexed[$possibleTableShortName])) {
                     // are the tables given in the tableSpec?
-                    if( !$shortNameIndexed[$possibleTableShortName]['name'] ||
-                        !$nameIndexed[$aTable]['name'] ) {
+                    if (!$shortNameIndexed[$possibleTableShortName]['name'] ||
+                        !$nameIndexed[$aTable]['name']) {
                         // its an error of the developer, so log the error, dont show it to the end user
                         $this->_errorLog("autoJoin-ERROR: '$aTable' is not given in the tableSpec!<br>");
                     } else {
-                        $joinTables[] = $nameIndexed[$aTable]['name'];
-                        $joinTables[] = $shortNameIndexed[$possibleTableShortName]['name'];
-                        $joinConditions[] = $shortNameIndexed[$possibleTableShortName]['name'].".$possibleColumnName=$aTable.$aCol";
+                        // do only join different table.col combination, 
+                        // we shoul not join stuff like 'question.question=question.question' this would be quite stupid, but it used to be :-(
+                        if ($shortNameIndexed[$possibleTableShortName]['name'].$possibleColumnName!=$aTable.$aCol) {
+                            $joinTables[] = $nameIndexed[$aTable]['name'];
+                            $joinTables[] = $shortNameIndexed[$possibleTableShortName]['name'];
+                            $joinConditions[] = $shortNameIndexed[$possibleTableShortName]['name'].".$possibleColumnName=$aTable.$aCol";
+                        }
                     }
                 }
             }
