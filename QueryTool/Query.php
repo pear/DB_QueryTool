@@ -661,9 +661,13 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
         return true;
     }
 
-    function setLimit($from,$count)
+    function setLimit($from=0,$count=0)
     {
-        $this->_limit = array($from,$count);
+        if ($from==0 && $count==0) {
+            $this->_limit = array();
+        } else {
+            $this->_limit = array($from,$count);
+        }
     }
     
     function getLimit()
