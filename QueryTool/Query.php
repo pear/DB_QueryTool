@@ -1104,7 +1104,11 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
         }
         $this->_join[$type]['table'] = array_merge($this->_join[$type]['table'], $table);
         if (!is_array($this->_join[$type]['where'])) {
-            settype($this->_join[$type]['where'], 'array');
+            if (!empty($this->_join[$type]['where'])) {
+                settype($this->_join[$type]['where'], 'array');
+            } else {
+                $this->_join[$type]['where'] = array();
+            }
         }
         $this->_join[$type]['where'][] = $where;
     }
