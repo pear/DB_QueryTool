@@ -18,6 +18,7 @@
 // $Id$
 //
 
+require_once 'PEAR.php';
 require_once 'DB.php';
 
 
@@ -40,7 +41,12 @@ class DB_QueryTool_Query
     /**
     *   var string  the current table the class works on
     */
-    var $table      = '';
+    var $table      = '';   
+    
+    /**
+    *   var string  the name of the sequence for this table
+    */                                                     
+    var $sequenceName = null;
 
     /**
     *   var object  the db-object, a PEAR::Db-object instance
@@ -91,7 +97,7 @@ class DB_QueryTool_Query
     *   the rows that shall be selected
     */
     var $_select = '*';
-    
+
     var $_dontSelect = '';
 
     /**
@@ -99,8 +105,8 @@ class DB_QueryTool_Query
     *           i.e. 'raw' means no quoting before saving/updating data
     *   @access private
     */
-    var $options = array(   'raw'       =>  false,
-                            'verbose'   =>  true        // set this to false in a productive environment
+    var $options = array(   'raw'       =>  false
+                            ,'verbose'   =>  true       // set this to false in a productive environment
                                                         // it will produce error-logs if set to true
                         );
 
@@ -139,14 +145,50 @@ class DB_QueryTool_Query
     *   @author     Wolfram Kriesing <wk@visionp.de>
     *   @param      object  db-object
     */
-    function __construct( $dsn )
-    {
-        $this->_db = DB::connect($dsn);
-        $this->_db->setFetchMode(DB_FETCHMODE_ASSOC);
+    function __construct( $dsn , $options=array() )
+    {        
+        if (!isset($options['autoConnect'])) {
+            $autoConnect = true;
+        }
+        if (isset($options['errorCallback'])) {
+            $this->setErrorCallback($options['errorCallback']);
+        }
+        if (isset($options['errorSetCallback'])) {
+            $this->setErrorSetCallback($options['errorSetCallback']);
+        }
+        if (isset($options['errorLogCallback'])) {
+            $this->setErrorLogCallback($options['errorLogCallback']);
+        }
 
+        if ($autoConnect) {
+            $this->connect($dsn);
+        }
+/*  we would need to parse the dsn first ... i dont feel like now :-)
         // oracle has all column names in upper case
-        if( $this->_db->phptype=='oci8' )
+//FIXXXME make the class work only with upper case when we work with oracle
+        if ($this->_db->phptype=='oci8' && !$this->primaryCol) {
             $this->primaryCol = 'ID';
+        }
+*/
+        if ($this->sequenceName == null) {
+            $this->sequenceName = $this->table;
+        }
+    }
+
+
+    /**
+    *   use this method if you want to connect manually
+    *
+    */
+    function connect($dsn)
+    {
+        $res = $this->_db = DB::connect($dsn);
+        if (DB::isError($res)) {
+// FIXXME what shall we do here?
+            $this->_errorLog($res->getUserInfo());
+        } else {
+            $this->_db->setFetchMode(DB_FETCHMODE_ASSOC);
+        }
     }
 
     /**
@@ -157,9 +199,9 @@ class DB_QueryTool_Query
     *   @author     Wolfram Kriesing <wk@visionp.de>
     *   @param      object  db-object
     */
-    function DB_QueryTool_Query( $dsn )
+    function DB_QueryTool_Query( $dsn , $options )
     {
-        $this->__construct( $dsn );
+        $this->__construct( $dsn , $options );
     }
 
     /**
@@ -408,7 +450,7 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
 
         if ($this->primaryCol) {                    // do only use the sequence if a primary column is given
                                                     // otherwise the data are written as given
-            $id = $this->_db->nextId( $this->table );
+            $id = $this->_db->nextId( $this->sequenceName );
             $newData[$this->primaryCol] = $this->getOption('raw') ? $id : $this->_db->quote($id);
         }
 
@@ -445,7 +487,7 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
 
             if( $this->primaryCol )                     // do only use the sequence if a primary column is given
             {                                           // otherwise the data are written as given
-                $id = $this->_db->nextId( $this->table );
+                $id = $this->_db->nextId( $this->sequenceName );
                 $aData[$this->primaryCol] = $this->getOption('raw') ? $id : $this->_db->quote($id);
 
                 $retIds[] = $id;
@@ -1064,9 +1106,11 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
                 $res[$key]['name'] = $val['COLUMN_NAME'];
         } else {
             $res=$this->_db->tableinfo($table);
-            if( DB::isError($res) )
+            if (DB::isError($res)) {
+                $this->_errorSet($res->getUserInfo());
                 return false;
-        }           
+            }
+        }
 
 
         $ret = array();
@@ -1094,7 +1138,7 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
     function _buildFrom()
     {
         $from = $this->table;
-                                      
+
         if( $join = $this->getJoin() )   // is join set?
         {
             // handle the standard join thingy
