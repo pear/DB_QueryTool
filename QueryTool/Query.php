@@ -41,11 +41,11 @@ class DB_QueryTool_Query
     /**
     *   var string  the current table the class works on
     */
-    var $table      = '';   
-    
+    var $table      = '';
+
     /**
     *   var string  the name of the sequence for this table
-    */                                                     
+    */
     var $sequenceName = null;
 
     /**
@@ -62,7 +62,7 @@ class DB_QueryTool_Query
     *   var string  the order condition
     */
     var $_order = '';
-    
+
     /**
     *   @var    string  the having definition
     */
@@ -87,10 +87,10 @@ class DB_QueryTool_Query
     var $_group = '';
 
     /**
-    *   @var    array   the limit 
+    *   @var    array   the limit
     */
     var $_limit = array();
-    
+
     /**
     *   @var    boolean     if to use the DB_QueryTool_Result as a result or not
     */
@@ -119,7 +119,7 @@ class DB_QueryTool_Query
                             ,'verbose'   =>  true       // set this to false in a productive environment
                                                         // it will produce error-logs if set to true
                             ,'useCache' =>  false
-                            
+
                             ,'logFile'  =>  false
                         );
 
@@ -157,13 +157,13 @@ class DB_QueryTool_Query
     *   The object that contains the log-instance
     */
     var $_logObject = null;
-    
+
     /**
     *   Some internal data the logging needs
     */
     var $_logData = array();
-    
-    
+
+
     /**
     *   this is the constructor, as it will be implemented in ZE2 (php5)
     *
@@ -173,7 +173,7 @@ class DB_QueryTool_Query
     *   @param      object  db-object
     */
     function __construct( $dsn=false , $options=array() )
-    {        
+    {
         if (!isset($options['autoConnect'])) {
             $autoConnect = true;
         }
@@ -235,7 +235,7 @@ class DB_QueryTool_Query
     {
         return $this->db;
     }
-    
+
     /**
     * Setup using an existing connection.
     * this also sets the DB_FETCHMODE_ASSOC since this class
@@ -249,7 +249,7 @@ class DB_QueryTool_Query
         $this->db =& $dbh;
         $this->db->setFetchMode(DB_FETCHMODE_ASSOC);
     }
-    
+
     /**
     *   get the data of a single entry
     *   if the second parameter is only one column the result will be returned
@@ -331,12 +331,12 @@ class DB_QueryTool_Query
 
     /**
     *   this method only returns one column, so the result will be a one dimensional array
-    *   this does also mean that using setSelect() should be set to *one* column, the one you want to 
+    *   this does also mean that using setSelect() should be set to *one* column, the one you want to
     *   have returned a most common use case for this could be:
     *       $table->setSelect('id');
     *       $ids = $table->getCol();
     *   OR
-    *       $ids = $table->getCol('id');   
+    *       $ids = $table->getCol('id');
     *   so ids will ba an array with all the id's
     *
     *   @version    2003/02/25
@@ -353,7 +353,7 @@ class DB_QueryTool_Query
         $query = array();
         if ($column!=null) {
             // by using _buildSelect() i can be sure that the table name will not be ambigious
-            // i.e. in a join, where all the joined tables have a col 'id' 
+            // i.e. in a join, where all the joined tables have a col 'id'
             // _buildSelect() will put the proper table name in front in case there is none
             $query['select'] = $this->_buildSelect($column);
         }
@@ -362,7 +362,7 @@ class DB_QueryTool_Query
         }
         return $this->returnResult($this->execute($this->_buildSelectQuery($query),'getCol') );
     }
-    
+
     /**
     *   get the number of entries
     *
@@ -424,8 +424,8 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
             $ret[$aCol] = '';
         }
         return $ret;
-    }                        
-    
+    }
+
     /**
     *   this is just for BC
     *   @deprecated
@@ -438,18 +438,18 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
     /**
     * Render the current query and return it as a string.
     *
-    * @return string the current query 
+    * @return string the current query
     */
     function getQueryString()
     {
         return $this->_buildSelectQuery();
-    }    
+    }
 
     /**
     *   save data, calls either update or add
     *   if the primaryCol is given in the data this method knows that the
     *   data passed to it are meant to be updated (call 'update'), otherwise it will
-    *   call the method 'add'. 
+    *   call the method 'add'.
     *   If you dont like this behaviour simply stick with the methods 'add'
     *   and 'update' and ignore this one here.
     *   This method is very useful when you have validation checks that have to
@@ -465,7 +465,7 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
     function save( $data )
     {
         if (isset($data[$this->primaryCol]) && $data[$this->primaryCol]) {
-            return $this->update( $data );                                
+            return $this->update( $data );
         }
         return $this->add( $data );
     }
@@ -548,12 +548,12 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
     function addMultiple( $data )
     {
         if (!sizeof($data)) {
-            return false;    
+            return false;
         }
 
         // the inserted ids which will be returned or if no primaryCol is given
         // we return true by default
-        $retIds = $this->primaryCol ? array() : true;   
+        $retIds = $this->primaryCol ? array() : true;
         $allData = array();                         // each row that will be inserted
         foreach ($data as $key=>$aData) {
             unset($aData[$this->primaryCol]);       // we are adding a new data set, so be sure there is no value for the primary col
@@ -562,7 +562,7 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
 
             // do only use the sequence if a primary column is given
             // otherwise the data are written as given
-            if ($this->primaryCol) {                    
+            if ($this->primaryCol) {
                 $id = $this->db->nextId( $this->sequenceName );
                 $aData[$this->primaryCol] = $this->getOption('raw') ? $id : $this->db->quote($id);
                 $retIds[] = $id;
@@ -642,7 +642,7 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
     {
         if( $colName=='' )
             $colName = $this->primaryCol;
-        
+
         $ids = $this->_quoteArray($ids);
 
         $query = sprintf(   'DELETE FROM %s WHERE %s IN (%s)',
@@ -696,12 +696,12 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
             $this->_limit = array($from,$count);
         }
     }
-    
+
     function getLimit()
     {
         return $this->_limit;
     }
-    
+
     /**
     *   sets the where condition which is used for the current instance
     *
@@ -763,7 +763,7 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
     *   @param      string  the string to search for
     */
     function addWhereSearch($column ,$string ,$condition='AND')
-    {                         
+    {
         // if the column doesnt contain a tablename use the current table name in case it is a defined column
         // to prevent ambigious rows
         if (strpos($column,'.')===false) {
@@ -807,7 +807,7 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
             $this->_order = $order;
         }
     }
-    
+
     /**
     *   gets the order condition which is used for the current instance
     *
@@ -820,7 +820,7 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
     {
         return $this->_order;
     }
-    
+
     /**
     *   sets the having definition
     *
@@ -833,7 +833,7 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
     {
         $this->_having = $having;
     }
-    
+
     /**
     *   gets the having definition which is used for the current instance
     *
@@ -849,21 +849,21 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
 
     /**
     *   Extend the current having clause. This is very useful, when you are building
-    *   this clause from different places and dont want to overwrite the currently 
+    *   this clause from different places and dont want to overwrite the currently
     *   set having clause, but extend it.
-    *   
+    *
     *   @param string this is a having clause, i.e. 'column' or 'table.column' or 'MAX(column)'
     *   @param string the connection string, which usually stays the default, which is ',' (a comma)
     */
     function addHaving($what='*', $connectString=' AND ')
-    {                        
+    {
         if ($this->_having) {
             $this->_having = $this->_having.$connectString.$what;
         } else {
             $this->_having = $what;
         }
-    }    
-    
+    }
+
     /**
     *   sets a join-condition
     *
@@ -926,7 +926,7 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
         }
         $this->_join[$type]['where'][] = $where;
     }
-    
+
     /**
     *   see setLeftJoin for further explaination on what a left/right join is
     *   NOTE: be sure to only use either a right or a left join
@@ -998,8 +998,8 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
     */
     function addJoin( $table , $where , $type='default' )
     {
-        settype($table,'array');                   
-                                                                   
+        settype($table,'array');
+
         // init value, to prevent E_ALL-warning
         if (!isset($this->_join[$type]) || !$this->_join[$type]) {
             $this->_join[$type] = array('table'=>array(),'where'=>'');
@@ -1085,7 +1085,7 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
     *   @return     void
     */
     function addSelect( $what='*' , $connectString=',' )
-    {                        
+    {
         // if the select string is not empty add the string, otherwise simply set it
         if ($this->_select) {
             $this->_select = $this->_select.$connectString.$what;
@@ -1120,7 +1120,7 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
     function reset( $what=array() )
     {
         if (sizeof($what) == 0) {
-            $what = array('select','dontSelect','group','having','where','index','order','join','leftJoin','rightJoin');
+            $what = array('select','dontSelect','group','having','limit','where','index','order','join','leftJoin','rightJoin');
         }
 
         foreach ( $what as $aReset ) {
@@ -1233,7 +1233,7 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
             $split = explode(' ',trim($table));
             $table = $split[0];
         }
-    
+
         $full = false;
         if( $table=='' )
             $table = $this->table;
@@ -1356,7 +1356,7 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
                 }
             }
         }
-        
+
         return $from;
     }
 
@@ -1397,7 +1397,7 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
         foreach( $this->tableSpec as $aSpec )
         {
             if( sizeof($tables)==0 || in_array($aSpec['name'],$tables) )
-            {              
+            {
                 if( $shortNameIndexed )
                     $newSpec[$aSpec['shortName']] = $aSpec;
                 else
@@ -1421,7 +1421,7 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
     function _buildSelect( $what=null )
     {
         // what has preference, that means if what is set it is used
-        // this is only because the methods like 'get' pass an individually built value, which 
+        // this is only because the methods like 'get' pass an individually built value, which
         // is supposed to be used, but usually it's generically build using the 'getSelect' values
         if( !$what && $this->getSelect() )
         {
@@ -1506,7 +1506,7 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
                                         // $2 is actually just to keep the spaces, is not really
                                         // necessary, but this way the test works independent of this functionality here
                                         "$1$2{$this->table}.$aCol$3",
-                                        $what);                                                                                                                      
+                                        $what);
             }
 
             // replace all 'joinedTable.columnName' by '_joinedTable_columnName'
@@ -1627,15 +1627,15 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
         }
         return $group;
     }
-    
+
     /**
-    *   
+    *
     *
     *   @version    2003/06/05
     *   @access     public
     *   @author     Johannes Schaefer <johnschaefer@gmx.de>
-    *   @param      
-    *   @return string the having clause   
+    *   @param
+    *   @return string the having clause
     */
     function _buildHaving()
     {
@@ -1648,7 +1648,7 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
         }
         return $having;
     }
-    
+
     /**
     *
     *
@@ -1659,10 +1659,10 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
     *                       indexed by their key, which are: 'select','from','where', etc.
     *   @return
     */
-    
+
     function _buildSelectQuery( $query=array() )
     {
-/*FIXXXME finish this 
+/*FIXXXME finish this
         $cacheKey = md5(serialize(????));
         if (isset($this->_queryCache[$cacheKey])) {
             $this->_errorLog('using cached query',__LINE__);
@@ -1732,7 +1732,7 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
                             );
         return $updateString;
     }
-    
+
     /**
     *
     *
@@ -1743,7 +1743,7 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
     *   @return
     */
     function execute( $query=null , $method='getAll' )
-    {    
+    {
         $this->writeLog();
         if ($query==null) {
             $query = $this->_buildSelectQuery();
@@ -1757,8 +1757,8 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
         $this->debug($query);
         $this->writeLog('start query');
         if( DB::isError( $res = $this->db->$method($query) ) )
-        {   
-            $this->writeLog('end query (failed)');                
+        {
+            $this->writeLog('end query (failed)');
             if ($this->getOption('verbose')) {
                 $this->_errorSet( $res->getMessage() );
             } else {
@@ -1772,21 +1772,21 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
         $res = $this->_makeIndexed($res);
         return $res;
     }
-    
+
     /**
     *   Write events to the logfile.
     *
-    *   It does some additional work, like time measuring etc. to 
+    *   It does some additional work, like time measuring etc. to
     *   see some additional info
     *
     */
     function writeLog($text='START')
     {
-//its still really a quicky.... 'refactor' (nice word) that    
+//its still really a quicky.... 'refactor' (nice word) that
         if (!isset($this->options['logfile'])) {
             return;
         }
-        
+
         include_once 'Log.php';
         if (!class_exists('Log')) {
             return;
@@ -1810,7 +1810,7 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
             return;
         }
         if ($text==='end query') {
-            $text .= ' result size: '.((int)$bytesSent-(int)$this->_logData['startBytesSent']).' bytes';            
+            $text .= ' result size: '.((int)$bytesSent-(int)$this->_logData['startBytesSent']).' bytes';
             $endTime = split(" ",microtime());
             $endTime = $endTime[1]+$endTime[0];
             $text .= ', took: '.(($endTime - $this->_logData['startQueryTime'])).' seconds';
@@ -1821,15 +1821,15 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
             $this->writeLog('query building took: '.(($endTime - $this->_logData['startTime'])).' seconds');
         }
         $this->_logObject->log($text);
-    
+
         if (strpos($text,'end query')===0) {
             $endTime = split(" ",microtime());
             $endTime = $endTime[1]+$endTime[0];
             $text = 'time over all: '.(($endTime - $this->_logData['startTime'])).' seconds';
             $this->_logObject->log($text);
-        }    
+        }
     }
-    
+
     /**
     *
     *
@@ -1959,9 +1959,9 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
         if( $doit )
             require_once 'DB/QueryTool/Result.php';
     }
-                          
-    
-    
+
+
+
     /**
     *   set both callbacks
     */
@@ -2022,7 +2022,7 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
             return;
         }
 */
-                                                                               
+
         $msg = get_class($this)."::$msg ($line)";
 
         $logOrSet = ucfirst($logOrSet);
