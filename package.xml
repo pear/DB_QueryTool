@@ -27,12 +27,15 @@ SQL-Statements and execute them.
     </maintainers>
 
     <release>
-        <version>0.9.1</version>
+        <version>0.9.2</version>
         <license>PHP</license>
         <state>stable</state>
-        <date>2003-01-29</date>
+        <date>2003-02-09</date>
         <notes>
-            maintanence release, fix a lot E_ALL issues and CS issues
+            - now you can customize the sequence name
+            - testing on postgres and added example
+            - enhancing the constructor to take the error/log callbacks
+            - some cleaning up
         </notes>
 
         <filelist>
@@ -47,7 +50,8 @@ SQL-Statements and execute them.
 
                 <dir name="docs">
                     <file role="doc" name="example.php" />
-                    <file role="doc" name="example.sql" />
+                    <file role="doc" name="mysql.sql" />
+                    <file role="doc" name="pgsql.sql" />
                 </dir>
 
             </dir>
@@ -59,6 +63,15 @@ SQL-Statements and execute them.
     </release>
 
     <changelog>
+        <release>
+            <version>0.9.1</version>
+            <license>PHP</license>
+            <state>stable</state>
+            <date>2003-01-29</date>
+            <notes>
+                maintanence release, fix a lot E_ALL issues and CS issues
+            </notes>
+        </release>
         <release>
             <version>0.9</version>
             <license>PHP</license>
