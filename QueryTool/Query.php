@@ -281,9 +281,9 @@ class DB_QueryTool_Query
     function getMultiple( $ids , $column='' )
     {
         $col = $this->primaryCol;
-        if( $column )
+        if ($column) {
             $col = $column;
-
+        }
 // FIXXME if $ids has no table.col syntax and we are using joins, the table better be put in front!!!
         $ids = $this->_quoteArray($ids);
 
@@ -1736,37 +1736,37 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
             $this->_logObject = Log::factory('file',$this->options['logfile']);
         }
 
-        if ($text=='start query' || $text=='end query') {
+        if ($text==='start query' || $text==='end query') {
             $bytesSent = $this->db->getAll("SHOW STATUS like 'Bytes_sent'");
             $bytesSent = $bytesSent[0]['Value'];
         }
-        if ($text=='START') {
+        if ($text==='START') {
             $startTime = split(" ",microtime());
             $this->_logData['startTime'] = $startTime[1]+$startTime[0];
         }
-        if ($text=='start query') {
+        if ($text==='start query') {
             $this->_logData['startBytesSent'] = $bytesSent;
             $startTime = split(" ",microtime());
             $this->_logData['startQueryTime'] = $startTime[1]+$startTime[0];
             return;
         }
-        if ($text=='end query') {
+        if ($text==='end query') {
             $text .= ' result size: '.((int)$bytesSent-(int)$this->_logData['startBytesSent']).' bytes';            
             $endTime = split(" ",microtime());
             $endTime = $endTime[1]+$endTime[0];
-            $text .= ', took: '.(($endTime - $this->_logData['startQueryTime'])*100).' seconds';
+            $text .= ', took: '.(($endTime - $this->_logData['startQueryTime'])).' seconds';
         }
         if (strpos($text,'query built')===0) {
             $endTime = split(" ",microtime());
             $endTime = $endTime[1]+$endTime[0];
-            $this->writeLog('query building took: '.(($endTime - $this->_logData['startTime'])*100).' seconds');
+            $this->writeLog('query building took: '.(($endTime - $this->_logData['startTime'])).' seconds');
         }
         $this->_logObject->log($text);
     
         if (strpos($text,'end query')===0) {
             $endTime = split(" ",microtime());
             $endTime = $endTime[1]+$endTime[0];
-            $text = 'time over all: '.(($endTime - $this->_logData['startTime'])*100).' seconds';
+            $text = 'time over all: '.(($endTime - $this->_logData['startTime'])).' seconds';
             $this->writeLog($text);
             $this->_logObject->writeOut();
         }    
