@@ -631,8 +631,8 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
 
         $query = sprintf(   'INSERT INTO %s (%s) VALUES (%s)',
                             $this->table,
-                            implode(',', array_keys($newData)),
-                            implode(',', $newData)
+                            implode(', ', array_keys($newData)),
+                            implode(', ', $newData)
                        );
         return $this->execute($query, 'query') ? $id : false;
     }
@@ -661,24 +661,25 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
         $retIds = $this->primaryCol ? array() : true;
         $allData = array();     // each row that will be inserted
         foreach ($data as $key => $aData) {
-            unset($aData[$this->primaryCol]);   // we are adding a new data set, so be sure there is no value for the primary col
             $aData = $this->_checkColumns($aData, 'add');
             $aData = $this->_quoteArray($aData);
 
-            // do only use the sequence if a primary column is given
-            // otherwise the data are written as given
-            if ($this->primaryCol) {
-                $id = $this->db->nextId($this->sequenceName);
-                $aData[$this->primaryCol] = $this->getOption('raw') ? $id : $this->db->quote($id);
-                $retIds[] = $id;
+            if (empty($aData[$this->primaryCol])) {
+                if ($this->primaryCol) {    // do only use the sequence if a primary column is given
+                                            // otherwise the data are written as given
+                    $retIds[] = $id = (int)$this->db->nextId($this->sequenceName);
+                    $aData[$this->primaryCol] = $id;
+                }
+            } else {
+                $retIds[] = $aData[$this->primaryCol];
             }
-            $allData[] = '('.implode(',', $aData).')';
+            $allData[] = '('.implode(', ', $aData).')';
         }
 
         $query = sprintf(   'INSERT INTO %s (%s) VALUES %s',
                             $this->table,
-                            implode(',', array_keys($aData)), // use the keys of the last element built
-                            implode(',', $allData)
+                            implode(', ', array_keys($aData)), // use the keys of the last element built
+                            implode(', ', $allData)
                         );
         return $this->execute($query, 'query') ? $retIds : false;
     }
