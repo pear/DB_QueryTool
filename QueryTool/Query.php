@@ -1442,7 +1442,7 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
             foreach ($this->metadata() as $aCol=>$x) {
                 // handle ',id as xid,MAX(id),id' etc.
 // FIXXME do this better!!!
-                $what = preg_replace(   "/(^|,|\()(\s*)$aCol(\)|\s|,|as)/i",
+                $what = preg_replace(   "/(^|,|\()(\s*)$aCol(\)|\s|,|as|$)/i",
                                         // $2 is actually just to keep the spaces, is not really
                                         // necessary, but this way the test works independent of this functionality here
                                         "$1$2{$this->table}.$aCol$3",
@@ -1452,16 +1452,13 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
             // replace all 'joinedTable.columnName' by '_joinedTable_columnName'
             // this actually only has an effect if there was no 'table.*' for 'table'
             // if that was there, then it has already been done before
-            foreach( $this->getJoin('tables') as $aTable )
-            {
-                if( $meta = $this->metadata($aTable) )
-                {
-                    foreach( $meta as $aCol=>$x )
-                    {
+            foreach ($this->getJoin('tables') as $aTable) {
+                if ($meta = $this->metadata($aTable)) {
+                    foreach ( $meta as $aCol=>$x ) {
                         // dont put the 'AS' behind it if there is already one
-                        if( preg_match("/$aTable.$aCol\s*as/i",$what) )
+                        if (preg_match("/$aTable.$aCol\s*as/i",$what)) {
                             continue;
-
+                        }
                         // this covers a ' table.colName ' surrounded by spaces, and replaces it by ' table.colName AS _table_colName'
                         $what = preg_replace( '/\s'.$aTable.'.'.$aCol.'\s/' , " $aTable.$aCol AS _".$this->getTableShortName($aTable)."_$aCol " , $what );
                         // replace also the column names which are behind a ','
