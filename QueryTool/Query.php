@@ -524,27 +524,28 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
             return false;    
         }
 
-        $retIds = array();                          // the inserted ids which will be returned
+        // the inserted ids which will be returned or if no primaryCol is given
+        // we return true by default
+        $retIds = $this->primaryCol ? array() : true;   
         $allData = array();                         // each row that will be inserted
         foreach ($data as $aData) {
             unset($aData[$this->primaryCol]);       // we are adding a new data set, so be sure there is no value for the primary col
             $aData = $this->_checkColumns($aData,'add');
             $aData = $this->_quoteArray( $aData );
 
-            if( $this->primaryCol )                     // do only use the sequence if a primary column is given
-            {                                           // otherwise the data are written as given
+            // do only use the sequence if a primary column is given
+            // otherwise the data are written as given
+            if ($this->primaryCol) {                    
                 $id = $this->db->nextId( $this->sequenceName );
                 $aData[$this->primaryCol] = $this->getOption('raw') ? $id : $this->db->quote($id);
-
                 $retIds[] = $id;
             }
             $allData[] = '('.implode(',',$aData).')';
         }
 
-        $query = sprintf(   'INSERT INTO %s (%s,%s) VALUES %s',
+        $query = sprintf(   'INSERT INTO %s (%s) VALUES %s',
                             $this->table ,
                             implode(',',array_keys($data[0])) ,
-                            $this->primaryCol,
                             implode(',',$allData)
                         );
         return $this->execute($query,'query') ? $retIds : false;
