@@ -1637,7 +1637,7 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
     function writeLog($text='START')
     {
 //its still really a quicky.... 'refactor' (nice word) that    
-        if (!$this->options['logfile']) {
+        if (!isset($this->options['logfile'])) {
             return;
         }
         
