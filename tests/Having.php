@@ -114,7 +114,7 @@ class tests_Having extends tests_UnitTest
 
 		$user->reset();
 
-        $user->setGroup('address_id,address_id');
+        $user->setGroup('company_id,address_id');
         $user->addHaving('COUNT(address_id) > 1'); // this is not correct but must also work.
         $user->addHaving('company_id > 1');
 
