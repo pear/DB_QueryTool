@@ -1,9 +1,25 @@
 TODO
 - use varibales for the table names, to shorten the queries
   such as SELECT * FROM tableX a1, tableY a2 ...
-- implement primaryCol to be capable of using multiple columns   
-- set and option which calls autoJoin by itself if a table is not joined, but used 
+- implement primaryCol to be capable of using multiple columns
+  so to say multiple primary keys :-)
+- set and option which calls autoJoin by itself if a table is not joined, but used
   in some clause (like in where or select) use only tables from the tableSpec
+- allow multiple DB's to be used
+- allow using the short name inside a query-building method
+  and the engine will detect them and replace them with the right table name
+  such as
+    $obj->setWhere('table.id=6');
+  but actually the table is names 'appl_table', so u 'should' acutally use
+    $obj->setWhere('appl_table.id=6');
+  but since moving db's from one server to another might change the table name ... :-(
+  using the first version and letting the engine do the replacement to use the
+  real table name (using the tableSpec-prop) makes life a lot easier
+- adding a mode, which lets you refer to the tables in an easy way, using vars
+  i.e. when you join three tables: table 1 is the actual table the object works on name it 't'
+  table 2 and 3 are other joined tables use 't1' and 't2' for them
+  so allow the use of table names such as
+    $obj->setWhere('t.id=5 AND t1.id=4 AND t2.id=6');
 
 
 DONE
