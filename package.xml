@@ -33,19 +33,23 @@ SQL-Statements and execute them.
     </maintainers>
 
     <release>
-        <version>0.10.2</version>
+        <version>0.11.1</version>
         <license>PHP</license>
         <state>stable</state>
-        <date>2004-08-17</date>
+        <date>2004-10-13</date>
         <notes>
+* allow multiple left|right join clauses.
+  NB: getJoin($type) now returns
+    array(
+       $joinTable1 => $joinOnClause1,
+       $joinTable2 => $joinOnClause2,
+    )
 * allow class usage without instanciating a db object
   (to use the class as a simple query builder)
 * unset non-specific PEAR::DB options before calling connect()
   (bug #1614)
 * allow reuse of existing connection (bug #2007),
   thanks to eln at gmx dot net
-* extra empty condition in addLeftJoin() if no left join was previously set
-  (bug #2133), thanks to julien dot huang at netavenir dot fr
         </notes>
         <filelist>
             <dir name="/" baseinstalldir="DB">

@@ -1057,15 +1057,12 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
             $this->_join[$joinType] = array();
             return;
         }
-
-        settype($table, 'array');
-        $this->_join[$joinType]['table'] = $table;
 /* this causes problems if we use the order-by, since it doenst know the name to order it by ... :-)
         // replace the table names with the internal name used for the join
         // this way we can also join one table multiple times if it will be implemented one day
-        $this->_join['where'] = preg_replace('/'.$table.'/','j1',$where);
+        $this->_join[$table] = preg_replace('/'.$table.'/','j1',$where);
 */
-        $this->_join[$joinType]['where'] = $where;
+        $this->_join[$joinType][$table] = $where;
     }
 
     // }}}
@@ -1100,17 +1097,9 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
     {
         // init value, to prevent E_ALL-warning
         if (!isset($this->_join[$type]) || !$this->_join[$type]) {
-            $this->_join[$type] = array('table' => array(), 'where' => '');
+            $this->_join[$type] = array();
         }
-        $this->_join[$type]['table'] = array_merge($this->_join[$type]['table'], $table);
-        if (!is_array($this->_join[$type]['where'])) {
-            if (!empty($this->_join[$type]['where'])) {
-                settype($this->_join[$type]['where'], 'array');
-            } else {
-                $this->_join[$type]['where'] = array();
-            }
-        }
-        $this->_join[$type]['where'][] = $where;
+        $this->_join[$type][$table] = $where;
     }
 
     // }}}
@@ -1139,33 +1128,34 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
     /**
      * gets the join-condition
      *
-     * @version    2002/06/10
-     * @access     public
-     * @author     Wolfram Kriesing <wk@visionp.de>
-     * @return     array   gets the join parameters
+     * @access public
+     * @param  string  [null|''|'table'|'tables'|'right'|'left']
+     * @return array   gets the join parameters
      */
     function getJoin($what=null)
     {
         // if the user requests all the join data or if the join is empty, return it
         if (is_null($what) || empty($this->_join)) {
-            $ret = $this->_join;
+            return $this->_join;
         }
 
+        $ret = array();
         switch (strtolower($what)) {
             case 'table':
             case 'tables':
-                $ret = array();
                 foreach ($this->_join as $aJoin) {
-                    if (isset($aJoin['table']) && sizeof($aJoin['table'])) {
-                        $ret = array_merge($ret, $aJoin['table']);
+                    if (count($aJoin)) {
+                        $ret = array_merge($ret, array_keys($aJoin));
                     }
                 }
                 break;
             case 'right':   // return right-join data only
             case 'left':    // return left join data only
+                if (count($this->_join[$what])) {
+                    $ret = array_merge($ret, $this->_join[$what]);
+                }
                 break;
         }
-
         return $ret;
     }
 
@@ -1186,23 +1176,21 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
      *       addJoin(table2,'<where clause2>')
      *       // results in ...  FROM $this->table,table2 LEFT JOIN table ON <where clause1> WHERE <where clause2>
      *
-     * @version    2002/07/22
      * @access     public
-     * @author     Wolfram Kriesing <wk@visionp.de>
      * @param      string the table to be joined
      * @param      string the where clause for the join
      * @param      string the join type
      */
     function addJoin($table, $where, $type='default')
     {
-        settype($table, 'array');
-
+        if ($table == $this->table) {
+            return;  //skip. Self joins are not supported.
+        }
         // init value, to prevent E_ALL-warning
         if (!isset($this->_join[$type]) || !$this->_join[$type]) {
-            $this->_join[$type] = array('table' => array(), 'where' => '');
+            $this->_join[$type] = array();
         }
-        $this->_join[$type]['table'] = array_merge($this->_join[$type]['table'], $table);
-        $this->_join[$type]['where'] .= trim($this->_join[$type]['where']) ? ' AND '.$where : $where;
+        $this->_join[$type][$table] = $where;
     }
 
     // }}}
@@ -1576,61 +1564,50 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
     /**
      * build the from string
      *
-     * @version    2002/07/11
-     * @access     public
-     * @author     Wolfram Kriesing <wk@visionp.de>
-     * @return     string  the string added behind FROM
+     * @access     private
+     * @return     string  the string added after FROM
      */
     function _buildFrom()
     {
         $from = $this->table;
+        $join = $this->getJoin();
 
-        if ($join = $this->getJoin()) {  // is join set?
-            // handle the standard join thingy
-            if (@$join['default']) {
-                $from .= ','.implode(',',$join['default']['table']);
-            }
+        if (!$join) {  // no join set
+            return $from;
+        }
+        // handle the standard join thingy
+        if (isset($join['default']) && count($join['default'])) {
+            $from .= ','.implode(',',array_keys($join['default']));
+        }
 
-            // if we also have a left join, add the 'LEFT JOIN table ON condition'
-            // use isset to prevent E_ALL warnings
-            $joinType = isset($join['left']) && $join['left'] ? 'left' :
-                        (isset($join['right']) && $join['right'] ? 'right' : false);
-// this class can only handle one kind of join at a time ... how stupid :-)
-
-            if ($joinType) { // do we have any of the above checked join-types?
-                $joinExpr = ' '.strtoupper($joinType).' JOIN ';
-                $tables = $join[$joinType]['table'];
-                settype($tables,'array');
-                $wheres = $join[$joinType]['where'];
-                settype($wheres,'array');
-                foreach ($wheres as $k => $where) {
-                    $from .= $joinExpr.$tables[$k];
+        // handle left/right joins
+        foreach (array('left', 'right') as $joinType) {
+            if (isset($join[$joinType]) && count($join[$joinType])) {
+                foreach($join[$joinType] as $table => $condition) {
                     // replace the _TABLENAME_COLUMNNAME by TABLENAME.COLUMNNAME
                     // since oracle doesnt work with the _TABLENAME_COLUMNNAME which i think is strange
-    // FIXXME i think this should become deprecated since the setWhere should not be used like this: '_table_column' but 'table.column'
-                    $regExp = '/_('.implode('|', $join[$joinType]['table']).')_([^\s]+)/';
-                    $where = preg_replace($regExp, '$1.$2', $where);
+// FIXXME i think this should become deprecated since the setWhere should not be used like this: '_table_column' but 'table.column'
+                    $regExp = '/_('.$table.')_([^\s]+)/';
+                    $where = preg_replace($regExp, '$1.$2', $condition);
 
                     // add the table name before any column that has no table prefix
-                    // since this might cause "unambigious column" errors
+                    // since this might cause "unambiguous column" errors
                     if ($meta = $this->metadata()) {
                         foreach ($meta as $aCol=>$x) {
                             // this covers the LIKE,IN stuff: 'name LIKE "%you%"'  'id IN (2,3,4,5)'
-                            $where = preg_replace('/\s'.$aCol.'\s/', " {$this->table}.$aCol ", $where);
+                            $condition = preg_replace('/\s'.$aCol.'\s/', " {$this->table}.$aCol ", $condition);
                             // replace also the column names which are behind a '='
                             // and do this also if the aCol is at the end of the where clause
                             // that's what the $ is for
-                            $where = preg_replace('/=\s*'.$aCol.'(\s|$)/', "={$this->table}.$aCol ", $where);
+                            $condition = preg_replace('/=\s*'.$aCol.'(\s|$)/', "={$this->table}.$aCol ", $condition);
                             // replace if colName is first and possibly also if at the beginning of the where-string
-                            $where = preg_replace('/(^\s*|\s+)'.$aCol.'\s*=/', "$1{$this->table}.$aCol=", $where);
+                            $condition = preg_replace('/(^\s*|\s+)'.$aCol.'\s*=/', "$1{$this->table}.$aCol=", $condition);
                         }
                     }
-
-                    $from .= ' ON '.$where;
+                    $from .= ' '.strtoupper($joinType).' JOIN '.$table.' ON '.$condition;
                 }
             }
         }
-
         return $from;
     }
 
@@ -1817,35 +1794,36 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
     // {{{ _buildWhere()
 
     /**
+     * Build WHERE clause
      *
-     *
-     * @version    2002/07/11
-     * @access     public
-     * @author     Wolfram Kriesing <wk@visionp.de>
-     * @param      string where clause
-     * @return
+     * @param  string $where WHERE clause
+     * @return string $where WHERE clause after processing
+     * @access private
      */
     function _buildWhere($where='')
     {
-        if ($this->getWhere()) {
+        $where = trim($where);
+        $originalWhere = $this->getWhere();
+        if ($originalWhere) {
             if (!empty($where)) {
-                $where = $this->getWhere().' AND '.$where;
+                $where = $originalWhere.' AND '.$where;
             } else {
-                $where = $this->getWhere();
+                $where = $originalWhere;
             }
         }
+        $where = trim($where);
 
         if ($join = $this->getJoin()) {     // is join set?
             // only those where conditions in the default-join have to be added here
             // left-join conditions are added behind 'ON', the '_buildJoin()' does that
-            if (@strlen($join['default']['where']) > 0) {
+            if (isset($join['default']) && count($join['default'])) {
                 // we have to add this join-where clause here
                 // since at least in mysql a query like: select * from tableX JOIN tableY ON ...
                 // doesnt work, may be that's even SQL-standard...
-                if (trim($where)) {
-                    $where = $join['default']['where'].' AND '.$where;
+                if (!empty($where)) {
+                    $where = implode(' AND ', $join['default']).' AND '.$where;
                 } else {
-                    $where = $join['default']['where'];
+                    $where = implode(' AND ', $join['default']);
                 }
             }
             // replace the _TABLENAME_COLUMNNAME by TABLENAME.COLUMNNAME

@@ -25,7 +25,6 @@ require_once 'DB/QueryTool/Query.php';
 /**
  *
  * @package    DB_QueryTool
- * @version    2002/09/03
  * @access     public
  * @author     Wolfram Kriesing <wolfram@kriesing.de>
  */
@@ -94,8 +93,8 @@ class DB_QueryTool_EasyJoin extends DB_QueryTool_Query
         foreach ($tables as $aTable) {   // go through $this->table and all the given tables
             if ($metadata = $this->metadata($aTable))
             foreach ($metadata as $aCol => $x) {   // go through each row to check which might be related to $aTable
-                $possibleTableShortName = preg_replace($this->_tableNamePreg, '' , $aCol);
-                $possibleColumnName = preg_replace($this->_columnNamePreg, '' , $aCol);
+                $possibleTableShortName = preg_replace($this->_tableNamePreg,  '' , $aCol);
+                $possibleColumnName     = preg_replace($this->_columnNamePreg, '' , $aCol);
 //print "$aTable.$aCol .... possibleTableShortName=$possibleTableShortName .... possibleColumnName=$possibleColumnName<br>";
                 if (isset($shortNameIndexed[$possibleTableShortName])) {
                     // are the tables given in the tableSpec?
@@ -105,30 +104,18 @@ class DB_QueryTool_EasyJoin extends DB_QueryTool_Query
                         $this->_errorLog("autoJoin-ERROR: '$aTable' is not given in the tableSpec!<br />");
                     } else {
                         // do only join different table.col combination,
-                        // we shoul not join stuff like 'question.question=question.question' this would be quite stupid, but it used to be :-(
-                        if ($shortNameIndexed[$possibleTableShortName]['name'].$possibleColumnName != $aTable.$aCol) {
-                            $joinTables[] = $nameIndexed[$aTable]['name'];
-                            $joinTables[] = $shortNameIndexed[$possibleTableShortName]['name'];
-                            $joinConditions[] = $shortNameIndexed[$possibleTableShortName]['name'].".$possibleColumnName=$aTable.$aCol";
+                        // we should not join stuff like 'question.question=question.question' this would be quite stupid, but it used to be :-(
+                        if ($shortNameIndexed[$possibleTableShortName]['name'] != $aTable ||
+                            $possibleColumnName != $aCol
+                        ) {
+                            $where = $shortNameIndexed[$possibleTableShortName]['name'].".$possibleColumnName=$aTable.$aCol";
+                            $this->addJoin($nameIndexed[$aTable]['name'],                      $where);
+                            $this->addJoin($shortNameIndexed[$possibleTableShortName]['name'], $where);
                         }
                     }
                 }
             }
         }
-
-        if (sizeof($joinTables) && sizeof($joinConditions)) {
-            $joinTables = array_unique($joinTables);
-            foreach ($joinTables as $key => $val) {
-                if ($val == $this->table) {
-                    unset($joinTables[$key]);
-                }
-            }
-//FIXXME set tables only when they are not already in the join!!!!!
-
-//print_r($joinTables); echo '$this->addJoin('.implode(' AND ',$joinConditions).');<br />';
-            $this->addJoin($joinTables, implode(' AND ', $joinConditions));
-        }
-//print '<br /><br /><br />';
     }
 
     // }}}
