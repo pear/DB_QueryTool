@@ -11,6 +11,11 @@ $_Common_Errors = array();
 
 class Common extends DB_QueryTool
 {
+    var $tableSpec = array(
+                        array('name'    =>  TABLE_QUESTION,     'shortName' =>  TABLE_QUESTION)
+                        ,array('name'    =>  TABLE_ANSWER,      'shortName' =>  TABLE_ANSWER) 
+                        );
+
     function Common($table=null)
     {
         if ($table != null) {

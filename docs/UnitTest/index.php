@@ -12,7 +12,11 @@ require_once 'PHPUnit/GUI/HTML.php';
 define(DB_DSN,'mysql://root@localhost/test');
 define(TABLE_USER,      'QueryTool_user');
 define(TABLE_ADDRESS,   'QueryTool_address');
-$allTables = array(TABLE_USER,TABLE_ADDRESS);
+
+define(TABLE_QUESTION,  'question');
+define(TABLE_ANSWER,    'answer');
+
+$allTables = array(TABLE_USER,TABLE_ADDRESS,TABLE_QUESTION,TABLE_ANSWER);
 require_once 'sql.php'; 
 
 require_once 'Common.php';
@@ -30,6 +34,7 @@ foreach ($dbStructure[$querytool->db->phptype]['setup'] as $aQuery) {
 //
 //  run the test suite
 //
+
 require_once 'DB_QueryTool_UnitTest_Get.php';
 require_once 'DB_QueryTool_UnitTest_GetAll.php';
 require_once 'DB_QueryTool_UnitTest_GetCount.php';
@@ -40,13 +45,14 @@ $suites[] = new PHPUnit_TestSuite('DB_QueryTool_UnitTest_Get');
 $suites[] = new PHPUnit_TestSuite('DB_QueryTool_UnitTest_GetAll');
 $suites[] = new PHPUnit_TestSuite('DB_QueryTool_UnitTest_GetCount');
 $suites[] = new PHPUnit_TestSuite('DB_QueryTool_UnitTest_Where');
-//require_once 'PHPUnit/GUI/SetupDecorator.php';
-//$gui = new PHPUnit_GUI_SetupDecorator(new PHPUnit_GUI_HTML());
-//$gui->getSuitesFromDir(dirname(__FILE__),'DB_QueryTool_UnitTest_.*');
 $gui = new PHPUnit_GUI_HTML();
 $gui->addSuites($suites);
 $gui->show();
-
+/*
+require_once 'PHPUnit/GUI/SetupDecorator.php';
+$gui = new PHPUnit_GUI_SetupDecorator(new PHPUnit_GUI_HTML());
+$gui->getSuitesFromDir(dirname(__FILE__),'.*\.php',array('UnitTest.php'));
+*/
 //print_r($errors);
 
 ?>
