@@ -1260,7 +1260,7 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
         if( $join = $this->getJoin() )   // is join set?
         {
             // handle the standard join thingy
-            if ( $join['default'] ) {
+            if (@$join['default']) {
                 $from .= ','.implode(',',$join['default']['table']);
             }
 
