@@ -42,6 +42,11 @@ class DB_QueryTool_Result
     var $_data = array();
 
     /**
+     * @var array
+     */
+    var $_dataKeys = array();
+
+    /**
      * @var integer
      */
     var $_count = 0;
@@ -65,20 +70,39 @@ class DB_QueryTool_Result
      */
     function DB_QueryTool_Result($data)
     {
-        list($firstElement) = $data;
-        if (is_array($firstElement)) { // is the array a collection of rows?
-            $this->_count = sizeof($data);
+        if (!count($data)) {
+            $this->_count = 0;
         } else {
-            if (sizeof($data) > 0) {
-                $this->_count = 1;
+            list($firstElement) = $data;
+            if (is_array($firstElement)) { // is the array a collection of rows?
+                $this->_count = sizeof($data);
             } else {
-                $this->_count = 0;
+                if (sizeof($data) > 0) {
+                    $this->_count = 1;
+                } else {
+                    $this->_count = 0;
+                }
             }
         }
         $this->_data = $data;
     }
 
     // }}}
+    // {{{ numRows
+
+	/**
+	 * return the number of rows returned. This is an alias for getCount().
+	 *
+	 * @param
+	 * @access    public
+	 * @return    integer
+	 */
+	function numRows()
+	{
+	    return $this->_count;
+	}
+
+	// }}}
     // {{{ getCount()
 
     /**
@@ -109,7 +133,7 @@ class DB_QueryTool_Result
      */
     function getData($key=null)
     {
-        if(is_null($key)) {
+        if (is_null($key)) {
             return $this->_data;
         }
         if ($this->_data[$key]) {
@@ -129,8 +153,7 @@ class DB_QueryTool_Result
      *   @version    2002/07/11
      *   @access     public
      *   @author     Wolfram Kriesing <wolfram@kriesing.de>
-     *   @param
-     *   @return
+     *   @return mixed
      */
     function getFirst()
     {
@@ -146,11 +169,15 @@ class DB_QueryTool_Result
     // {{{ getNext()
 
     /**
-     * get next result set
-     * @return
+     * Get next result set. If getFirst() has never been called before,
+     * it calls that method.
+     * @return mixed
      */
     function getNext()
     {
+        if (!$this->initDone()) {
+    		return $this->getFirst();
+    	}
         if ($this->hasMore()) {
             $this->_counter++;
             return $this->_data[$this->_dataKeys[$this->_counter]];
@@ -173,6 +200,46 @@ class DB_QueryTool_Result
     }
 
     // }}}
+	// {{{ fetchRow
+
+	/**
+	 * This function emulates PEAR_DB function FetchRow
+	 * With this function DB_QueryTool can transparently replace PEAR_DB
+	 *
+	 * @todo implement fetchmode support?
+	 * @access    public
+	 * @return    void
+	 */
+	function fetchRow()
+	{
+		if ($this->hasMore()) {
+    		$arr = $this->getNext();
+    		if (!PEAR::isError($arr)) {
+    		    return $arr;
+    		}
+    	}
+    	return false;
+	}
+
+    // }}}
+	// {{{ initDone
+
+	/**
+	 * Helper method. Check if $this->_dataKeys has been initialized
+	 *
+	 * @return boolean
+	 * @access private
+	 */
+	function initDone()
+	{
+	    return (
+	        isset($this->_dataKeys) &&
+            is_array($this->_dataKeys) &&
+            count($this->_dataKeys)
+        );
+	}
+
+	// }}}
 
     #TODO
     #function getPrevious()
