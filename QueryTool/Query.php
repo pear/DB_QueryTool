@@ -172,7 +172,7 @@ class DB_QueryTool_Query
     *   @author     Wolfram Kriesing <wk@visionp.de>
     *   @param      object  db-object
     */
-    function __construct( $dsn , $options=array() )
+    function __construct( $dsn=false , $options=array() )
     {        
         if (!isset($options['autoConnect'])) {
             $autoConnect = true;
@@ -187,7 +187,7 @@ class DB_QueryTool_Query
             $this->setErrorLogCallback($options['errorLogCallback']);
         }
 
-        if ($autoConnect) {
+        if ($autoConnect && $dsn) {
             $this->connect($dsn);
         }
 /*  we would need to parse the dsn first ... i dont feel like now :-)
@@ -226,7 +226,7 @@ class DB_QueryTool_Query
     *   @author     Wolfram Kriesing <wk@visionp.de>
     *   @param      object  db-object
     */
-    function DB_QueryTool_Query( $dsn , $options=array() )
+    function DB_QueryTool_Query( $dsn=false , $options=array() )
     {
         $this->__construct( $dsn , $options );
     }
@@ -234,6 +234,20 @@ class DB_QueryTool_Query
     function &getDbInstance()
     {
         return $this->db;
+    }
+    
+    /**
+    * Setup using an existing connection.
+    * this also sets the DB_FETCHMODE_ASSOC since this class
+    * needs this to be set!
+    *
+    * @param object a reference to an existing DB-object
+    * @return void
+    */
+    function setDbInstance( &$dbh)
+    {
+        $this->db =& $dbh;
+        $this->db->setFetchMode(DB_FETCHMODE_ASSOC);
     }
     
     /**
@@ -420,6 +434,16 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
     {
         $this->getDefaultValues();
     }
+
+    /**
+    * Render the current query and return it as a string.
+    *
+    * @return string the current query 
+    */
+    function getQueryString()
+    {
+        return $this->_buildSelectQuery();
+    }    
 
     /**
     *   save data, calls either update or add
