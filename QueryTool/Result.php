@@ -96,7 +96,7 @@ class DB_QueryTool_Result
         if( $this->_data[$key] )
             return $this->_data[$key];
         else
-            return new PEAR_Error("there is no element with the key '$numElement'!");
+            return new PEAR_Error("there is no element with the key '$key'!");
     }
 
     /**
