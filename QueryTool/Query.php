@@ -2246,11 +2246,9 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
     // {{{ useResultObject()
 
     /**
-     *   @version    2004/04/04
-     *   @access     public
-     *   @author     Roman Dostovalov <roman.dostovalov@ctco.lv>
-     *   @param boolean
-     *   @return
+     * @author Roman Dostovalov <roman.dostovalov@ctco.lv>
+     * @param boolean
+     * @access public
      */
     function useResultObject($doit=true)
     {
