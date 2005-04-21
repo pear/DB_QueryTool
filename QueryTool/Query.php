@@ -597,14 +597,15 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
     function update($newData)
     {
         $query = array();
+        $raw = $this->getOption('raw');
         // do only set the 'where' part in $query, if a primary column is given
         // if not the default 'where' clause is used
         if (isset($newData[$this->primaryCol])) {
-            $query['where'] = $this->primaryCol.'='.$this->db->quoteSmart($newData[$this->primaryCol]);
+            $query['where'] = $this->primaryCol.'='
+                .($raw ? $newData[$this->primaryCol] : $this->db->quoteSmart($newData[$this->primaryCol]));
         }
         $newData = $this->_checkColumns($newData, 'update');
         $values = array();
-        $raw = $this->getOption('raw');
         foreach ($newData as $key => $aData) {         // quote the data
             //$values[] = "{$this->table}.$key=". ($raw ? $aData : $this->db->quote($aData));
             $values[] = "$key=". ($raw ? $aData : $this->db->quote($aData));
