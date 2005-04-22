@@ -1144,7 +1144,7 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
      * gets the join-condition
      *
      * @access public
-     * @param  string  [null|''|'table'|'tables'|'right'|'left']
+     * @param  string  [null|''|'table'|'tables'|'right'|'left'|'inner']
      * @return array   gets the join parameters
      */
     function getJoin($what=null)
@@ -1164,6 +1164,7 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
                     }
                 }
                 break;
+            case 'inner':   // return inner-join data only
             case 'right':   // return right-join data only
             case 'left':    // return left join data only
                 if (count($this->_join[$what])) {
@@ -1594,8 +1595,8 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
             $from .= ','.implode(',',array_keys($join['default']));
         }
 
-        // handle left/right joins
-        foreach (array('left', 'right') as $joinType) {
+        // handle left/right/inner joins
+        foreach (array('left', 'right', 'inner') as $joinType) {
             if (isset($join[$joinType]) && count($join[$joinType])) {
                 foreach($join[$joinType] as $table => $condition) {
                     // replace the _TABLENAME_COLUMNNAME by TABLENAME.COLUMNNAME
