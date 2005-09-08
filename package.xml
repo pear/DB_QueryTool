@@ -36,11 +36,12 @@ SQL-Statements and execute them.
         <version>1.0.1</version>
         <license>PHP</license>
         <state>stable</state>
-        <date>2005-04-22</date>
+        <date>2005-09-07</date>
         <notes>
 * fixed req #3842: added support for INNER JOINs
 * fixed bug #3902, now non-integer primaryCol are supported
 * fixed bug #4189: update() quoted the PK even if the "raw" option was set
+* fixed pass-by-reference error with PHP 5.1 (thanks to Dmitry Shirokov)
         </notes>
         <filelist>
           <dir name="/" baseinstalldir="DB">
@@ -109,11 +110,12 @@ SQL-Statements and execute them.
         <version>1.0.1</version>
         <license>PHP</license>
         <state>stable</state>
-        <date>2005-04-22</date>
+        <date>2005-09-07</date>
         <notes>
 * fixed req #3842: added support for INNER JOINs
 * fixed bug #3902, now non-integer primaryCol are supported
 * fixed bug #4189: update() quoted the PK even if the "raw" option was set
+* fixed pass-by-reference error with PHP 5.1 (thanks to Dmitry Shirokov)
         </notes>
       </release>
       <release>
