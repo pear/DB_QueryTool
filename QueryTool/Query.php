@@ -373,9 +373,9 @@ class DB_QueryTool_Query
      * @version    2002/04/23
      * @access     public
      * @author     Wolfram Kriesing <wk@visionp.de>
-     * @param      array   this is an array of ids to retreive
+     * @param      array   this is an array of ids to retrieve
      * @param      string  the column to search in for
-     * @return     mixed   an array of the retreived data, or false in case of failure
+     * @return     mixed   an array of the retrieved data, or false in case of failure
      *                       when failing an error is set in $this->_error
      */
     function getMultiple($ids, $column='')
@@ -406,7 +406,7 @@ class DB_QueryTool_Query
      * @param      int     to start from
      * @param      int     the number of rows to show
      * @param      string  the DB-method to use, i dont know if we should leave this param here ...
-     * @return     mixed   an array of the retreived data, or false in case of failure
+     * @return     mixed   an array of the retrieved data, or false in case of failure
      *                       when failing an error is set in $this->_error
      */
     function getAll($from=0,$count=0,$method='getAll')
@@ -434,10 +434,10 @@ class DB_QueryTool_Query
      * @version    2003/02/25
      * @access     public
      * @author     Wolfram Kriesing <wk@visionp.de>
-     * @param      string  the column that shall be retreived
+     * @param      string  the column that shall be retrieved
      * @param      int     to start from
      * @param      int     the number of rows to show
-     * @return     mixed   an array of the retreived data, or false in case of failure
+     * @return     mixed   an array of the retrieved data, or false in case of failure
      *                     when failing an error is set in $this->_error
      */
     function getCol($column=null, $from=0, $count=0)
@@ -465,7 +465,7 @@ class DB_QueryTool_Query
      * @access     public
      * @author     Wolfram Kriesing <wk@visionp.de>
      * @param
-     * @return     mixed   an array of the retreived data, or false in case of failure
+     * @return     mixed   an array of the retrieved data, or false in case of failure
      *                       when failing an error is set in $this->_error
      */
     function getCount()
@@ -1167,6 +1167,7 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
             case 'inner':   // return inner-join data only
             case 'right':   // return right-join data only
             case 'left':    // return left join data only
+            default:
                 if (count($this->_join[$what])) {
                     $ret = array_merge($ret, $this->_join[$what]);
                 }
@@ -2140,7 +2141,7 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
      * @param object reference
      * @return mixed
      */
-    function returnResult(&$result)
+    function returnResult($result)
     {
         if ($this->_resultType == 'none') {
             return $result;
