@@ -33,15 +33,13 @@ SQL-Statements and execute them.
     </maintainers>
 
     <release>
-        <version>1.0.1</version>
-        <license>PHP</license>
+        <version>1.0.2</version>
+        <license>BSD</license>
         <state>stable</state>
-        <date>2005-09-07</date>
+        <date>2006-01-26</date>
         <notes>
-* fixed req #3842: added support for INNER JOINs
-* fixed bug #3902, now non-integer primaryCol are supported
-* fixed bug #4189: update() quoted the PK even if the "raw" option was set
-* fixed pass-by-reference error with PHP 5.1 (thanks to Dmitry Shirokov)
+* changed license to BSD
+* fixed bug with big integers being incorrectly trimmed
         </notes>
         <filelist>
           <dir name="/" baseinstalldir="DB">
@@ -106,6 +104,16 @@ SQL-Statements and execute them.
     </release>
 
     <changelog>
+      <release>
+        <version>1.0.2</version>
+        <license>BSD</license>
+        <state>stable</state>
+        <date>2006-01-26</date>
+        <notes>
+* changed license to BSD
+* fixed bug with big integers being incorrectly trimmed
+        </notes>
+      </release>
       <release>
         <version>1.0.1</version>
         <license>PHP</license>
