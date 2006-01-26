@@ -17,7 +17,7 @@
  * @author     Wolfram Kriesing <wk@visionp.de>
  * @author     Paolo Panto <wk@visionp.de>
  * @author     Lorenzo Alberton <l dot alberton at quipo dot it>
- * @copyright  2003-2005 Wolfram Kriesing, Paolo Panto, Lorenzo Alberton
+ * @copyright  2003-2006 Wolfram Kriesing, Paolo Panto, Lorenzo Alberton
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
  * @version    CVS: $Id$
  * @link       http://pear.php.net/package/DB_QueryTool
@@ -39,7 +39,7 @@ require_once 'DB.php';
  * @author     Wolfram Kriesing <wk@visionp.de>
  * @author     Paolo Panto <wk@visionp.de>
  * @author     Lorenzo Alberton <l dot alberton at quipo dot it>
- * @copyright  2003-2005 Wolfram Kriesing, Paolo Panto, Lorenzo Alberton
+ * @copyright  2003-2006 Wolfram Kriesing, Paolo Panto, Lorenzo Alberton
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
  * @link       http://pear.php.net/package/DB_QueryTool
  */
@@ -1458,8 +1458,9 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
                 // if the current column exists, check the length too, not to write content that is too long
                 // prevent DB-errors here
                 // do only check the data length if this field is given
-                if (isset($meta[$colName]['len']) && ($meta[$colName]['len'] != -1) &&
-                    ($oldLength=strlen($newData[$colName])) > $meta[$colName]['len']
+                if (isset($meta[$colName]['len']) && ($meta[$colName]['len'] != -1)
+                    && (($oldLength=strlen($newData[$colName])) > $meta[$colName]['len'])
+                    && !is_numeric($newData[$colName])
                 ) {
                     $this->_errorLog("_checkColumns, had to trim column '$colName' from $oldLength to ".
                                         $meta[$colName]['DATA_LENGTH'].' characters.', __LINE__);
