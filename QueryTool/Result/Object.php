@@ -93,6 +93,9 @@ class DB_QueryTool_Result_Object extends DB_QueryTool_Result
 	{
 		$arr = $this->getNext();
 		if (!PEAR::isError($arr)) {
+		    if (is_scalar($arr)) {
+                return $arr;
+            }
 		    $row = new DB_QueryTool_Result_Row($arr);
 			return $row;
 		}

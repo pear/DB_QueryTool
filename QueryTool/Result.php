@@ -239,11 +239,9 @@ class DB_QueryTool_Result
 	 */
 	function fetchRow()
 	{
-		if ($this->hasMore()) {
-    		$arr = $this->getNext();
-    		if (!PEAR::isError($arr)) {
-    		    return $arr;
-    		}
+		$arr = $this->getNext();
+    	if (!PEAR::isError($arr)) {
+    	   return $arr;
     	}
     	return false;
 	}

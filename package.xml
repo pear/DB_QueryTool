@@ -33,13 +33,13 @@ SQL-Statements and execute them.
     </maintainers>
 
     <release>
-        <version>1.0.2</version>
+        <version>1.0.3</version>
         <license>BSD</license>
         <state>stable</state>
-        <date>2006-01-26</date>
+        <date>2006-05-01</date>
         <notes>
-* changed license to BSD
-* fixed bug with big integers being incorrectly trimmed
+* fixed DB_QueryTool_Result_Object::fetchRow() when the return type is
+  a scalar value instead of an array (bug #7532)
         </notes>
         <filelist>
           <dir name="/" baseinstalldir="DB">
@@ -104,6 +104,16 @@ SQL-Statements and execute them.
     </release>
 
     <changelog>
+      <release>
+        <version>1.0.3</version>
+        <license>BSD</license>
+        <state>stable</state>
+        <date>2006-05-01</date>
+        <notes>
+* fixed DB_QueryTool_Result_Object::fetchRow() when the return type is
+  a scalar value instead of an array (bug #7532)
+        </notes>
+      </release>
       <release>
         <version>1.0.2</version>
         <license>BSD</license>
