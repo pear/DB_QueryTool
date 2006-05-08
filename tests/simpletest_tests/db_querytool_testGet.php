@@ -75,6 +75,23 @@ class TestOfDB_QueryTool_Get extends TestOfDB_QueryTool
         $this->assertEqual($newData, $this->qt->get($id));
     }
 
+    function test_GetOne() {
+        $this->qt =& new DB_QT(TABLE_USER);
+        $this->qt->table = TABLE_USER;
+        //$this->qt->primaryCol = 'id';
+
+        $newData1 = $this->_getSampleData(1);
+        $id      = $this->qt->add($newData1);
+        $this->assertTrue($id != false);
+
+        $newData2 = $this->_getSampleData(2);
+        $id      = $this->qt->add($newData2);
+        $this->assertTrue($id != false);
+
+        $this->qt->setSelect('name');
+        $this->assertEqual($newData1['name'], $this->qt->getOne());
+    }
+
     // test if column==table works, using the table TABLE_QUESTION
     function test_tableEqualsColumn() {
         unset($this->qt);
@@ -106,7 +123,7 @@ class TestOfDB_QueryTool_Get extends TestOfDB_QueryTool
 
     // test if column==table works, using the table TABLE_QUESTION
     // this fails in v0.9.3
-    // a join makes it fail!!!, the tests above are just convinience tests
+    // a join makes it fail!!!, the tests above are just convenience tests
     // they are actually meant to work !always! :-)
     function test_tableEqualsColumnJoinedGetAll() {
         $theQuestion = 'Why does this not work?';

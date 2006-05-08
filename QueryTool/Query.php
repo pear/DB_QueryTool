@@ -394,6 +394,22 @@ class DB_QueryTool_Query
     }
 
     // }}}
+    // {{{ getOne()
+
+    /**
+     * get the first value of the first row
+     *
+     * @access     public
+     * @return     mixed   (1) a scalar value in case of success
+     *                     (2) false in case of failure
+     */
+    function getOne()
+    {
+        $queryString = $this->getQueryString();
+        return $this->execute($queryString, 'getOne');
+    }
+
+    // }}}
     // {{{ getAll()
 
     /**
