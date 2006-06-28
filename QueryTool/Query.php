@@ -744,7 +744,11 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
 //FIXXME check $data if it only contains columns that really exist in the table
             $wheres = array();
             foreach ($data as $key => $val) {
-                $wheres[] = $key.'='. ($raw ? $val : $this->db->quote($val));
+                if (is_null($val)) {
+                    $wheres[] = $key .' IS NULL';
+                } else {
+                    $wheres[] = $key .'='. ($raw ? $val : $this->db->quote($val);
+                }
             }
             $whereClause = implode(' AND ',$wheres);
         } else {
@@ -754,10 +758,7 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
             $whereClause = $whereCol.'='. ($raw ? $data : $this->db->quote($data));
         }
 
-        $query = sprintf(   'DELETE FROM %s WHERE %s',
-                            $this->table,
-                            $whereClause
-                            );
+        $query = 'DELETE FROM '. $this->table .' WHERE '. $whereClause;
         return $this->execute($query, 'query') ? true : false;
 // i think this method should return the ID's that it removed, this way we could simply use the result
 // for further actions that depend on those id ... or? make stuff easier, see ignaz::imail::remove
