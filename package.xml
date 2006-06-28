@@ -36,9 +36,10 @@ SQL-Statements and execute them.
         <version>1.1.0</version>
         <license>BSD</license>
         <state>stable</state>
-        <date>2006-05-08</date>
+        <date>2006-06-28</date>
         <notes>
 * added getOne() method (request #7580)
+* added support for NULL fields in remove() (request #8056)
         </notes>
         <filelist>
           <dir name="/" baseinstalldir="DB">
@@ -107,9 +108,10 @@ SQL-Statements and execute them.
         <version>1.1.0</version>
         <license>BSD</license>
         <state>stable</state>
-        <date>2006-05-08</date>
+        <date>2006-06-28</date>
         <notes>
 * added getOne() method (request #7580)
+* added support for NULL fields in remove() (request #8056)
         </notes>
       </release>
       <release>
