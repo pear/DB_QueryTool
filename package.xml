@@ -47,7 +47,7 @@ backported most of the latest changes implemented in MDB_QueryTool:
   Only the ibase driver is affected by this change.
 * custom implementation of implode() to circumvent locale handling of floats,
   which clashes with SQL standards
-* added table and field name quoting (requests #4613, #5250, #7570)
+* added table and field name quoting (requests #4613, #5250, #7570, #9197)
 * phpdoc and CS fixes
 * added new tests
 
@@ -130,7 +130,7 @@ in favour of MDB_QueryTool.
   Only the ibase driver is affected by this change.
 * custom implementation of implode() to circumvent locale handling of floats,
   which clashes with SQL standards
-* added table and field name quoting (requests #4613, #5250, #7570)
+* added table and field name quoting (requests #4613, #5250, #7570, #9197)
 * phpdoc and CS fixes
 * added new tests
 
