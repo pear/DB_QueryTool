@@ -48,6 +48,8 @@ backported most of the latest changes implemented in MDB_QueryTool:
 * custom implementation of implode() to circumvent locale handling of floats,
   which clashes with SQL standards
 * added table and field name quoting (requests #4613, #5250, #7570, #9197)
+* fixed bug #9734, an incorrect regexp adds extraneous table names to the fields,
+  if the name of the field appears as a column name in the current table.
 * phpdoc and CS fixes
 * added new tests
 
@@ -131,6 +133,8 @@ in favour of MDB_QueryTool.
 * custom implementation of implode() to circumvent locale handling of floats,
   which clashes with SQL standards
 * added table and field name quoting (requests #4613, #5250, #7570, #9197)
+* fixed bug #9734, an incorrect regexp adds extraneous table names to the fields,
+  if the name of the field appears as a column name in the current table.
 * phpdoc and CS fixes
 * added new tests
 
