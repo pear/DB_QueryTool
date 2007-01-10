@@ -23,6 +23,7 @@ SQL-Statements and execute them.
             <name>Wolfram Kriesing</name>
             <email>wolfram@kriesing.de</email>
             <role>lead</role>
+            <inactive/>
         </maintainer>
         <maintainer>
             <user>quipo</user>
@@ -36,10 +37,21 @@ SQL-Statements and execute them.
         <version>1.1.0</version>
         <license>BSD</license>
         <state>stable</state>
-        <date>2006-06-28</date>
+        <date>2007-01-10</date>
         <notes>
+backported most of the latest changes implemented in MDB_QueryTool:
 * added getOne() method (request #7580)
 * added support for NULL fields in remove() (request #8056)
+* fixed bug #3842, using the addJoin/setJoin methods causes an "invalid token" error with ibase;
+  the joined table columns aliases are now named in this format: "t_tablename_fieldname" instead of "_tablename_fieldname".
+  Only the ibase driver is affected by this change.
+* custom implementation of implode() to circumvent locale handling of floats,
+  which clashes with SQL standards
+* phpdoc and CS fixes
+* added new tests
+
+NB: This will probably be the last release of DB_QueryTool, which is deprecated
+in favour of MDB_QueryTool.
         </notes>
         <filelist>
           <dir name="/" baseinstalldir="DB">
@@ -108,10 +120,20 @@ SQL-Statements and execute them.
         <version>1.1.0</version>
         <license>BSD</license>
         <state>stable</state>
-        <date>2006-06-28</date>
+        <date>2007-01-10</date>
         <notes>
 * added getOne() method (request #7580)
 * added support for NULL fields in remove() (request #8056)
+* fixed bug #3842, using the addJoin/setJoin methods causes an "invalid token" error with ibase;
+  the joined table columns aliases are now named in this format: "t_tablename_fieldname" instead of "_tablename_fieldname".
+  Only the ibase driver is affected by this change.
+* custom implementation of implode() to circumvent locale handling of floats,
+  which clashes with SQL standards
+* phpdoc and CS fixes
+* added new tests
+
+NB: This will probably be the last release of DB_QueryTool, which is deprecated
+in favour of MDB_QueryTool.
         </notes>
       </release>
       <release>
