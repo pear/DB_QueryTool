@@ -2007,7 +2007,9 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
                 $column = explode(' AS ', $column);
                 if (strpos($column[0], '(') !== false) {
                     //do not quote function calls, COUNT(), etc.
-                    $column[1] = $this->db->quoteIdentifier($column[1]);
+                    if ($this->db->phptype != 'ibase') {
+                        $column[1] = $this->db->quoteIdentifier($column[1]);
+                    }
                 } elseif (strpos($column[0], '.') !== false) {
                     $column[0] = explode('.', $column[0]);
                     if ($this->db->phptype != 'ibase') {
