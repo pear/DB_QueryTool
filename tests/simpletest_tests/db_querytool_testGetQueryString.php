@@ -73,6 +73,38 @@ class TestOfDB_QueryTool_GetQueryString extends TestOfDB_QueryTool
         }
         $this->assertEqual($expected, $this->qt->getQueryString());
     }
+    function test_prependTableName() {
+        $this->qt =& new DB_QT(TABLE_QUESTION);
+        $table = TABLE_QUESTION;
+
+        $fieldlist = 'question';
+        $fieldlist = $this->qt->_prependTableName($fieldlist, TABLE_QUESTION);
+        $this->assertEqual($fieldlist, TABLE_QUESTION.'.question');
+
+        $fieldlist = 'fieldname1,question';
+        $fieldlist = $this->qt->_prependTableName($fieldlist, TABLE_QUESTION);
+        $this->assertEqual($fieldlist, 'fieldname1,'.TABLE_QUESTION.'.question');
+
+        $fieldlist = 'fieldname1,'.TABLE_QUESTION.'.question,fieldname2';
+        $fieldlist = $this->qt->_prependTableName($fieldlist, TABLE_QUESTION);
+        $this->assertEqual($fieldlist, 'fieldname1,'.TABLE_QUESTION.'.question,fieldname2');
+    }
+    function test_quoteIdentifierWithFunctions() {
+        $this->qt =& new DB_QT(TABLE_QUESTION);
+        $table = TABLE_QUESTION;
+
+        $this->qt->setSelect('question, COUNT(DISTINCT id) AS num_questions');
+        $this->qt->setGroup('question');
+
+        if (DB_TYPE == 'ibase') {
+            $expected = 'SELECT question,COUNT(DISTINCT id) AS num_questions FROM question  GROUP BY question.question';
+        } else {
+            $expected = 'SELECT '.$this->qt->db->quoteIdentifier('question')
+                       .',COUNT(DISTINCT id) AS '.$this->qt->db->quoteIdentifier('num_questions')
+                       .' FROM question  GROUP BY question.question';
+        }
+        $this->assertEqual($expected, $this->qt->getQueryString());
+    }
 }
 
 if (!defined('TEST_RUNNING')) {
