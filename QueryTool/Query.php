@@ -369,7 +369,8 @@ class DB_QueryTool_Query
         // build the query directly
         // if $column is '' then _buildSelect selects '*' anyway, so that's the same behaviour as before
         $query['select'] = $this->_buildSelect($column);
-        $query['where']  = $this->_buildWhere($this->table.'.'.$this->primaryCol.'='.$this->db->quoteSmart($id));
+        $query['where']  = $this->_buildWhere(
+            $this->_quoteIdentifier($this->table).'.'.$this->_quoteIdentifier($this->primaryCol) .'='. $this->_quote($id));
         $queryString = $this->_buildSelectQuery($query);
 
         return $this->returnResult($this->execute($queryString, $getMethod));
@@ -441,6 +442,7 @@ class DB_QueryTool_Query
         $query = array();
         if ($count) {
             $query = array('limit' => array($from, $count));
+//echo '<br/>'.$this->_buildSelectQuery($query).'<br/>';
         }
         return $this->returnResult($this->execute($this->_buildSelectQuery($query), $method));
     }
@@ -667,22 +669,13 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
         // do only set the 'where' part in $query, if a primary column is given
         // if not the default 'where' clause is used
         if (isset($newData[$this->primaryCol])) {
-            if ($raw) {
-                $query['where'] = $this->primaryCol .'='. $newData[$this->primaryCol];
-            } else {
-                $query['where'] = $this->_quoteIdentifier($this->primaryCol) . '=' . $this->db->quoteSmart($newData[$this->primaryCol]);
-            }
+            $query['where'] = $this->_quoteIdentifier($this->primaryCol) . '=' . $this->_quote($newData[$this->primaryCol]);
         }
         $newData = $this->_checkColumns($newData, 'update');
         $values = array();
         foreach ($newData as $key => $aData) {         // quote the data
-            //$values[] = "{$this->table}.$key=". ($raw ? $aData : $this->db->quote($aData));
-            $values[] = "$key=". ($raw ? $aData : $this->db->quote($aData));
-            if ($raw) {
-                $values[] = $key .'='. $aData;
-            } else {
-                $values[] = $this->_quoteIdentifier($key) . '=' . $this->quote($aData);
-            }
+            //$values[] = "{$this->table}.$key=". $this->_quote($aData);
+            $values[] = $this->_quoteIdentifier($key) . '=' . $this->_quote($aData);
         }
 
         $query['set'] = $this->_localeSafeImplode(',', $values);
@@ -740,6 +733,7 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
             implode(', ', array_keys($newData)),
             $this->_localeSafeImplode(', ', $newData)
         );
+        //echo $query;
         return $this->execute($query, 'query') ? $id : false;
     }
 
@@ -843,13 +837,9 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
             $wheres = array();
             foreach ($data as $key => $val) {
                 if (is_null($val)) {
-                    $wheres[] = ($raw ? $key : $this->_quoteIdentifier($key)) .' IS NULL';
+                    $wheres[] = $this->_quoteIdentifier($key) .' IS NULL';
                 } else {
-                    if ($raw) {
-                        $wheres[] = $key .'='. $val;
-                    } else {
-                        $wheres[] = $this->_quoteIdentifier($key) .'='. $this->db->quote($val);
-                    }
+                    $wheres[] = $this->_quoteIdentifier($key) .'='. $this->_quote($val);
                 }
             }
             $whereClause = implode(' AND ', $wheres);
@@ -857,11 +847,7 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
             if (empty($whereCol)) {
                 $whereCol = $this->primaryCol;
             }
-            if ($raw) {
-                $whereClause = $whereCol .'='. $data;
-            } else {
-                $whereClause = $this->_quoteIdentifier($whereCol) .'='. $this->db->quote($data);
-            }
+            $whereClause = $this->_quoteIdentifier($whereCol) .'='. $this->_quote($data);
         }
 
         $query = 'DELETE FROM '. $this->table .' WHERE '. $whereClause;
@@ -1065,7 +1051,7 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
             }
         }
 
-        $string = $this->db->quote('%'.str_replace(' ', '%', strtolower($string)).'%');
+        $string = $this->db->quoteSmart('%'.str_replace(' ', '%', strtolower($string)).'%');
         $this->addWhere("LOWER($column) LIKE $string", $condition);
     }
 
@@ -1583,10 +1569,32 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
     {
         if (!$this->getOption('raw')) {
             foreach ($data as $key => $val) {
-                $data[$key] = $this->db->quote($val);
+                $data[$key] = $this->db->quoteSmart($val);
             }
         }
         return $data;
+    }
+
+    // }}}
+    // {{{ _quote()
+
+    /**
+     * quotes all the data in this array|string if we are not in raw mode!
+     * @param mixed $data
+     * @return mixed
+     * @access private
+     */
+    function _quote($data)
+    {
+        if ($this->getOption('raw')) {
+            return $data;
+        }
+        switch (gettype($data)) {
+            case 'array':
+                return $this->_quoteArray($data);
+            default:
+                return $this->db->quoteSmart($data);
+        }
     }
 
     // }}}
@@ -1714,6 +1722,8 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
             }
             $res = $this->db->tableinfo($table);
             if (PEAR::isError($res)) {
+            //var_dump($res);
+            //echo '<div style="border:1px solid red; background: yellow">'.$res->getUserInfo().'<br/><pre>'; print_r(debug_backtrace()); echo '</pre></div>';
                 $this->_errorSet($res->getUserInfo());
                 return false;
             }
@@ -1905,6 +1915,7 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
             preg_match_all('/([^,]*)(\.)?\*\s*(,|$)/U', $what, $res);
 //echo '<pre>'; print "$what ... "; print_r($res); print "</pre><hr />";
             $selectAllFromTables = array_unique($res[1]); // make the table names unique, so we do it all just once for each table
+//echo '<pre>'; print "$what ... "; print_r($selectAllFromTables); print "</pre><hr />";
             $tables = array();
             if (in_array('', $selectAllFromTables)) { // was there a '*' ?
                 // get all the tables that we need to process, depending on if joined or not
@@ -1914,8 +1925,11 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
             } else {
                 $tables = $selectAllFromTables;
             }
+//echo '<br />'; print_r($tables);
             $cols = array();
             foreach ($tables as $aTable) {      // go thru all the tables and get all columns for each, and handle 'dontSelect'
+//echo '<br />$this->metadata('.$aTable.')';
+//echo '<br /><pre>';var_dump($this->metadata($aTable)); echo '</pre>';
                 if ($meta = $this->metadata($aTable)) {
                     foreach ($meta as $colName => $x) {
                         // handle the dontSelect's
@@ -2201,6 +2215,7 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
         if (!$isCalledViaGetCount && !empty($limit[1])) {
             // is there a count set?
             $queryString = $this->db->modifyLimitQuery($queryString, $limit[0], $limit[1]);
+//echo '<pre>'; var_dump($queryString); echo '</pre>';
             if (PEAR::isError($queryString)) {
                 $this->_errorSet('DB_QueryTool::db::modifyLimitQuery failed '.$queryString->getMessage());
                 $this->_errorLog($queryString->getUserInfo());
