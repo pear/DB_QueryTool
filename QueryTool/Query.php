@@ -1717,9 +1717,40 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
         return $ret;
     }
 
+    // }}}
+
     //
     //  methods for building the query
     //
+
+    // {{{ _prependTableName()
+
+    /**
+     * replace 'column' by 'table.column' if the column is defined for the table
+     *
+     * @param string $fieldlist
+     * @param string $table table name
+     * @return string $fieldlist
+     * @see http://pear.php.net/bugs/bug.php?id=9734
+     * @access private
+     */
+    function _prependTableName($fieldlist, $table) {
+        if (!$meta = $this->metadata($table)) {
+            return $fieldlist;
+        }
+        $fields = explode(',', $fieldlist);
+        foreach (array_keys($meta) as $column) {
+            //$fieldlist = preg_replace('/(^\s*|\s+|,)'.$column.'\s*(,)?/U', "$1{$table}.$column$2", $fieldlist);
+            $pattern = '/^'.$column.'\b.*/U';
+            foreach (array_keys($fields) as $k) {
+                $fields[$k] = trim($fields[$k]);
+                if (!strpos($fields[$k], '.') && preg_match($pattern, $fields[$k])) {
+                    $fields[$k] = $table.'.'.$fields[$k];
+                }
+            }
+        }
+        return implode(',', $fields);
+    }
 
     // }}}
     // {{{ _buildFrom()
@@ -2075,65 +2106,48 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
     // {{{ _buildOrder()
 
     /**
+     * Build the "ORDER BY" clause, replace 'column' by 'table.column'.
      *
-     * @version    2002/07/11
-     * @author     Wolfram Kriesing <wk@visionp.de>
-     * @return string $order
+     * @version 2007/01/10
+     * @author  Lorenzo Alberton <l.alberton@quipo.it>
+     * @return string the rendered "ORDER BY" clause
      * @access private
      */
     function _buildOrder()
     {
-        $order = $this->getOrder();
-        // replace 'column' by '$this->table.column' if the column is defined for $this->table
-        if ($meta = $this->metadata()) {
-            foreach ($meta as $aCol=>$x) {
-                $order = preg_replace('/(^\s*|\s+|,)'.$aCol.'\s*(,)?/U', "$1{$this->table}.$aCol$2", $order);
-            }
-        }
-        return $order;
+        return $this->_prependTableName($this->getOrder(), $this->table);
     }
 
     // }}}
     // {{{ _buildGroup()
 
     /**
-     *   Build the group-clause, replace 'column' by 'table.column'.
+     * Build the "GROUP BY" clause, replace 'column' by 'table.column'.
      *
-     * @return string the rendered group clause
+     * @version 2007/01/10
+     * @author  Lorenzo Alberton <l.alberton@quipo.it>
+     * @return string the rendered "GROUP BY" clause
      * @access private
      */
     function _buildGroup()
     {
-        $group = $this->getGroup();
-        // replace 'column' by '$this->table.column' if the column is defined for $this->table
-        if ($meta = $this->metadata()) {
-            foreach ($meta as $aCol => $x) {
-                $group = preg_replace('/(^\s*|\s+|,)'.$aCol.'\s*(,)?/U', "$1{$this->table}.$aCol$2", $group);
-            }
-        }
-        return $group;
+        return $this->_prependTableName($this->getGroup(), $this->table);
     }
 
     // }}}
     // {{{ _buildHaving()
 
     /**
+     * Build the "HAVING" clause, replace 'column' by 'table.column'.
      *
-     * @version    2003/06/05
-     * @author     Johannes Schaefer <johnschaefer@gmx.de>
-     * @return string the having clause
+     * @version 2007/01/10
+     * @author  Lorenzo Alberton <l.alberton@quipo.it>
+     * @return string the rendered "HAVING" clause
      * @access private
      */
     function _buildHaving()
     {
-        $having = $this->getHaving();
-        // replace 'column' by '$this->table.column' if the column is defined for $this->table
-        if ($meta = $this->metadata()) {
-            foreach ($meta as $aCol => $x) {
-                $having = preg_replace('/(^\s*|\s+|,)'.$aCol.'\s*(,)?/U',"$1{$this->table}.$aCol$2",$having);
-            }
-        }
-        return $having;
+        return $this->_prependTableName($this->getHaving(), $this->table);
     }
 
     // }}}
