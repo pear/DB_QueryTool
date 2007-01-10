@@ -670,11 +670,7 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
             if ($raw) {
                 $query['where'] = $this->primaryCol .'='. $newData[$this->primaryCol];
             } else {
-                if ($this->db->phptype != 'ibase') {
-                    $query['where'] = $this->db->quoteIdentifier($this->primaryCol) . '=' . $this->db->quoteSmart($newData[$this->primaryCol]);
-                } else {
-                    $query['where'] = $this->primaryCol . '=' . $this->db->quoteSmart($newData[$this->primaryCol]);
-                }
+                $query['where'] = $this->_quoteIdentifier($this->primaryCol) . '=' . $this->db->quoteSmart($newData[$this->primaryCol]);
             }
         }
         $newData = $this->_checkColumns($newData, 'update');
@@ -685,11 +681,7 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
             if ($raw) {
                 $values[] = $key .'='. $aData;
             } else {
-                if ($this->db->phptype != 'ibase') {
-                    $values[] = $this->db->quoteIdentifier($key) . '=' . $this->quote($aData);
-                } else {
-                    $values[] = $key . '=' . $this->quote($aData);
-                }
+                $values[] = $this->_quoteIdentifier($key) . '=' . $this->quote($aData);
             }
         }
 
@@ -735,14 +727,12 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
         $newData = $this->_quoteArray($newData);
         
         //quoting the columns
-        if ($this->db->phptype != 'ibase') {
-            $tmpData = array();
-            foreach ($newData as $key=>$val) {
-                $tmpData[$this->db->quoteIdentifier($key)] = $val;
-            }
-            $newData = $tmpData;
-            unset($tmpData);
+        $tmpData = array();
+        foreach ($newData as $key=>$val) {
+            $tmpData[$this->_quoteIdentifier($key)] = $val;
         }
+        $newData = $tmpData;
+        unset($tmpData);
 
         $query = sprintf(
             'INSERT INTO %s (%s) VALUES (%s)',
@@ -798,7 +788,7 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
             //quoting the columns
             $tmpData = array();
             foreach ($aData as $key=>$val) {
-                $tmpData[$this->db->quoteIdentifier($key)] = $val;
+                $tmpData[$this->_quoteIdentifier($key)] = $val;
             }
             $newData = $tmpData;
             unset($tmpData);
@@ -853,12 +843,12 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
             $wheres = array();
             foreach ($data as $key => $val) {
                 if (is_null($val)) {
-                    $wheres[] = ($raw ? $key : $this->db->quoteIdentifier($key)) .' IS NULL';
+                    $wheres[] = ($raw ? $key : $this->_quoteIdentifier($key)) .' IS NULL';
                 } else {
                     if ($raw) {
                         $wheres[] = $key .'='. $val;
                     } else {
-                        $wheres[] = $this->db->quoteIdentifier($key) .'='. $this->db->quote($val);
+                        $wheres[] = $this->_quoteIdentifier($key) .'='. $this->db->quote($val);
                     }
                 }
             }
@@ -870,7 +860,7 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
             if ($raw) {
                 $whereClause = $whereCol .'='. $data;
             } else {
-                $whereClause = $this->db->quoteIdentifier($whereCol) .'='. $this->db->quote($data);
+                $whereClause = $this->_quoteIdentifier($whereCol) .'='. $this->db->quote($data);
             }
         }
 
@@ -1057,11 +1047,12 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
      *     LOWER(name) LIKE "%otto%hans%"
      * so the search finds the given string
      *
-     * @version    2002/08/14
-     * @author     Wolfram Kriesing <wk@visionp.de>
-     * @param      string  the column to search in for
-     * @param      string  the string to search for
-     * @access     public
+     * @version 2002/08/14
+     * @author  Wolfram Kriesing <wk@visionp.de>
+     * @param   string  the column to search in for
+     * @param   string  the string to search for
+     * @param   string  the condition
+     * @access  public
      */
     function addWhereSearch($column, $string, $condition='AND')
     {
@@ -1561,6 +1552,25 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
     }
 
     // }}}
+    // {{{ _quoteIdentifier()
+
+    /**
+     * Quotes an identifier (table or field name). This wrapper is needed to
+     * comply with the $raw parameter and to override DB_ibase::quoteIdentifier().
+     *
+     * @param string $var
+     * @return string quoted identifier
+     * @access private
+     */
+    function _quoteIdentifier($var)
+    {
+        if (!$this->getOption('raw') && $this->db->phptype != 'ibase') {
+            return $this->db->quoteIdentifier($var);
+        }
+        return $var;
+    }
+
+    // }}}
     // {{{ _quoteArray()
 
     /**
@@ -1918,22 +1928,13 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
                         // and 'option' actually is a reserved word, at least in mysql
                         // but don't do this for ibase because it doesn't work!
                         if ($aTable == $this->table) {
-                            if ($this->db->phptype == 'ibase') {
-                                $cols[$aTable][] = $this->table. '.' .$colName . ' AS '. $colName;
-                            } else {
-                                $cols[$aTable][] = $this->table. '.' .$colName . ' AS '. $this->db->quoteIdentifier($colName);
-                            }
+                            $cols[$aTable][] = $this->table. '.' .$colName . ' AS '. $this->_quoteIdentifier($colName);
                         } else {
-                            if ($this->db->phptype == 'ibase') {
-                                //$cols[$aTable][] = $aTable. '.' .$colName . ' AS _'. $this->getTableShortName($aTable) .'_'. $colName;
-                                //with ibase, don't quote aliases,
-                                //and prepend the joined table cols alias with "t_"
-                                //because an alias starting with just "_" triggers
-                                //an "invalid token" error
-                                $cols[$aTable][] = $aTable. '.' .$colName . ' AS t_'. $this->getTableShortName($aTable) .'_'. $colName;
-                            } else {
-                                $cols[$aTable][] = $aTable. '.' .$colName . ' AS '. $this->db->quoteIdentifier('_'. $this->getTableShortName($aTable) .'_'. $colName);
-                            }
+                            //with ibase, don't quote aliases, and prepend the 
+                            //joined table cols alias with "t_" because an alias
+                            //starting with just "_" triggers an "invalid token" error
+                            $short_alias = ($this->db->phptype == 'ibase' ? 't_' : '_') . $this->getTableShortName($aTable) .'_'. $colName;
+                            $cols[$aTable][] = $aTable. '.' .$colName . ' AS '. $this->_quoteIdentifier($short_alias);
                         }
                     }
                 }
@@ -1954,7 +1955,7 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
                 foreach ($cols as $tableName => $aTable) {
                     if (is_array($aTable) && sizeof($aTable)) {
                         // replace all the 'table.*' by their select of each column
-                        $what = preg_replace('/(^|,)\s*'.$tableName.'\.\*\s*($|,)/', '$1'.implode(',',$aTable).'$2', $what);
+                        $what = preg_replace('/(^|,)\s*'.$tableName.'\.\*\s*($|,)/', '$1'.implode(',', $aTable).'$2', $what);
                     }
                 }
             }
@@ -1998,7 +1999,7 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
 
         // quotations of columns
         $columns    = explode(',', $what);
-        $identifier = substr($this->db->quoteIdentifier(''), 0, 1);
+        $identifier = substr($this->_quoteIdentifier(''), 0, 1);
         for ($i=0; $i<sizeof($columns); $i++) {
             $column = trim($columns[$i]);
             // Uppercasing "as"
@@ -2007,19 +2008,13 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
                 $column = explode(' AS ', $column);
                 if (strpos($column[0], '(') !== false) {
                     //do not quote function calls, COUNT(), etc.
-                    if ($this->db->phptype != 'ibase') {
-                        $column[1] = $this->db->quoteIdentifier($column[1]);
-                    }
+                    $column[1] = $this->_quoteIdentifier($column[1]);
                 } elseif (strpos($column[0], '.') !== false) {
                     $column[0] = explode('.', $column[0]);
-                    if ($this->db->phptype != 'ibase') {
-                        $column[0][1] = $this->db->quoteIdentifier($column[0][1]);
-                    }
+                    $column[0][1] = $this->_quoteIdentifier($column[0][1]);
                     $column[0] = implode('.', $column[0]);
                 } else {
-                    if ($this->db->phptype != 'ibase') {
-                        $column[0] = $this->db->quoteIdentifier($column[0]);
-                    }
+                    $column[0] = $this->_quoteIdentifier($column[0]);
                 }
                 $column = implode(' AS ', $column);
             } else {
@@ -2027,14 +2022,10 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
                     //do not quote function calls, COUNT(), etc.
                 } elseif (strpos($column, '.') !== false) {
                     $column = explode('.', $column);
-                    if ($this->db->phptype != 'ibase') {
-                        $column[1] = $this->db->quoteIdentifier($column[1]);
-                    }
+                    $column[1] = $this->_quoteIdentifier($column[1]);
                     $column = implode('.', $column);
                 } else {
-                    if ($this->db->phptype != 'ibase') {
-                        $column = $this->db->quoteIdentifier($column);
-                    }
+                    $column = $this->_quoteIdentifier($column);
                 }
             }
             // Clean up if a function was used in the query
