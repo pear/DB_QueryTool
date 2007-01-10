@@ -17,7 +17,7 @@
  * @author     Wolfram Kriesing <wk@visionp.de>
  * @author     Paolo Panto <wk@visionp.de>
  * @author     Lorenzo Alberton <l dot alberton at quipo dot it>
- * @copyright  2003-2006 Wolfram Kriesing, Paolo Panto, Lorenzo Alberton
+ * @copyright  2003-2007 Wolfram Kriesing, Paolo Panto, Lorenzo Alberton
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
  * @version    CVS: $Id$
  * @link       http://pear.php.net/package/DB_QueryTool
@@ -39,7 +39,7 @@ require_once 'DB.php';
  * @author     Wolfram Kriesing <wk@visionp.de>
  * @author     Paolo Panto <wk@visionp.de>
  * @author     Lorenzo Alberton <l dot alberton at quipo dot it>
- * @copyright  2003-2006 Wolfram Kriesing, Paolo Panto, Lorenzo Alberton
+ * @copyright  2003-2007 Wolfram Kriesing, Paolo Panto, Lorenzo Alberton
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
  * @link       http://pear.php.net/package/DB_QueryTool
  */
@@ -2001,11 +2001,14 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
         $identifier = substr($this->db->quoteIdentifier(''), 0, 1);
         for ($i=0; $i<sizeof($columns); $i++) {
             $column = trim($columns[$i]);
-            // Uppercasing as
+            // Uppercasing "as"
             $column = str_replace(' as ', ' AS ', $column);
             if (strpos($column, ' AS ') !== false) {
                 $column = explode(' AS ', $column);
-                if (strpos($column[0], '.') !== false) {
+                if (strpos($column[0], '(') !== false) {
+                    //do not quote function calls, COUNT(), etc.
+                    $column[1] = $this->db->quoteIdentifier($column[1]);
+                } elseif (strpos($column[0], '.') !== false) {
                     $column[0] = explode('.', $column[0]);
                     if ($this->db->phptype != 'ibase') {
                         $column[0][1] = $this->db->quoteIdentifier($column[0][1]);
@@ -2018,7 +2021,9 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
                 }
                 $column = implode(' AS ', $column);
             } else {
-                if (strpos($column, '.') !== false) {
+                if (strpos($column[0], '(') !== false) {
+                    //do not quote function calls, COUNT(), etc.
+                } elseif (strpos($column, '.') !== false) {
                     $column = explode('.', $column);
                     if ($this->db->phptype != 'ibase') {
                         $column[1] = $this->db->quoteIdentifier($column[1]);
@@ -2154,6 +2159,7 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
     // {{{ _buildSelectQuery()
 
     /**
+     * Build the "SELECT" query
      *
      * @version 2002/07/11
      * @author Wolfram Kriesing <wk@visionp.de>
@@ -2188,14 +2194,15 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
         if ($having) {
             $having = 'HAVING '.$having;
         }
-        $queryString = sprintf( 'SELECT %s FROM %s %s %s %s %s',
-                                isset($query['select']) ? $query['select'] : $this->_buildSelect(),
-                                isset($query['from']) ? $query['from'] : $this->_buildFrom(),
-                                $where,
-                                $group,
-                                $having,
-                                $order
-                                );
+        $queryString = sprintf(
+            'SELECT %s FROM %s %s %s %s %s',
+            isset($query['select']) ? $query['select'] : $this->_buildSelect(),
+            isset($query['from']) ? $query['from'] : $this->_buildFrom(),
+            $where,
+            $group,
+            $having,
+            $order
+        );
         // $query['limit'] has preference!
         $limit = isset($query['limit']) ? $query['limit'] : $this->_limit;
         if (!$isCalledViaGetCount && !empty($limit[1])) {
@@ -2233,11 +2240,12 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
             $where = 'WHERE '.$where;
         }
 
-        $updateString = sprintf('UPDATE %s SET %s %s',
-                                $this->table,
-                                $query['set'],
-                                $where
-                            );
+        $updateString = sprintf(
+            'UPDATE %s SET %s %s',
+            $this->table,
+            $query['set'],
+            $where
+        );
         return $updateString;
     }
 
