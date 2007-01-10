@@ -1765,7 +1765,7 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
             foreach (array_keys($fields) as $k) {
                 $fields[$k] = trim($fields[$k]);
                 if (!strpos($fields[$k], '.') && preg_match($pattern, $fields[$k])) {
-                    $fields[$k] = $table.'.'.$fields[$k];
+                    $fields[$k] = $this->_quoteIdentifier($table).'.'.$this->_quoteIdentifier($fields[$k]);
                 }
             }
         }
@@ -1783,7 +1783,7 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
      */
     function _buildFrom()
     {
-        $from = $this->table;
+        $this_table = $from = $this->_quoteIdentifier($this->table);
         $join = $this->getJoin();
 
         if (!$join) {  // no join set
@@ -1791,7 +1791,9 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
         }
         // handle the standard join thingy
         if (isset($join['default']) && count($join['default'])) {
-            $from .= ','.implode(',',array_keys($join['default']));
+            foreach (array_keys($join['default']) as $joined_tbl) {
+                $from .= ','.$this->_quoteIdentifier($joined_tbl);
+            }
         }
 
         // handle left/right/inner joins
@@ -1799,7 +1801,7 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
             if (isset($join[$joinType]) && count($join[$joinType])) {
                 foreach($join[$joinType] as $table => $condition) {
                     // replace the _TABLENAME_COLUMNNAME by TABLENAME.COLUMNNAME
-                    // since oracle doesnt work with the _TABLENAME_COLUMNNAME which i think is strange
+                    // since oracle doesn't work with the _TABLENAME_COLUMNNAME which i think is strange
 // FIXXME i think this should become deprecated since the setWhere should not be used like this: '_table_column' but 'table.column'
                     $regExp = '/_('.$table.')_([^\s]+)/';
                     $where = preg_replace($regExp, '$1.$2', $condition);
@@ -1807,18 +1809,18 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
                     // add the table name before any column that has no table prefix
                     // since this might cause "unambiguous column" errors
                     if ($meta = $this->metadata()) {
-                        foreach ($meta as $aCol=>$x) {
+                        foreach ($meta as $aCol => $x) {
                             // this covers the LIKE,IN stuff: 'name LIKE "%you%"'  'id IN (2,3,4,5)'
-                            $condition = preg_replace('/\s'.$aCol.'\s/', " {$this->table}.$aCol ", $condition);
+                            $condition = preg_replace('/\s'.$aCol.'\s/', " {$this_table}.$aCol ", $condition);
                             // replace also the column names which are behind a '='
                             // and do this also if the aCol is at the end of the where clause
                             // that's what the $ is for
-                            $condition = preg_replace('/=\s*'.$aCol.'(\s|$)/', "={$this->table}.$aCol ", $condition);
+                            $condition = preg_replace('/=\s*'.$aCol.'(\s|$)/', "={$this_table}.$aCol ", $condition);
                             // replace if colName is first and possibly also if at the beginning of the where-string
-                            $condition = preg_replace('/(^\s*|\s+)'.$aCol.'\s*=/', "$1{$this->table}.$aCol=", $condition);
+                            $condition = preg_replace('/(^\s*|\s+)'.$aCol.'\s*=/', "$1{$this_table}.$aCol=", $condition);
                         }
                     }
-                    $from .= ' '.strtoupper($joinType).' JOIN '.$table.' ON '.$condition;
+                    $from .= ' '.strtoupper($joinType).' JOIN '.$this->_quoteIdentifier($table).' ON '.$condition;
                 }
             }
         }
@@ -1994,7 +1996,7 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
             // if that was there, then it has already been done before
             foreach ($this->getJoin('tables') as $aTable) {
                 if ($meta = $this->metadata($aTable)) {
-                    foreach ($meta as $aCol=>$x) {
+                    foreach ($meta as $aCol => $x) {
                         // dont put the 'AS' behind it if there is already one
                         if (preg_match("/$aTable.$aCol\s*as/i",$what)) {
                             continue;
@@ -2022,9 +2024,9 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
                 $column = explode(' AS ', $column);
                 if (strpos($column[0], '(') !== false) {
                     //do not quote function calls, COUNT(), etc.
-                    $column[1] = $this->_quoteIdentifier($column[1]);
                 } elseif (strpos($column[0], '.') !== false) {
                     $column[0] = explode('.', $column[0]);
+                    $column[0][0] = $this->_quoteIdentifier($column[0][0]);
                     $column[0][1] = $this->_quoteIdentifier($column[0][1]);
                     $column[0] = implode('.', $column[0]);
                 } else {
@@ -2032,16 +2034,18 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
                 }
                 $column = implode(' AS ', $column);
             } else {
-                if (strpos($column[0], '(') !== false) {
+                if (strpos($column, '(') !== false) {
                     //do not quote function calls, COUNT(), etc.
                 } elseif (strpos($column, '.') !== false) {
                     $column = explode('.', $column);
+                    $column[0] = $this->_quoteIdentifier($column[0]);
                     $column[1] = $this->_quoteIdentifier($column[1]);
                     $column = implode('.', $column);
                 } else {
                     $column = $this->_quoteIdentifier($column);
                 }
             }
+            /*
             // Clean up if a function was used in the query
             if (substr($column, -2) == ')'.$identifier) {
                 $column = substr($column, 0, -2).$identifier.')';
@@ -2050,6 +2054,7 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
                     $column = str_replace(' '.$identifier, $identifier.' ', $column);
                 }
             }
+            */
             $columns[$i] = $column;
         }
         return implode(',', $columns);

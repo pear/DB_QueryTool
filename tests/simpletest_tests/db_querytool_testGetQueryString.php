@@ -11,24 +11,23 @@ class TestOfDB_QueryTool_GetQueryString extends TestOfDB_QueryTool
     }
     function test_selectAll() {
         $this->qt =& new DB_QT(TABLE_QUESTION);
-        if (DB_TYPE == 'ibase') {
-            $expected = 'SELECT question.id AS id,question.question AS question FROM question';
-        } else {
-            $expected = 'SELECT question.'.$this->qt->db->quoteIdentifier('id').' AS '.$this->qt->db->quoteIdentifier('id')
-                       .',question.'.$this->qt->db->quoteIdentifier('question').' AS '.$this->qt->db->quoteIdentifier('question')
-                       .' FROM question';
-        }
+        $expected = 'SELECT '.$this->qt->_quoteIdentifier(TABLE_QUESTION).'.'.$this->qt->_quoteIdentifier('id').' AS '.$this->qt->_quoteIdentifier('id')
+                   .','.$this->qt->_quoteIdentifier(TABLE_QUESTION).'.'.$this->qt->_quoteIdentifier('question').' AS '.$this->qt->_quoteIdentifier('question')
+                   .' FROM '.$this->qt->_quoteIdentifier(TABLE_QUESTION);
         $this->assertEqual($expected, $this->qt->getQueryString());
     }
     function test_selectWithWhere() {
         $this->qt =& new DB_QT(TABLE_QUESTION);
         $this->qt->setWhere('id=1');
         if (DB_TYPE == 'ibase') {
-            $expected = 'SELECT question.id AS id,question.question AS question FROM question WHERE id=1';
+            $expected = 'SELECT '.TABLE_QUESTION.'.id AS id,'
+                        .TABLE_QUESTION.'.question AS question'
+                        .' FROM '.TABLE_QUESTION
+                        .' WHERE id=1';
         } else {
-            $expected = 'SELECT question.'.$this->qt->db->quoteIdentifier('id').' AS '.$this->qt->db->quoteIdentifier('id')
-                       .',question.'.$this->qt->db->quoteIdentifier('question').' AS '.$this->qt->db->quoteIdentifier('question')
-                       .' FROM question WHERE id=1';
+            $expected = 'SELECT '.$this->qt->_quoteIdentifier(TABLE_QUESTION).'.'.$this->qt->_quoteIdentifier('id').' AS '.$this->qt->_quoteIdentifier('id')
+                       .','.$this->qt->_quoteIdentifier(TABLE_QUESTION).'.'.$this->qt->_quoteIdentifier('question').' AS '.$this->qt->_quoteIdentifier('question')
+                       .' FROM '.$this->qt->_quoteIdentifier(TABLE_QUESTION).' WHERE id=1';
         }
         $this->assertEqual($expected, $this->qt->getQueryString());
     }
@@ -38,14 +37,22 @@ class TestOfDB_QueryTool_GetQueryString extends TestOfDB_QueryTool
         $this->qt->setJoin(TABLE_ANSWER, $joinOn, 'left');
 
         if (DB_TYPE == 'ibase') {
-            $expected = 'SELECT answer.id AS t_answer_id,answer.answer AS t_answer_answer,answer.question_id AS t_answer_question_id,question.id AS id,question.question AS question FROM question LEFT JOIN answer ON question.id=answer.question_id';
+            $expected = 'SELECT '.TABLE_ANSWER.'.id AS t_'.TABLE_ANSWER.'_id,'
+                        .TABLE_ANSWER.'.answer AS t_'.TABLE_ANSWER.'_answer,'
+                        .TABLE_ANSWER.'.question_id AS t_'.TABLE_ANSWER.'_question_id,'
+                        .TABLE_QUESTION.'.id AS id,'
+                        .TABLE_QUESTION.'.question AS question'
+                        .' FROM '.TABLE_QUESTION
+                        .' LEFT JOIN '.TABLE_ANSWER.' ON '.$joinOn;
         } else {
-            $expected = 'SELECT answer.'.$this->qt->db->quoteIdentifier('id').' AS '.$this->qt->db->quoteIdentifier('_answer_id')
-                       .',answer.'.$this->qt->db->quoteIdentifier('answer').' AS '.$this->qt->db->quoteIdentifier('_answer_answer')
-                       .',answer.'.$this->qt->db->quoteIdentifier('question_id').' AS '.$this->qt->db->quoteIdentifier('_answer_question_id')
-                       .',question.'.$this->qt->db->quoteIdentifier('id').' AS '.$this->qt->db->quoteIdentifier('id')
-                       .',question.'.$this->qt->db->quoteIdentifier('question').' AS '.$this->qt->db->quoteIdentifier('question')
-                       .' FROM question LEFT JOIN answer ON question.id=answer.question_id';
+            $expected = 'SELECT '.$this->qt->_quoteIdentifier(TABLE_ANSWER).'.'.$this->qt->_quoteIdentifier('id').' AS '.$this->qt->_quoteIdentifier('_answer_id')
+                       .','.$this->qt->_quoteIdentifier(TABLE_ANSWER).'.'.$this->qt->_quoteIdentifier('answer').' AS '.$this->qt->_quoteIdentifier('_answer_answer')
+                       .','.$this->qt->_quoteIdentifier(TABLE_ANSWER).'.'.$this->qt->_quoteIdentifier('question_id').' AS '.$this->qt->_quoteIdentifier('_answer_question_id')
+                       .','.$this->qt->_quoteIdentifier(TABLE_QUESTION).'.'.$this->qt->_quoteIdentifier('id').' AS '.$this->qt->_quoteIdentifier('id')
+                       .','.$this->qt->_quoteIdentifier(TABLE_QUESTION).'.'.$this->qt->_quoteIdentifier('question').' AS '.$this->qt->_quoteIdentifier('question')
+                       .' FROM '.$this->qt->_quoteIdentifier(TABLE_QUESTION)
+                       .' LEFT JOIN '.$this->qt->_quoteIdentifier(TABLE_ANSWER)
+                       .' ON '.$joinOn;
         }
         $this->assertEqual($expected, $this->qt->getQueryString());
     }
@@ -53,24 +60,19 @@ class TestOfDB_QueryTool_GetQueryString extends TestOfDB_QueryTool
         $this->qt =& new DB_QT(TABLE_QUESTION);
         $this->qt->setWhere('id=1');
         $this->qt->setSelect('id');
-        if (DB_TYPE == 'ibase') {
-            $expected = 'SELECT id FROM question WHERE id=1';
-        } else {
-            $expected = 'SELECT '.$this->qt->db->quoteIdentifier('id').' FROM question WHERE id=1';
-        }
+        $expected = 'SELECT '.$this->qt->_quoteIdentifier('id')
+                   .' FROM '.$this->qt->_quoteIdentifier(TABLE_QUESTION)
+                   .' WHERE id=1';
         $this->assertEqual($expected, $this->qt->getQueryString());
     }
     function test_selectTwoColumns() {
         $this->qt =& new DB_QT(TABLE_QUESTION);
         $this->qt->setWhere('id=1');
         $this->qt->setSelect('id,answer');
-        if (DB_TYPE == 'ibase') {
-            $expected = 'SELECT id,answer FROM question WHERE id=1';
-        } else {
-            $expected = 'SELECT '.$this->qt->db->quoteIdentifier('id')
-                        .','.$this->qt->db->quoteIdentifier('answer')
-                        .' FROM question WHERE id=1';
-        }
+        $expected = 'SELECT '.$this->qt->_quoteIdentifier('id')
+                    .','.$this->qt->_quoteIdentifier('answer')
+                    .' FROM '.$this->qt->_quoteIdentifier(TABLE_QUESTION)
+                    .' WHERE id=1';
         $this->assertEqual($expected, $this->qt->getQueryString());
     }
     function test_prependTableName() {
@@ -78,16 +80,19 @@ class TestOfDB_QueryTool_GetQueryString extends TestOfDB_QueryTool
         $table = TABLE_QUESTION;
 
         $fieldlist = 'question';
-        $fieldlist = $this->qt->_prependTableName($fieldlist, TABLE_QUESTION);
-        $this->assertEqual($fieldlist, TABLE_QUESTION.'.question');
+        $actual = $this->qt->_prependTableName($fieldlist, TABLE_QUESTION);
+        $expected = $this->qt->_quoteIdentifier(TABLE_QUESTION).'.'.$this->qt->_quoteIdentifier('question');
+        $this->assertEqual($actual, $expected);
 
         $fieldlist = 'fieldname1,question';
-        $fieldlist = $this->qt->_prependTableName($fieldlist, TABLE_QUESTION);
-        $this->assertEqual($fieldlist, 'fieldname1,'.TABLE_QUESTION.'.question');
+        $actual = $this->qt->_prependTableName($fieldlist, TABLE_QUESTION);
+        $expected = 'fieldname1,'.$this->qt->_quoteIdentifier(TABLE_QUESTION).'.'.$this->qt->_quoteIdentifier('question');
+        $this->assertEqual($actual, $expected);
 
         $fieldlist = 'fieldname1,'.TABLE_QUESTION.'.question,fieldname2';
-        $fieldlist = $this->qt->_prependTableName($fieldlist, TABLE_QUESTION);
-        $this->assertEqual($fieldlist, 'fieldname1,'.TABLE_QUESTION.'.question,fieldname2');
+        $actual = $this->qt->_prependTableName($fieldlist, TABLE_QUESTION);
+        $expected = 'fieldname1,'.TABLE_QUESTION.'.question,fieldname2';
+        $this->assertEqual($actual, $expected);
     }
     function test_quoteIdentifierWithFunctions() {
         $this->qt =& new DB_QT(TABLE_QUESTION);
@@ -97,11 +102,13 @@ class TestOfDB_QueryTool_GetQueryString extends TestOfDB_QueryTool
         $this->qt->setGroup('question');
 
         if (DB_TYPE == 'ibase') {
-            $expected = 'SELECT question,COUNT(DISTINCT id) AS num_questions FROM question  GROUP BY question.question';
+            $expected = 'SELECT question,COUNT(DISTINCT id) AS num_questions'
+                       .' FROM '.TABLE_QUESTION.'  GROUP BY '.TABLE_QUESTION.'.question';
         } else {
-            $expected = 'SELECT '.$this->qt->db->quoteIdentifier('question')
-                       .',COUNT(DISTINCT id) AS '.$this->qt->db->quoteIdentifier('num_questions')
-                       .' FROM question  GROUP BY question.question';
+            $expected = 'SELECT '.$this->qt->_quoteIdentifier('question')
+                       .',COUNT(DISTINCT id) AS num_questions'
+                       .' FROM '.$this->qt->_quoteIdentifier(TABLE_QUESTION)
+                       .'  GROUP BY '.$this->qt->_quoteIdentifier(TABLE_QUESTION).'.'.$this->qt->_quoteIdentifier('question');
         }
         $this->assertEqual($expected, $this->qt->getQueryString());
     }
