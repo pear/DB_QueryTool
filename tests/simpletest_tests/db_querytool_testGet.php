@@ -10,34 +10,6 @@ class TestOfDB_QueryTool_Get extends TestOfDB_QueryTool
         $this->UnitTestCase($name);
     }
 
-    function setUp() {
-        $this->qt =& new DB_QueryTool(DB_DSN, $GLOBALS['DB_OPTIONS']);
-        $this->qt->table = TABLE_TRANSLATION;
-        $this->qt->removeAll();
-        $this->qt->table = TABLE_USER;
-        $this->qt->removeAll();
-        $this->qt->table = TABLE_QUESTION;
-        $this->qt->removeAll();
-        $this->qt->table = TABLE_ANSWER;
-        $this->qt->removeAll();
-        $this->qt->db->dropSequence(TABLE_USER);
-        $this->qt->db->dropSequence(TABLE_QUESTION);
-        $this->qt->db->dropSequence(TABLE_ANSWER);
-    }
-    function tearDown() {
-        $this->qt->table = TABLE_TRANSLATION;
-        $this->qt->removeAll();
-        $this->qt->table = TABLE_USER;
-        $this->qt->removeAll();
-        $this->qt->table = TABLE_QUESTION;
-        $this->qt->removeAll();
-        $this->qt->table = TABLE_ANSWER;
-        $this->qt->removeAll();
-        $this->qt->db->dropSequence(TABLE_USER);
-        $this->qt->db->dropSequence(TABLE_QUESTION);
-        $this->qt->db->dropSequence(TABLE_ANSWER);
-        unset($this->qt);
-    }
     function test_AddGet() {
         $this->qt =& new DB_QT(TABLE_USER);
         $this->qt->table = TABLE_USER;
@@ -55,6 +27,22 @@ class TestOfDB_QueryTool_Get extends TestOfDB_QueryTool
         
         $newData['id'] = $id;
         $this->assertEqual($newData, $this->qt->get($id));
+    }
+
+    function test_GetTrimmed() {
+        $this->qt = new DB_QT(TABLE_USER);
+        $this->qt->table = TABLE_USER;
+
+        $newData = $this->_getSampleData(1);
+        $newData['name'] = str_repeat($newData['name'], 10); //exceeds field size
+        $newData['address_id'] = 123456789012; //within 11 bytes - more than 11 digits
+        $id      = $this->qt->add($newData);
+        $this->assertTrue($id != false);
+
+        $newData['id'] = $id;
+        $retrieved = $this->qt->get($id);
+        $this->assertEqual($newData['name'], $retrieved['name']);
+        $this->assertEqual($newData['address_id'], $retrieved['address_id']);
     }
     
     function test_AddGetPKNotInteger() {
@@ -78,7 +66,6 @@ class TestOfDB_QueryTool_Get extends TestOfDB_QueryTool
     function test_GetOne() {
         $this->qt =& new DB_QT(TABLE_USER);
         $this->qt->table = TABLE_USER;
-        //$this->qt->primaryCol = 'id';
 
         $newData1 = $this->_getSampleData(1);
         $id      = $this->qt->add($newData1);
@@ -96,8 +83,6 @@ class TestOfDB_QueryTool_Get extends TestOfDB_QueryTool
     function test_tableEqualsColumn() {
         unset($this->qt);
         $this->qt =& new DB_QT(TABLE_QUESTION);
-        //$this->qt->table = TABLE_QUESTION;
-        
         $newData  = array(TABLE_QUESTION => 'Why does this not work?');
         $id       = $this->qt->add($newData);
         $this->assertTrue($id != false);
@@ -145,13 +130,68 @@ class TestOfDB_QueryTool_Get extends TestOfDB_QueryTool
 
         //$newData['id'] = $id;
         $data = $question->getAll();
-        $expected =  array( '_answer_id' => $aid,
-                            '_answer_answer' => $theAnswer,
-                            '_answer_question_id' => $qid,
-                            'id' => $qid,
-                            'question' => $theQuestion);
+        if (DB_TYPE == 'ibase') {
+            $expected =  array(
+                't_answer_id'          => $aid,
+                't_answer_answer'      => $theAnswer,
+                't_answer_question_id' => $qid,
+                'id'                   => $qid,
+                'question'             => $theQuestion,
+            );
+        } else {
+            $expected =  array(
+                '_answer_id'          => $aid,
+                '_answer_answer'      => $theAnswer,
+                '_answer_question_id' => $qid,
+                'id'                  => $qid,
+                'question'            => $theQuestion,
+            );
+        }
         // assertEquals doesn't sort arrays recursively, so we have to extract the data :-(
         // we can't do this:     $this->assertEquals(array($newData),$question->getAll());
+        $this->assertEqual($expected, $data[0]);
+    }
+
+    function test_innerJoin()
+    {
+        $theQuestion = 'Why does this not work?';
+        $theAnswer   = 'I dont know!';
+
+        $question = new DB_QT(TABLE_QUESTION);
+        $question->removeAll();
+
+        $newQuest = array(TABLE_QUESTION => $theQuestion);
+        $qid = $question->add($newQuest);
+
+        $answer = new DB_QT(TABLE_ANSWER);
+        $answer->removeAll();
+
+        $newAnswer = array(TABLE_QUESTION.'_id' => $qid, TABLE_ANSWER => $theAnswer);
+        $aid = $answer->add($newAnswer);
+
+        $question->setJoin(TABLE_ANSWER ,TABLE_QUESTION.'.id = '.TABLE_ANSWER.'.question_id' , 'inner');
+
+        $data = $question->getAll();
+
+        if (DB_TYPE == 'ibase') {
+            $expected =  array(
+                't_answer_id'          => $aid,
+                't_answer_answer'      => $theAnswer,
+                't_answer_question_id' => $qid,
+                'id'                   => $qid,
+                'question'             => $theQuestion,
+            );
+        } else {
+            $expected =  array(
+                '_answer_id'          => $aid,
+                '_answer_answer'      => $theAnswer,
+                '_answer_question_id' => $qid,
+                'id'                  => $qid,
+                'question'            => $theQuestion,
+            );
+        }
+        // assertEquals doesnt sort arrays recursively, so we have to extract the data :-(
+        // we cant do this:     $this->assertEquals(array($newData),$question->getAll());
         $this->assertEqual($expected, $data[0]);
     }
 
@@ -177,13 +217,22 @@ class TestOfDB_QueryTool_Get extends TestOfDB_QueryTool
         $aid = $answer->add($newAnswer);
 
         $question->autoJoin(TABLE_ANSWER);
-//        $question->setSelect('id, '.TABLE_QUESTION.' as question, '.TABLE_ANSWER.' as answer');
         $question->setSelect('MAX(id),'.TABLE_ANSWER.'.id');
-        $this->assertTrue(strpos($question->_buildSelectQuery(), 'MAX('.TABLE_QUESTION.'.id)'));
+        if (DB_TYPE == 'ibase') {
+            $expected = 'MAX('.TABLE_QUESTION.'.id)';
+        } else {
+            $expected = 'MAX('.TABLE_QUESTION.'.'.$question->db->quoteIdentifier('id').')';
+        }
+        $this->assertTrue(strpos($question->_buildSelectQuery(), $expected));
 
         // check '(question)'
         $question->setSelect('LOWER(question),'.TABLE_ANSWER.'.*');
-        $this->assertTrue(strpos($question->_buildSelectQuery(), 'LOWER('.TABLE_QUESTION.'.question)'));
+        if (DB_TYPE == 'ibase') {
+            $expected = 'LOWER('.TABLE_QUESTION.'.question)';
+        } else {
+            $expected = 'LOWER('.TABLE_QUESTION.'.'.$question->db->quoteIdentifier('question').')';
+        }
+        $this->assertTrue(strpos($question->_buildSelectQuery(), $expected));
 
         // check 'id,'
         $question->setSelect('id, '.TABLE_ANSWER.'.*');
@@ -191,11 +240,107 @@ class TestOfDB_QueryTool_Get extends TestOfDB_QueryTool
 
         // check 'id as qid'
         $question->setSelect('id as qid, '.TABLE_ANSWER.'.*');
-        $this->assertTrue(strpos($question->_buildSelectQuery(), TABLE_QUESTION.'.id as qid'));
+        if (DB_TYPE == 'ibase') {
+            $expected = TABLE_QUESTION.'.id AS qid';
+        } else {
+            $expected = TABLE_QUESTION.'.'.$question->db->quoteIdentifier('id').' AS qid';
+        }
+        $this->assertTrue(strpos($question->_buildSelectQuery(), $expected));
 
         // check 'id as qid'
         $question->setSelect('LOWER( question ), '.TABLE_ANSWER.'.*');
-        $this->assertTrue(strpos($question->_buildSelectQuery(), 'LOWER( '.TABLE_QUESTION.'.question )'));
+        if (DB_TYPE == 'ibase') {
+            $expected = 'LOWER( '.TABLE_QUESTION.'.question )';
+        } else {
+            $expected = 'LOWER( '.TABLE_QUESTION.'.'.$question->db->quoteIdentifier('question').' )';
+        }
+        $this->assertTrue(strpos($question->_buildSelectQuery(), $expected));
+    }
+
+    /**
+     * This method checks if the setJoin() method is working correctly
+     *
+     * check if stuff like MAX(id), LOWER(question), etc. will be converted to
+     *     MAX(TABLE_QUESTION.id), LOWER(TABLE_QUESTION.question)
+     * this is done for preventing ambiguous column names, that's why it only applies
+     * in joined queries ...
+     */
+    function test_setJoin()
+    {
+        $theQuestion = 'Why does this not work?';
+        $theAnswer   = 'I dont know!';
+
+        $question = new DB_QT(TABLE_QUESTION);
+        $newQuest = array(TABLE_QUESTION => $theQuestion);
+        $qid = $question->add($newQuest);
+        $this->assertTrue($qid != false);
+
+        $answer    = new DB_QT(TABLE_ANSWER);
+        $newAnswer = array(TABLE_QUESTION.'_id' => $qid, TABLE_ANSWER => $theAnswer);
+        $aid = $answer->add($newAnswer);
+        $this->assertTrue($aid != false);
+
+        $joinOn = TABLE_QUESTION.'.id='.TABLE_ANSWER.'.question_id';
+        $question->setJoin(TABLE_ANSWER, $joinOn);
+
+        if (DB_TYPE == 'ibase') {
+            $expected =  array(
+                't_answer_id'          => $aid,
+                't_answer_answer'      => $theAnswer,
+                't_answer_question_id' => $qid,
+                'id'                   => $qid,
+                'question'             => $theQuestion,
+            );
+        } else {
+            $expected =  array(
+                '_answer_id'          => $aid,
+                '_answer_answer'      => $theAnswer,
+                '_answer_question_id' => $qid,
+                'id'                  => $qid,
+                'question'            => $theQuestion,
+            );
+        }
+        $this->assertEqual($expected, $question->get($qid));
+    }
+
+    /**
+     * This method checks if the getJoin() method is working correctly
+     */
+    function test_getJoin()
+    {
+        $question = new DB_QT(TABLE_QUESTION);
+        $joinOn1 = TABLE_QUESTION.'.id='.TABLE_ANSWER.'.question_id';
+        $question->setJoin(TABLE_ANSWER, $joinOn1);
+
+        $all = array(
+            'default' => array(TABLE_ANSWER => $joinOn1),
+        );
+        $tables = array(TABLE_ANSWER);
+        $right  = array();
+        $left   = array();
+
+        $this->assertEqual($all,    $question->getJoin());
+        $this->assertEqual($tables, $question->getJoin('tables'));
+        $this->assertEqual($right,  $question->getJoin('right'));
+        $this->assertEqual($left,   $question->getJoin('left'));
+
+        //--------------------------------------------------------
+
+        $joinOn2 = TABLE_USER.'.id='.TABLE_ANSWER.'.question_id';
+        $question->setRightJoin(TABLE_USER, $joinOn2);
+
+        $all = array(
+            'default' => array(TABLE_ANSWER => $joinOn1),
+            'right'   => array(TABLE_USER   => $joinOn2),
+        );
+        $tables = array(TABLE_ANSWER, TABLE_USER);
+        $right  = array(TABLE_USER => $joinOn2);
+        $left   = array();
+
+        $this->assertEqual($all,    $question->getJoin());
+        $this->assertEqual($tables, $question->getJoin('tables'));
+        $this->assertEqual($right,  $question->getJoin('right'));
+        $this->assertEqual($left,   $question->getJoin('left'));
     }
 }
 
