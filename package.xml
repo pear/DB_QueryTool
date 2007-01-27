@@ -1,49 +1,47 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
-<!DOCTYPE package SYSTEM "../../php4/pehttp://pear.php.net/dtd/package-1.0">
-<!-- do not use the "Type" attribute here, that one is only for
-     generated package.xml files -->
-<package version="1.0">
-    <name>DB_QueryTool</name>
-    <summary>
-An OO-interface for easily retrieving and modifying data in a DB.
-    </summary>
-
-    <description>
-This package is an OO-abstraction to the SQL-Query language, it provides methods such
+<?xml version="1.0" encoding="UTF-8"?>
+<package packagerversion="1.5.0" version="2.0" xmlns="http://pear.php.net/dtd/package-2.0" xmlns:tasks="http://pear.php.net/dtd/tasks-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0
+http://pear.php.net/dtd/tasks-1.0.xsd
+http://pear.php.net/dtd/package-2.0
+http://pear.php.net/dtd/package-2.0.xsd">
+ <name>DB_QueryTool</name>
+ <channel>pear.php.net</channel>
+ <summary>An OO-interface for easily retrieving and modifying data in a DB.</summary>
+ <description>This package is an OO-abstraction to the SQL-Query language, it provides methods such
 as setWhere, setOrder, setGroup, setJoin, etc. to easily build queries.
 It also provides an easy to learn interface that interacts nicely with HTML-forms using
 arrays that contain the column data, that shall be updated/added in a DB.
 This package bases on an SQL-Builder which lets you easily build
 SQL-Statements and execute them.
-    </description>
-
-    <maintainers>
-        <maintainer>
-            <user>cain</user>
-            <name>Wolfram Kriesing</name>
-            <email>wolfram@kriesing.de</email>
-            <role>lead</role>
-            <inactive/>
-        </maintainer>
-        <maintainer>
-            <user>quipo</user>
-            <name>Lorenzo Alberton</name>
-            <email>l.alberton@quipo.it</email>
-            <role>lead</role>
-        </maintainer>
-    </maintainers>
-
-    <release>
-        <version>1.1.0</version>
-        <license>BSD</license>
-        <state>stable</state>
-        <date>2007-01-10</date>
-        <notes>
-backported most of the latest changes implemented in MDB_QueryTool:
+    
+ </description>
+ <lead>
+  <name>Wolfram Kriesing</name>
+  <user>cain</user>
+  <email>wolfram@kriesing.de</email>
+  <active>no</active>
+ </lead>
+ <lead>
+  <name>Lorenzo Alberton</name>
+  <user>quipo</user>
+  <email>l.alberton@quipo.it</email>
+  <active>yes</active>
+ </lead>
+ <date>2007-01-27</date>
+ <time>20:34:51</time>
+ <version>
+  <release>1.1.0</release>
+  <api>1.1.0</api>
+ </version>
+ <stability>
+  <release>stable</release>
+  <api>stable</api>
+ </stability>
+ <license uri="http://www.debian.org/misc/bsd.license">BSD</license>
+ <notes>backported most of the latest changes implemented in MDB_QueryTool:
 * added getOne() method (request #7580)
 * added support for NULL fields in remove() (request #8056)
-* fixed bug #3842, using the addJoin/setJoin methods causes an "invalid token" error with ibase;
-  the joined table columns aliases are now named in this format: "t_tablename_fieldname" instead of "_tablename_fieldname".
+* fixed bug #3842, using the addJoin/setJoin methods causes an &quot;invalid token&quot; error with ibase;
+  the joined table columns aliases are now named in this format: &quot;t_tablename_fieldname&quot; instead of &quot;_tablename_fieldname&quot;.
   Only the ibase driver is affected by this change.
 * custom implementation of implode() to circumvent locale handling of floats,
   which clashes with SQL standards
@@ -55,80 +53,97 @@ backported most of the latest changes implemented in MDB_QueryTool:
 
 NB: This will probably be the last release of DB_QueryTool, which is deprecated
 in favour of MDB_QueryTool.
-        </notes>
-        <filelist>
-          <dir name="/" baseinstalldir="DB">
-            <file role="php" name="QueryTool.php" />
-
-            <dir name="QueryTool" role="php">
-              <file name="Query.php" />
-              <file name="EasyJoin.php" />
-              <file name="Result.php" />
-              <file name="Result/Object.php" />
-            </dir>
-
-            <dir name="docs/examples" role="doc">
-              <file name="example.php" />
-              <file name="mysql.sql" />
-              <file name="pgsql.sql" />
-            </dir>
-
-            <dir name="tests" role="test">
-              <file name="Common.php" />
-              <file name="Get.php" />
-              <file name="GetAll.php" />
-              <file name="GetCount.php" />
-              <file name="GetQueryString.php" />
-              <file name="index.php" />
-              <file name="Having.php" />
-              <file name="Limit.php" />
-              <file name="sql.php" />
-              <file name="UnitTest.php" />
-              <file name="Where.php" />
-              <file name="SetDbInstance.php" />
-
-              <dir name="simpletest_tests" role="test">
-                <file name="all_tests.php"/>
-                <file name="db_querytool_include.php"/>
-                <file name="db_querytool_test_base.php"/>
-                <file name="db_querytool_testDbInstance.php"/>
-                <file name="db_querytool_testGet.php"/>
-                <file name="db_querytool_testGetAll.php"/>
-                <file name="db_querytool_testGetCount.php"/>
-                <file name="db_querytool_testGetQueryString.php"/>
-                <file name="db_querytool_testHaving.php"/>
-                <file name="db_querytool_testLimit.php"/>
-                <file name="db_querytool_tests_get.php"/>
-                <file name="db_querytool_tests_usage.php"/>
-                <file name="db_querytool_testWhere.php"/>
-                <file name="db_settings.php"/>
-                <file name="index.php"/>
-                <file name="readme.txt"/>
-                <file name="simple_include.php"/>
-              </dir>
-            </dir>
-          </dir>
-
-          <deps>
-            <dep type="pkg" rel="has">DB</dep>
-            <dep type="pkg" rel="ge" version="1.7">Log</dep>
-          </deps>
-
-        </filelist>
-
-    </release>
-
-    <changelog>
-      <release>
-        <version>1.1.0</version>
-        <license>BSD</license>
-        <state>stable</state>
-        <date>2007-01-10</date>
-        <notes>
-* added getOne() method (request #7580)
+        
+ </notes>
+ <contents>
+  <dir name="/">
+   <dir name="docs">
+    <dir name="examples">
+     <file baseinstalldir="DB" name="example.php" role="doc" />
+     <file baseinstalldir="DB" name="mysql.sql" role="doc" />
+     <file baseinstalldir="DB" name="pgsql.sql" role="doc" />
+    </dir> <!-- /docs/examples -->
+   </dir> <!-- /docs -->
+   <dir name="QueryTool">
+    <dir name="Result">
+     <file baseinstalldir="DB" name="Object.php" role="php" />
+    </dir> <!-- /QueryTool/Result -->
+    <file baseinstalldir="DB" name="EasyJoin.php" role="php" />
+    <file baseinstalldir="DB" name="Query.php" role="php" />
+    <file baseinstalldir="DB" name="Result.php" role="php" />
+   </dir> <!-- /QueryTool -->
+   <dir name="tests">
+    <dir name="simpletest_tests">
+     <file baseinstalldir="DB" name="all_tests.php" role="test" />
+     <file baseinstalldir="DB" name="db_querytool_include.php" role="test" />
+     <file baseinstalldir="DB" name="db_querytool_testDbInstance.php" role="test" />
+     <file baseinstalldir="DB" name="db_querytool_testGet.php" role="test" />
+     <file baseinstalldir="DB" name="db_querytool_testGetAll.php" role="test" />
+     <file baseinstalldir="DB" name="db_querytool_testGetCount.php" role="test" />
+     <file baseinstalldir="DB" name="db_querytool_testGetQueryString.php" role="test" />
+     <file baseinstalldir="DB" name="db_querytool_testHaving.php" role="test" />
+     <file baseinstalldir="DB" name="db_querytool_testLimit.php" role="test" />
+     <file baseinstalldir="DB" name="db_querytool_tests_get.php" role="test" />
+     <file baseinstalldir="DB" name="db_querytool_tests_usage.php" role="test" />
+     <file baseinstalldir="DB" name="db_querytool_testWhere.php" role="test" />
+     <file baseinstalldir="DB" name="db_querytool_test_base.php" role="test" />
+     <file baseinstalldir="DB" name="db_settings.php" role="test" />
+     <file baseinstalldir="DB" name="index.php" role="test" />
+     <file baseinstalldir="DB" name="readme.txt" role="test" />
+     <file baseinstalldir="DB" name="simple_include.php" role="test" />
+    </dir> <!-- /tests/simpletest_tests -->
+    <file baseinstalldir="DB" name="Common.php" role="test" />
+    <file baseinstalldir="DB" name="Get.php" role="test" />
+    <file baseinstalldir="DB" name="GetAll.php" role="test" />
+    <file baseinstalldir="DB" name="GetCount.php" role="test" />
+    <file baseinstalldir="DB" name="GetQueryString.php" role="test" />
+    <file baseinstalldir="DB" name="Having.php" role="test" />
+    <file baseinstalldir="DB" name="index.php" role="test" />
+    <file baseinstalldir="DB" name="Limit.php" role="test" />
+    <file baseinstalldir="DB" name="SetDbInstance.php" role="test" />
+    <file baseinstalldir="DB" name="sql.php" role="test" />
+    <file baseinstalldir="DB" name="UnitTest.php" role="test" />
+    <file baseinstalldir="DB" name="Where.php" role="test" />
+   </dir> <!-- /tests -->
+   <file baseinstalldir="DB" name="QueryTool.php" role="php" />
+  </dir> <!-- / -->
+ </contents>
+ <dependencies>
+  <required>
+   <php>
+    <min>4.0.0</min>
+   </php>
+   <pearinstaller>
+    <min>1.4.0b1</min>
+   </pearinstaller>
+   <package>
+    <name>DB</name>
+    <channel>pear.php.net</channel>
+   </package>
+   <package>
+    <name>Log</name>
+    <channel>pear.php.net</channel>
+    <min>1.7</min>
+   </package>
+  </required>
+ </dependencies>
+ <phprelease />
+ <changelog>
+  <release>
+   <version>
+    <release>1.1.0</release>
+    <api>1.1.0</api>
+   </version>
+   <stability>
+    <release>stable</release>
+    <api>stable</api>
+   </stability>
+   <date>2007-01-27</date>
+   <license uri="http://www.debian.org/misc/bsd.license">BSD</license>
+   <notes>* added getOne() method (request #7580)
 * added support for NULL fields in remove() (request #8056)
-* fixed bug #3842, using the addJoin/setJoin methods causes an "invalid token" error with ibase;
-  the joined table columns aliases are now named in this format: "t_tablename_fieldname" instead of "_tablename_fieldname".
+* fixed bug #3842, using the addJoin/setJoin methods causes an &quot;invalid token&quot; error with ibase;
+  the joined table columns aliases are now named in this format: &quot;t_tablename_fieldname&quot; instead of &quot;_tablename_fieldname&quot;.
   Only the ibase driver is affected by this change.
 * custom implementation of implode() to circumvent locale handling of floats,
   which clashes with SQL standards
@@ -140,66 +155,96 @@ in favour of MDB_QueryTool.
 
 NB: This will probably be the last release of DB_QueryTool, which is deprecated
 in favour of MDB_QueryTool.
-        </notes>
-      </release>
-      <release>
-        <version>1.0.3</version>
-        <license>BSD</license>
-        <state>stable</state>
-        <date>2006-05-01</date>
-        <notes>
-* fixed DB_QueryTool_Result_Object::fetchRow() when the return type is
+        
+   </notes>
+  </release>
+  <release>
+   <version>
+    <release>1.0.3</release>
+    <api>1.0.3</api>
+   </version>
+   <stability>
+    <release>stable</release>
+    <api>stable</api>
+   </stability>
+   <date>2006-05-01</date>
+   <license uri="http://www.debian.org/misc/bsd.license">BSD</license>
+   <notes>* fixed DB_QueryTool_Result_Object::fetchRow() when the return type is
   a scalar value instead of an array (bug #7532)
-        </notes>
-      </release>
-      <release>
-        <version>1.0.2</version>
-        <license>BSD</license>
-        <state>stable</state>
-        <date>2006-01-26</date>
-        <notes>
-* changed license to BSD
+        
+   </notes>
+  </release>
+  <release>
+   <version>
+    <release>1.0.2</release>
+    <api>1.0.2</api>
+   </version>
+   <stability>
+    <release>stable</release>
+    <api>stable</api>
+   </stability>
+   <date>2006-01-26</date>
+   <license uri="http://www.debian.org/misc/bsd.license">BSD</license>
+   <notes>* changed license to BSD
 * fixed bug with big integers being incorrectly trimmed
-        </notes>
-      </release>
-      <release>
-        <version>1.0.1</version>
-        <license>PHP</license>
-        <state>stable</state>
-        <date>2005-09-07</date>
-        <notes>
-* fixed req #3842: added support for INNER JOINs
+        
+   </notes>
+  </release>
+  <release>
+   <version>
+    <release>1.0.1</release>
+    <api>1.0.1</api>
+   </version>
+   <stability>
+    <release>stable</release>
+    <api>stable</api>
+   </stability>
+   <date>2005-09-07</date>
+   <license uri="http://www.php.net/license">PHP</license>
+   <notes>* fixed req #3842: added support for INNER JOINs
 * fixed bug #3902, now non-integer primaryCol are supported
-* fixed bug #4189: update() quoted the PK even if the "raw" option was set
+* fixed bug #4189: update() quoted the PK even if the &quot;raw&quot; option was set
 * fixed pass-by-reference error with PHP 5.1 (thanks to Dmitry Shirokov)
-        </notes>
-      </release>
-      <release>
-        <version>1.0.0</version>
-        <license>PHP</license>
-        <state>stable</state>
-        <date>2005-03-03</date>
-        <notes>
-* fixed bug #3290, getCount() method returns zero when using an offset
+        
+   </notes>
+  </release>
+  <release>
+   <version>
+    <release>1.0.0</release>
+    <api>1.0.0</api>
+   </version>
+   <stability>
+    <release>stable</release>
+    <api>stable</api>
+   </stability>
+   <date>2005-03-03</date>
+   <license uri="http://www.php.net/license">PHP</license>
+   <notes>* fixed bug #3290, getCount() method returns zero when using an offset
   (patch by kubo at isite dot co dot jp)
 * strings lenghtier than the column max size are truncated
   to prevent db errors
 * using setOrder() with setGroup()+setHaving() could cause a malformed query
 * fully tested with MySQL, PostgreSQL and Firebird/Interbase
   (added a new testsuite using SimpleTest)
-        </notes>
-      </release>
-      <release>
-        <version>0.11.1</version>
-        <license>PHP</license>
-        <state>stable</state>
-        <date>2004-10-18</date>
-        <notes>
-* allow multiple left|right join clauses.
+        
+   </notes>
+  </release>
+  <release>
+   <version>
+    <release>0.11.1</release>
+    <api>0.11.1</api>
+   </version>
+   <stability>
+    <release>stable</release>
+    <api>stable</api>
+   </stability>
+   <date>2004-10-18</date>
+   <license uri="http://www.php.net/license">PHP</license>
+   <notes>* allow multiple left|right join clauses.
   NB: getJoin($type) now returns
     array(
-       $joinTable1 => $joinOnClause1,
-       $joinTable2 => $joinOnClause2,
+       $joinTable1 =&gt; $joinOnClause1,
+       $joinTable2 =&gt; $joinOnClause2,
     )
 * allow class usage without instanciating a db object
   (to use the class as a simple query builder)
@@ -207,87 +252,120 @@ in favour of MDB_QueryTool.
   (bug #1614)
 * allow reuse of existing connection (bug #2007),
   thanks to eln at gmx dot net
-        </notes>
-      </release>
-      <release>
-        <version>0.10.1</version>
-        <license>PHP</license>
-        <state>stable</state>
-        <date>2004-05-05</date>
-        <notes>
-* on UPDATE, field names are no more prefixed by the table name
-  (it didn't work with PostgreSQL)
+        
+   </notes>
+  </release>
+  <release>
+   <version>
+    <release>0.10.1</release>
+    <api>0.10.1</api>
+   </version>
+   <stability>
+    <release>stable</release>
+    <api>stable</api>
+   </stability>
+   <date>2004-05-05</date>
+   <license uri="http://www.php.net/license">PHP</license>
+   <notes>* on UPDATE, field names are no more prefixed by the table name
+  (it didn&apos;t work with PostgreSQL)
 * added an $options parameter to connect()
 * fixed bug #284 (Log::factory() needs to return a reference)
 * fixed bug #298 (reset() does not reset limit)
 * fixed bug #322 (undefined var $autoConnect)
 * changed useResult() method; now it accepts a $type parameter, use it to return
-  'array' results or 'object' results (thanks to Roman Dostovalov).
+  &apos;array&apos; results or &apos;object&apos; results (thanks to Roman Dostovalov).
   Please note that BC is maintained, useResult(true) will default to
-  useResult('array'), and useResult(false) will default to useResult('none').
+  useResult(&apos;array&apos;), and useResult(false) will default to useResult(&apos;none&apos;).
 * fixed problems with useResult(true) and empty results
-* when using useResult(true), if the user doesn't call getFirst() on the first
+* when using useResult(true), if the user doesn&apos;t call getFirst() on the first
   iteration, the class does so automatically
 * PHP 5 fixes
 * fixes to the testsuite
-        </notes>
-      </release>
-      <release>
-        <version>0.9.8</version>
-        <license>PHP</license>
-        <state>stable</state>
-        <date>2003-09-23</date>
-        <notes>
-* added new method getQueryString() which returns the rendered query
+        
+   </notes>
+  </release>
+  <release>
+   <version>
+    <release>0.9.8</release>
+    <api>0.9.8</api>
+   </version>
+   <stability>
+    <release>stable</release>
+    <api>stable</api>
+   </stability>
+   <date>2003-09-23</date>
+   <license uri="http://www.php.net/license">PHP</license>
+   <notes>* added new method getQueryString() which returns the rendered query
 * added setDbInstance() which lets you supply an existing DB-instance to work with
   using this you dont need to pass a DSN to the constructor!
-        </notes>
-      </release>
-      <release>
-        <version>0.9.7</version>
-        <license>PHP</license>
-        <state>stable</state>
-        <date>2003-09-15</date>
-        <notes>
-* use Log 1.7 API
-        </notes>
-      </release>
-
-      <release>
-        <version>0.9.6</version>
-        <license>PHP</license>
-        <state>stable</state>
-        <date>2003-09-12</date>
-        <notes>
-- bugfix in addMultiple()
+        
+   </notes>
+  </release>
+  <release>
+   <version>
+    <release>0.9.7</release>
+    <api>0.9.7</api>
+   </version>
+   <stability>
+    <release>stable</release>
+    <api>stable</api>
+   </stability>
+   <date>2003-09-15</date>
+   <license uri="http://www.php.net/license">PHP</license>
+   <notes>* use Log 1.7 API
+        
+   </notes>
+  </release>
+  <release>
+   <version>
+    <release>0.9.6</release>
+    <api>0.9.6</api>
+   </version>
+   <stability>
+    <release>stable</release>
+    <api>stable</api>
+   </stability>
+   <date>2003-09-12</date>
+   <license uri="http://www.php.net/license">PHP</license>
+   <notes>- bugfix in addMultiple()
 - addWhereSearch now only prefixes known columns as it is supposed to be,
   otherwise it would also prefix aliases with the table name, which is bull...
 - quirk in the addLeftJoin() method ... not nice, but v1.0 will be, unit tests pass but thats still not enough proof
 - make setLimit also work to unset it
-        </notes>
-      </release>
-
-      <release>
-        <version>0.9.5</version>
-        <license>PHP</license>
-        <state>stable</state>
-        <date>2003-06-17</date>
-        <notes>
-- bugfix when writing log files, times were wrong
+        
+   </notes>
+  </release>
+  <release>
+   <version>
+    <release>0.9.5</release>
+    <api>0.9.5</api>
+   </version>
+   <stability>
+    <release>stable</release>
+    <api>stable</api>
+   </stability>
+   <date>2003-06-17</date>
+   <license uri="http://www.php.net/license">PHP</license>
+   <notes>- bugfix when writing log files, times were wrong
 - bugfix in EasyJoin, which added unnecessary conditions
 - bugfix in building column alias which is at the end of the string
 - bugfix in addMultiple() which didnt work without primaryCol
-- bugfix in addHaving and unit test, thanks to Johannes Sch&auml;fer
-        </notes>
-      </release>
-
-      <release>
-        <version>0.9.4</version>
-        <license>PHP</license>
-        <state>stable</state>
-        <date>2003-06-06</date>
-        <notes>
-- added set/getLimit(), which set the limit globally,
+- bugfix in addHaving and unit test, thanks to Johannes Schaefer
+        
+   </notes>
+  </release>
+  <release>
+   <version>
+    <release>0.9.4</release>
+    <api>0.9.4</api>
+   </version>
+   <stability>
+    <release>stable</release>
+    <api>stable</api>
+   </stability>
+   <date>2003-06-06</date>
+   <license uri="http://www.php.net/license">PHP</license>
+   <notes>- added set/getLimit(), which set the limit globally,
   getAll() and getCol() can still overwrite this temporarily
 - added addOrder()
 - added *Having() methods by Johannes Schaefer
@@ -295,59 +373,77 @@ in favour of MDB_QueryTool.
 - added condition param to addWhereSearch()
 - fix bug in building group clause for getCount()
 - bug fix in building join
-        </notes>
-      </release>
-
-      <release>
-        <version>0.9.3</version>
-        <license>PHP</license>
-        <state>stable</state>
-        <date>2003-03-11</date>
-        <notes>
-            - new method getCol() which lets you retreive just one column
-            - getAll() takes an additional optional parameter, where you can define
-              the method that should be used for firing the query
-            - update() does also consider the value of setWhere() when no primary column is given
-              added a _buildUpdateQuery() for that too
-            - added umbrello-uml class diagram
-            - fixing some typos, esp. for making the useResult() work
-            - bugfix in update, use fully qualified table name (Uwe D&ouml;rl)
-            - bugfix in _buildSelectQuery, enclose column names by ""
-              now Oracle should work and also reserved keywords can be used as column names (Uwe D&ouml;rl)
-            - some bugfixes and more CS issues
-        </notes>
-      </release>
-      <release>
-        <version>0.9.2</version>
-            <license>PHP</license>
-            <state>stable</state>
-            <date>2003-02-09</date>
-            <notes>
-                - now you can customize the sequence name
-                - testing on postgres and added example
-                - enhancing the constructor to take the error/log callbacks
-                - some cleaning up
-            </notes>
-      </release>
-      <release>
-            <version>0.9.1</version>
-            <license>PHP</license>
-            <state>stable</state>
-            <date>2003-01-29</date>
-            <notes>
-                maintanence release, fix a lot E_ALL issues and CS issues
-            </notes>
-      </release>
-      <release>
-            <version>0.9</version>
-            <license>PHP</license>
-            <state>stable</state>
-            <date>2003-01-17</date>
-            <notes>
-                - initial release in PEAR
-            </notes>
-      </release>
-    </changelog>
-
-
+        
+   </notes>
+  </release>
+  <release>
+   <version>
+    <release>0.9.3</release>
+    <api>0.9.3</api>
+   </version>
+   <stability>
+    <release>stable</release>
+    <api>stable</api>
+   </stability>
+   <date>2003-03-11</date>
+   <license uri="http://www.php.net/license">PHP</license>
+   <notes>- new method getCol() which lets you retreive just one column
+- getAll() takes an additional optional parameter, where you can define
+  the method that should be used for firing the query
+- update() does also consider the value of setWhere() when no primary column is given
+  added a _buildUpdateQuery() for that too
+- added umbrello-uml class diagram
+- fixing some typos, esp. for making the useResult() work
+- bugfix in update, use fully qualified table name (Uwe DÃ¶rl)
+- bugfix in _buildSelectQuery, enclose column names by &quot;&quot;
+  now Oracle should work and also reserved keywords can be used as column names (Uwe DÃ¶rl)
+- some bugfixes and more CS issues
+   </notes>
+  </release>
+  <release>
+   <version>
+    <release>0.9.2</release>
+    <api>0.9.2</api>
+   </version>
+   <stability>
+    <release>stable</release>
+    <api>stable</api>
+   </stability>
+   <date>2003-02-09</date>
+   <license uri="http://www.php.net/license">PHP</license>
+   <notes>- now you can customize the sequence name
+- testing on postgres and added example
+- enhancing the constructor to take the error/log callbacks
+- some cleaning up
+   </notes>
+  </release>
+  <release>
+   <version>
+    <release>0.9.1</release>
+    <api>0.9.1</api>
+   </version>
+   <stability>
+    <release>stable</release>
+    <api>stable</api>
+   </stability>
+   <date>2003-01-29</date>
+   <license uri="http://www.php.net/license">PHP</license>
+   <notes>maintanence release, fix a lot E_ALL issues and CS issues
+   </notes>
+  </release>
+  <release>
+   <version>
+    <release>0.9</release>
+    <api>0.9</api>
+   </version>
+   <stability>
+    <release>stable</release>
+    <api>stable</api>
+   </stability>
+   <date>2003-01-17</date>
+   <license uri="http://www.php.net/license">PHP</license>
+   <notes>- initial release in PEAR
+   </notes>
+  </release>
+ </changelog>
 </package>
