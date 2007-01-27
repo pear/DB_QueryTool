@@ -50,6 +50,7 @@ SQL-Statements and execute them.
   if the name of the field appears as a column name in the current table.
 * phpdoc and CS fixes
 * added new tests
+* switched to package.xml v2
 
 NB: This will probably be the last release of DB_QueryTool, which is deprecated
 in favour of MDB_QueryTool.
@@ -152,6 +153,7 @@ in favour of MDB_QueryTool.
   if the name of the field appears as a column name in the current table.
 * phpdoc and CS fixes
 * added new tests
+* switched to package.xml v2
 
 NB: This will probably be the last release of DB_QueryTool, which is deprecated
 in favour of MDB_QueryTool.
