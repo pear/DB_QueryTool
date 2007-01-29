@@ -77,6 +77,9 @@ class TestOfDB_QueryTool_Get extends TestOfDB_QueryTool
 
         $this->qt->setSelect('name');
         $this->assertEqual($newData1['name'], $this->qt->getOne());
+
+        $this->qt->setSelect('COUNT(*)');
+        $this->assertEqual(2, $this->qt->getOne());
     }
 
     // test if column==table works, using the table TABLE_QUESTION
