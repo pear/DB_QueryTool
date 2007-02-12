@@ -613,7 +613,7 @@ so that's why we do the following, i am not sure if that is standard SQL and abs
     {
         $str = '';
         foreach ($array as $value) {
-            if (!empty($str)) {
+            if ($str !== '') {
                 $str .= $glue;
             }
             $str .= is_double($value) ? $this->_floatToStringNoLocale($value) : $value;

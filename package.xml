@@ -26,34 +26,18 @@ SQL-Statements and execute them.
   <email>l.alberton@quipo.it</email>
   <active>yes</active>
  </lead>
- <date>2007-01-27</date>
+ <date>2007-02-12</date>
  <time>20:34:51</time>
  <version>
-  <release>1.1.0</release>
-  <api>1.1.0</api>
+  <release>1.1.1</release>
+  <api>1.1.1</api>
  </version>
  <stability>
   <release>stable</release>
   <api>stable</api>
  </stability>
  <license uri="http://www.debian.org/misc/bsd.license">BSD</license>
- <notes>backported most of the latest changes implemented in MDB_QueryTool:
-* added getOne() method (request #7580)
-* added support for NULL fields in remove() (request #8056)
-* fixed bug #3842, using the addJoin/setJoin methods causes an &quot;invalid token&quot; error with ibase;
-  the joined table columns aliases are now named in this format: &quot;t_tablename_fieldname&quot; instead of &quot;_tablename_fieldname&quot;.
-  Only the ibase driver is affected by this change.
-* custom implementation of implode() to circumvent locale handling of floats,
-  which clashes with SQL standards
-* added table and field name quoting (requests #4613, #5250, #7570, #9197)
-* fixed bug #9734, an incorrect regexp adds extraneous table names to the fields,
-  if the name of the field appears as a column name in the current table.
-* phpdoc and CS fixes
-* added new tests
-* switched to package.xml v2
-
-NB: This will probably be the last release of DB_QueryTool, which is deprecated
-in favour of MDB_QueryTool.
+ <notes>* fixed bug #10073: bug with empty() and 0 in _localeSafeImplode()
         
  </notes>
  <contents>
@@ -130,6 +114,21 @@ in favour of MDB_QueryTool.
  </dependencies>
  <phprelease />
  <changelog>
+  <release>
+   <version>
+    <release>1.1.1</release>
+    <api>1.1.1</api>
+   </version>
+   <stability>
+    <release>stable</release>
+    <api>stable</api>
+   </stability>
+   <date>2007-02-12</date>
+   <license uri="http://www.debian.org/misc/bsd.license">BSD</license>
+   <notes>* fixed bug #10073: bug with empty() and 0 in _localeSafeImplode()
+
+   </notes>
+  </release>
   <release>
    <version>
     <release>1.1.0</release>
