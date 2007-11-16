@@ -27,15 +27,15 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- * @category   Database
- * @package    DB_QueryTool
- * @author     Wolfram Kriesing <wk@visionp.de>
- * @author     Paolo Panto <wk@visionp.de>
- * @author     Lorenzo Alberton <l dot alberton at quipo dot it>
- * @copyright  2003-2006 Wolfram Kriesing, Paolo Panto, Lorenzo Alberton
- * @license    http://www.debian.org/misc/bsd.license  BSD License (3 Clause)
- * @version    CVS: $Id$
- * @link       http://pear.php.net/package/DB_QueryTool
+ * @category  Database
+ * @package   DB_QueryTool
+ * @author    Wolfram Kriesing <wk@visionp.de>
+ * @author    Paolo Panto <wk@visionp.de>
+ * @author    Lorenzo Alberton <l dot alberton at quipo dot it>
+ * @copyright 2003-2007 Wolfram Kriesing, Paolo Panto, Lorenzo Alberton
+ * @license   http://www.debian.org/misc/bsd.license  BSD License (3 Clause)
+ * @version   CVS: $Id$
+ * @link      http://pear.php.net/package/DB_QueryTool
  */
 
 /**
@@ -48,14 +48,14 @@
  * or
  * <DB_QueryTool_Common-instance>->getAll()->getData()
  *
- * @category   Database
- * @package    DB_QueryTool
- * @author     Wolfram Kriesing <wk@visionp.de>
- * @author     Paolo Panto <wk@visionp.de>
- * @author     Lorenzo Alberton <l dot alberton at quipo dot it>
- * @copyright  2003-2006 Wolfram Kriesing, Paolo Panto, Lorenzo Alberton
- * @license    http://www.debian.org/misc/bsd.license  BSD License (3 Clause)
- * @link       http://pear.php.net/package/DB_QueryTool
+ * @category  Database
+ * @package   DB_QueryTool
+ * @author    Wolfram Kriesing <wk@visionp.de>
+ * @author    Paolo Panto <wk@visionp.de>
+ * @author    Lorenzo Alberton <l dot alberton at quipo dot it>
+ * @copyright 2003-2007 Wolfram Kriesing, Paolo Panto, Lorenzo Alberton
+ * @license   http://www.debian.org/misc/bsd.license  BSD License (3 Clause)
+ * @link      http://pear.php.net/package/DB_QueryTool
  */
 class DB_QueryTool_Result
 {
@@ -88,10 +88,11 @@ class DB_QueryTool_Result
     /**
      * create a new instance of result with the data returned by the query
      *
-     * @version    2002/07/11
-     * @access     public
-     * @author     Wolfram Kriesing <wolfram@kriesing.de>
-     * @param      array   the data returned by the result
+     * @param array $data the data returned by the result
+     *
+     * @version 2002/07/11
+     * @author Wolfram Kriesing <wolfram@kriesing.de>
+     * @access public
      */
     function DB_QueryTool_Result($data)
     {
@@ -118,8 +119,8 @@ class DB_QueryTool_Result
 	/**
 	 * return the number of rows returned. This is an alias for getCount().
 	 *
-	 * @access    public
-	 * @return    integer
+	 * @return integer
+	 * @access public
 	 */
 	function numRows()
 	{
@@ -132,10 +133,10 @@ class DB_QueryTool_Result
     /**
      * return the number of rows returned
      *
-     * @version    2002/07/11
-     * @access     public
-     * @author     Wolfram Kriesing <wolfram@kriesing.de>
      * @return integer the number of rows returned
+     * @version 2002/07/11
+     * @author Wolfram Kriesing <wolfram@kriesing.de>
+     * @access public
      */
     function getCount()
     {
@@ -148,13 +149,14 @@ class DB_QueryTool_Result
     /**
      * get all the data returned
      *
-     * @version    2002/07/11
-     * @access     public
-     * @author     Wolfram Kriesing <wolfram@kriesing.de>
-     * @param      string $key
-     * @return mixed array or PEAR_Error
+     * @param string $key key of the data to retrieve
+     *
+     * @return array|PEAR_Error
+     * @version 2002/07/11
+     * @author Wolfram Kriesing <wolfram@kriesing.de>
+     * @access public
      */
-    function getData($key=null)
+    function getData($key = null)
     {
         if (is_null($key)) {
             return $this->_data;
@@ -173,10 +175,10 @@ class DB_QueryTool_Result
      * we are not using next, current, and reset, since those ignore keys
      * which are empty or 0
      *
-     * @version    2002/07/11
-     * @access     public
-     * @author     Wolfram Kriesing <wolfram@kriesing.de>
      * @return mixed
+     * @version 2002/07/11
+     * @author Wolfram Kriesing <wolfram@kriesing.de>
+     * @access public
      */
     function getFirst()
     {
@@ -194,6 +196,7 @@ class DB_QueryTool_Result
     /**
      * Get next result set. If getFirst() has never been called before,
      * it calls that method.
+     *
      * @return mixed
      * @access public
      */
@@ -233,13 +236,13 @@ class DB_QueryTool_Result
 	 * This function emulates PEAR::DB fetchRow() method.
 	 * With this method, DB_QueryTool can transparently replace PEAR_DB
 	 *
+	 * @return void
 	 * @todo implement fetchmode support?
-	 * @access    public
-	 * @return    void
+	 * @access public
 	 */
 	function fetchRow()
 	{
-		$arr = $this->getNext();
+        $arr = $this->getNext();
     	if (!PEAR::isError($arr)) {
     	   return $arr;
     	}
@@ -266,9 +269,8 @@ class DB_QueryTool_Result
 
 	// }}}
 
-    #TODO
-    #function getPrevious()
-    #function getLast()
-
+    //@TODO
+    //function getPrevious()
+    //function getLast()
 }
 ?>

@@ -27,14 +27,14 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- * @category   Database
- * @package    DB_QueryTool
- * @author     Wolfram Kriesing <wk@visionp.de>
- * @author     Paolo Panto <wk@visionp.de>
- * @copyright  2003-2006 Wolfram Kriesing, Paolo Panto
- * @license    http://www.debian.org/misc/bsd.license  BSD License (3 Clause)
- * @version    CVS: $Id$
- * @link       http://pear.php.net/package/DB_QueryTool
+ * @category  Database
+ * @package   DB_QueryTool
+ * @author    Wolfram Kriesing <wk@visionp.de>
+ * @author    Paolo Panto <wk@visionp.de>
+ * @copyright 2003-2007 Wolfram Kriesing, Paolo Panto
+ * @license   http://www.debian.org/misc/bsd.license  BSD License (3 Clause)
+ * @version   CVS: $Id$
+ * @link      http://pear.php.net/package/DB_QueryTool
  */
 
 /**
@@ -52,21 +52,22 @@ require_once 'DB/QueryTool/EasyJoin.php';
  * provide the name, since the functionality inside the other
  * classes might be restructured a bit but this name always stays.
  *
- * @category   Database
- * @package    DB_QueryTool
- * @author     Wolfram Kriesing <wk@visionp.de>
- * @copyright  2003-2006 Wolfram Kriesing
- * @license    http://www.debian.org/misc/bsd.license  BSD License (3 Clause)
- * @link       http://pear.php.net/package/DB_QueryTool
+ * @category  Database
+ * @package   DB_QueryTool
+ * @author    Wolfram Kriesing <wk@visionp.de>
+ * @copyright 2003-2007 Wolfram Kriesing
+ * @license   http://www.debian.org/misc/bsd.license  BSD License (3 Clause)
+ * @link      http://pear.php.net/package/DB_QueryTool
  */
 class DB_QueryTool extends DB_QueryTool_EasyJoin
 {
     // {{{ DB_QueryTool()
 
     /**
-     * call parent constructor
-     * @param mixed $dsn DSN string, DSN array or DB object
-     * @param array $options
+     * Call parent constructor
+     *
+     * @param mixed $dsn     DSN string, DSN array or DB object
+     * @param array $options database options
      */
     function DB_QueryTool($dsn=false, $options=array())
     {

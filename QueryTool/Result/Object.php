@@ -27,13 +27,13 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- * @category   Database
- * @package    DB_QueryTool
- * @author     Roman Dostovalov, Com-tec-so S.A.<roman.dostovalov@ctco.lv>
- * @copyright  2004-2006 Roman Dostovalov
- * @license    http://www.debian.org/misc/bsd.license  BSD License (3 Clause)
- * @version    CVS: $Id$
- * @link       http://pear.php.net/package/DB_QueryTool
+ * @category  Database
+ * @package   DB_QueryTool
+ * @author    Roman Dostovalov, Com-tec-so S.A.<roman.dostovalov@ctco.lv>
+ * @copyright 2004-2006 Roman Dostovalov
+ * @license   http://www.debian.org/misc/bsd.license  BSD License (3 Clause)
+ * @version   CVS: $Id$
+ * @link      http://pear.php.net/package/DB_QueryTool
  */
 
 /**
@@ -44,25 +44,26 @@ require_once 'DB/QueryTool/Result.php';
 /**
  * DB_QueryTool_Result_Row class
  *
- * @category   Database
- * @package    DB_QueryTool
- * @author     Roman Dostovalov, Com-tec-so S.A.<roman.dostovalov@ctco.lv>
- * @copyright  2004-2006 Roman Dostovalov
- * @license    http://www.debian.org/misc/bsd.license  BSD License (3 Clause)
- * @link       http://pear.php.net/package/DB_QueryTool
+ * @category  Database
+ * @package   DB_QueryTool
+ * @author    Roman Dostovalov Com-tec-so S.A. <roman.dostovalov@ctco.lv>
+ * @copyright 2004-2006 Roman Dostovalov
+ * @license   http://www.debian.org/misc/bsd.license  BSD License (3 Clause)
+ * @link      http://pear.php.net/package/DB_QueryTool
  */
 class DB_QueryTool_Result_Row
 {
-	/**
-	 * create object properties from the array
-	 * @param array
-	 */
-	function DB_QueryTool_Result_Row($arr)
-	{
+    /**
+     * create object properties from the array
+     *
+     * @param array $arr source data to transform into a result row
+     */
+    function DB_QueryTool_Result_Row($arr)
+    {
         foreach ($arr as $key => $value) {
-		    $this->$key = $value;
+            $this->$key = $value;
         }
-	}
+    }
 }
 
 // -----------------------------------------------------------------------------
@@ -70,38 +71,38 @@ class DB_QueryTool_Result_Row
 /**
  * DB_QueryTool_Result_Object class
  *
- * @category   Database
- * @package    DB_QueryTool
- * @author     Roman Dostovalov, Com-tec-so S.A.<roman.dostovalov@ctco.lv>
- * @copyright  2004-2005 Roman Dostovalov
- * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @link       http://pear.php.net/package/DB_QueryTool
+ * @category  Database
+ * @package   DB_QueryTool
+ * @author    Roman Dostovalov Com-tec-so S.A. <roman.dostovalov@ctco.lv>
+ * @copyright 2004-2005 Roman Dostovalov
+ * @license   http://www.php.net/license/3_0.txt  PHP License 3.0
+ * @link      http://pear.php.net/package/DB_QueryTool
  */
 class DB_QueryTool_Result_Object extends DB_QueryTool_Result
 {
     // {{{ fetchRow
 
-	/**
-	 * This function emulates PEAR::DB fetchRow() method
-	 * With this function DB_QueryTool can transparently replace PEAR::DB
-	 *
-	 * @todo implement fetchmode support?
-	 * @access    public
-	 * @return    void
-	 */
-	function fetchRow()
-	{
-		$arr = $this->getNext();
-		if (!PEAR::isError($arr)) {
-		    if (is_scalar($arr)) {
+    /**
+     * This function emulates PEAR::DB fetchRow() method
+     * With this function DB_QueryTool can transparently replace PEAR::DB
+     *
+     * @return    void
+     * @todo implement fetchmode support?
+     * @access    public
+     */
+    function fetchRow()
+    {
+        $arr = $this->getNext();
+        if (!PEAR::isError($arr)) {
+            if (is_scalar($arr)) {
                 return $arr;
             }
-		    $row = new DB_QueryTool_Result_Row($arr);
-			return $row;
-		}
-		return false;
-	}
+            $row = new DB_QueryTool_Result_Row($arr);
+            return $row;
+        }
+        return false;
+    }
 
-	// }}}
+    // }}}
 }
 ?>
