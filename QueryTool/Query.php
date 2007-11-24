@@ -213,7 +213,7 @@ class DB_QueryTool_Query
      * @author Wolfram Kriesing <wk@visionp.de>
      * @access public
      */
-/*
+    /*
     function __construct($dsn=false, $options=array())
     {
         if (!isset($options['autoConnect'])) {
@@ -245,7 +245,7 @@ class DB_QueryTool_Query
             $this->sequenceName = $this->table;
         }
     }
-*/
+    */
 
     // }}}
     // {{{ DB_QueryTool_Query()
@@ -319,6 +319,8 @@ class DB_QueryTool_Query
     // {{{ getDbInstance()
 
     /**
+     * Get the current DB instance
+     *
      * @return reference to current DB instance
      */
     function &getDbInstance()
@@ -472,9 +474,9 @@ class DB_QueryTool_Query
      *      $ids = $table->getCol('id');
      * so ids will be an array with all the id's
      *
-     * @param  string $column the column that shall be retrieved
-     * @param  int    $from   to start from
-     * @param  int    $count  the number of rows to show
+     * @param string $column the column that shall be retrieved
+     * @param int    $from   to start from
+     * @param int    $count  the number of rows to show
      *
      * @return mixed an array of the retrieved data, or false in case of failure
      *               when failing an error is set in $this->_error
@@ -574,6 +576,7 @@ class DB_QueryTool_Query
     /**
      * this is just for BC
      *
+     * @return void
      * @deprecated
      */
     function getEmptyElement()
@@ -606,6 +609,7 @@ class DB_QueryTool_Query
      *
      * @param string $float fload value as string
      *
+     * @return string
      * @see http://pear.php.net/bugs/bug.php?id=3021
      * @access private
      */
@@ -628,6 +632,7 @@ class DB_QueryTool_Query
      * @param string $glue  glue string
      * @param array  $array array to implode
      *
+     * @return string
      * @access private
      */
     function _localeSafeImplode($glue, $array)
@@ -679,6 +684,7 @@ class DB_QueryTool_Query
      *
      * @param array $newData contains the new data that shall be saved in the DB
      *                       the id has to be given in the field with the key 'ID'
+     *
      * @return mixed true on success, or false otherwise
      * @version 2002/03/06
      * @author Wolfram Kriesing <wk@visionp.de>
@@ -687,14 +693,14 @@ class DB_QueryTool_Query
     function update($newData)
     {
         $query = array();
-        $raw = $this->getOption('raw');
+        $raw   = $this->getOption('raw');
         // do only set the 'where' part in $query, if a primary column is given
         // if not the default 'where' clause is used
         if (isset($newData[$this->primaryCol])) {
             $query['where'] = $this->_quoteIdentifier($this->primaryCol) . '=' . $this->_quote($newData[$this->primaryCol]);
         }
         $newData = $this->_checkColumns($newData, 'update');
-        $values = array();
+        $values  = array();
         foreach ($newData as $key => $aData) {         // quote the data
             //$values[] = "{$this->table}.$key=". $this->_quote($aData);
             $values[] = $this->_quoteIdentifier($key) . '=' . $this->_quote($aData);
@@ -812,8 +818,8 @@ class DB_QueryTool_Query
 
             $query = sprintf(
                 'INSERT INTO %s (%s) VALUES %s',
-                $this->table ,
-                implode(', ', array_keys($aData)) ,
+                $this->table,
+                implode(', ', array_keys($aData)),
                 $this->_localeSafeImplode(', ', $allData)
             );
             return $this->execute($query, 'query') ? $retIds : false;
@@ -843,10 +849,10 @@ class DB_QueryTool_Query
     /**
      * removes a member from the DB
      *
-     * @param mixed $data - integer/string: the value of the column that shall be removed
-     *                    - array: multiple columns that shall be matched, 
-     *                             (the second parameter will be ignored)
-     * @param string  the column to match the data against, only if $data is not an array
+     * @param mixed  $data     - integer/string: the value of the column that shall be removed
+     *                         - array: multiple columns that shall be matched,
+     *                                  (the second parameter will be ignored)
+     * @param string $whereCol the column to match the data against, only if $data is not an array
      *
      * @return boolean
      * @version 2002/04/08
@@ -913,15 +919,14 @@ class DB_QueryTool_Query
      * @author Wolfram Kriesing <wk@visionp.de>
      * @access public
      */
-    function removeMultiple($ids, $colName='')
+    function removeMultiple($ids, $colName = '')
     {
         if (empty($colName)) {
             $colName = $this->primaryCol;
         }
         $ids = $this->_quoteArray($ids);
 
-        $query = sprintf(
-            'DELETE FROM %s WHERE %s IN (%s)',
+        $query = sprintf('DELETE FROM %s WHERE %s IN (%s)',
             $this->table,
             $colName,
             $this->_localeSafeImplode(',', $ids)
@@ -940,6 +945,7 @@ class DB_QueryTool_Query
      * @param string  $colName          the column name of the tables with the foreign keys
      * @param object  $atLeastOneObject just for convinience, so nobody forgets to call
      *                                  this method with at least one object as a parameter
+     *
      * @return boolean
      * @version 2002/04/08
      * @author Wolfram Kriesing <wk@visionp.de>
@@ -955,7 +961,7 @@ class DB_QueryTool_Query
             if (!$object->remove($id, $colName)) {
                 //FIXXXME do this better
                 $this->_errorSet("Error removing '$colName=$id' from table {$object->table}.");
-               return false;
+                return false;
             }
         }
 
@@ -974,9 +980,9 @@ class DB_QueryTool_Query
      * @return void
      * @access public
      */
-    function setLimit($from=0, $count=0)
+    function setLimit($from = 0, $count = 0)
     {
-        if ($from==0 && $count==0) {
+        if (0 == $from && 0 == $count) {
             $this->_limit = array();
         } else {
             $this->_limit = array($from, $count);
@@ -1001,15 +1007,16 @@ class DB_QueryTool_Query
     // {{{ setWhere()
 
     /**
-     * sets the where condition which is used for the current instance
+     * sets the WHERE condition which is used for the current instance
      *
-     * @param string $whereCondition the where condition, this can be complete like 'X=7 AND Y=8'
+     * @param string $whereCondition the WHERE condition, this can be complete like 'X=7 AND Y=8'
      *
+     * @return void
      * @version 2002/04/16
      * @author Wolfram Kriesing <wk@visionp.de>
      * @access public
      */
-    function setWhere($whereCondition='')
+    function setWhere($whereCondition = '')
     {
         $this->_where = $whereCondition;
         //FIXXME parse the where condition and replace ambigious column names, 
@@ -1022,9 +1029,9 @@ class DB_QueryTool_Query
     // {{{ getWhere()
 
     /**
-     * gets the where condition which is used for the current instance
+     * gets the WHERE condition which is used for the current instance
      *
-     * @return string the where condition, this can be complete like 'X=7 AND Y=8'
+     * @return string the WHERE condition, this can be complete like 'X=7 AND Y=8'
      * @version 2002/04/22
      * @author Wolfram Kriesing <wk@visionp.de>
      * @access public
@@ -1038,18 +1045,18 @@ class DB_QueryTool_Query
     // {{{ addWhere()
 
     /**
-     * only adds a string to the where clause
+     * only adds a string to the WHERE clause
      *
-     * @param string $where     the WHERE clause to add to the existing one
-     * @param string $condition the condition for how to concatenate the 
-     *                          new WHERE clause to the existing one (default AND)
+     * @param string $where         the WHERE clause to add to the existing one
+     * @param string $connectString the condition for how to concatenate the
+     *                              new WHERE clause to the existing one [default AND]
      *
      * @return void
      * @version 2002/07/22
      * @author Wolfram Kriesing <wk@visionp.de>
      * @access public
      */
-    function addWhere($where, $condition='AND')
+    function addWhere($where, $condition = 'AND')
     {
         if ($this->getWhere()) {
             $where = $this->getWhere().' '.$condition.' '.$where;
@@ -1061,23 +1068,24 @@ class DB_QueryTool_Query
     // {{{ addWhereSearch()
 
     /**
-     * add a where-like clause which works like a search for the given string
+     * add a WHERE-LIKE clause which works like a search for the given string
      * i.e. calling it like this:
      *     $this->addWhereSearch('name', 'otto hans')
      * produces a where clause like this one
      *     LOWER(name) LIKE "%otto%hans%"
      * so the search finds the given string
      *
-     * @param string $column    the column to search in for
-     * @param string $string    the string to search for
-     * @param string $condition the condition
+     * @param string $column        the column to search in for
+     * @param string $string        the string to search for
+     * @param string $connectString the condition for how to concatenate the
+     *                              new WHERE clause to the existing one [default AND]
      *
      * @return void
      * @version 2002/08/14
      * @author Wolfram Kriesing <wk@visionp.de>
      * @access public
      */
-    function addWhereSearch($column, $string, $condition='AND')
+    function addWhereSearch($column, $string, $connectString = 'AND')
     {
         // if the column doesn't contain a tablename use the current table name
         // in case it is a defined column to prevent ambiguous rows
@@ -1096,10 +1104,10 @@ class DB_QueryTool_Query
     // {{{ setOrder()
 
     /**
-     * sets the order condition which is used for the current instance
+     * sets the ORDER BY condition which is used for the current instance
      *
-     * @param string  $oderCondition the where condition, this can be complete like 'X=7 AND Y=8'
-     * @param boolean $desc          sorting order (TRUE => ASC, FALSE => DESC)
+     * @param string  $orderCondition the ORDER BY condition
+     * @param boolean $desc           sorting order (TRUE => ASC, FALSE => DESC)
      *
      * @return void
      * @version 2002/05/16
@@ -1115,11 +1123,12 @@ class DB_QueryTool_Query
     // {{{ addOrder()
 
     /**
-     * Add a order parameter to the query.
+     * Add a ORDER BY parameter to the query.
      *
-     * @param string  $orderCondition  the WHERE condition, this can be complete like 'X=7 AND Y=8'
-     * @param boolean sorting order (TRUE => ASC, FALSE => DESC)
+     * @param string  $orderCondition the ORDER BY condition
+     * @param boolean $desc           sorting order (TRUE => ASC, FALSE => DESC)
      *
+     * @return void
      * @version 2003/05/28
      * @author Wolfram Kriesing <wk@visionp.de>
      * @access public
@@ -1138,9 +1147,9 @@ class DB_QueryTool_Query
     // {{{ getOrder()
 
     /**
-     * gets the order condition which is used for the current instance
+     * gets the ORDER BY condition which is used for the current instance
      *
-     * @return string the order condition, this can be complete like 'ID,TIMESTAMP DESC'
+     * @return string the ORDER BY condition, this can be complete like 'ID,TIMESTAMP DESC'
      * @version 2002/05/16
      * @author Wolfram Kriesing <wk@visionp.de>
      * @access public
@@ -1154,9 +1163,9 @@ class DB_QueryTool_Query
     // {{{ setHaving()
 
     /**
-     * sets the having definition
+     * sets the HAVING definition
      *
-     * @param      string  the having definition
+     * @param string $having the HAVING definition
      *
      * @return void
      * @version 2003/06/05
@@ -1172,9 +1181,9 @@ class DB_QueryTool_Query
     // {{{ getHaving()
 
     /**
-     * gets the having definition which is used for the current instance
+     * gets the HAVING definition which is used for the current instance
      *
-     * @return string the having definition
+     * @return string the HAVING definition
      * @version 2003/06/05
      * @author Johannes Schaefer <johnschaefer@gmx.de>
      * @access public
@@ -1188,16 +1197,16 @@ class DB_QueryTool_Query
     // {{{ addHaving()
 
     /**
-     * Extend the current having clause. This is very useful, when you are building
+     * Extend the current HAVING clause. This is very useful, when you are building
      * this clause from different places and don't want to overwrite the currently
-     * set having clause, but extend it.
+     * set HAVING clause, but extend it.
      *
-     * @param string $what          this is a having clause, i.e. 'column' 
+     * @param string $what          this is a HAVING clause, i.e. 'column'
      *                              or 'table.column' or 'MAX(column)'
-     * @param string $connectString the connection string, which usually stays the default, 
-     *                              which is ',' (a comma)
+     * @param string $connectString the connection string [default ' AND ']
      *
-     * @access     public
+     * @return void
+     * @access public
      */
     function addHaving($what = '*', $connectString = ' AND ')
     {
@@ -1218,11 +1227,12 @@ class DB_QueryTool_Query
      * @param string       $where    the where clause for the join
      * @param string       $joinType type of the table join
      *
+     * @return void
      * @version 2002/06/10
      * @author Wolfram Kriesing <wk@visionp.de>
      * @access public
      */
-    function setJoin($table=null, $where=null, $joinType='default')
+    function setJoin($table = null, $where = null, $joinType = 'default')
     {
         //FIXXME make it possible to pass a table name as a string like this too 
         // 'user u' where u is the string that can be used to refer to this table 
@@ -1257,6 +1267,7 @@ class DB_QueryTool_Query
      * @param string $table the table(s) to be left-joined
      * @param string $where the where clause for the join
      *
+     * @return void
      * @version 2002/07/22
      * @author Wolfram Kriesing <wk@visionp.de>
      * @access public
@@ -1275,6 +1286,8 @@ class DB_QueryTool_Query
      * @param string $table the table(s) to be left-joined
      * @param string $where the where clause for the join
      * @param string $type  join type
+     *
+     * @return void
      * @access public
      */
     function addLeftJoin($table, $where, $type = 'left')
@@ -1297,6 +1310,7 @@ class DB_QueryTool_Query
      * @param string $table the table(s) to be right-joined
      * @param string $where the where clause for the join
      *
+     * @return void
      * @version 2002/09/04
      * @author Wolfram Kriesing <wk@visionp.de>
      * @see setLeftJoin()
@@ -1313,7 +1327,7 @@ class DB_QueryTool_Query
     /**
      * gets the join-condition
      *
-     * @param string $what  [null|''|'table'|'tables'|'right'|'left'|'inner']
+     * @param string $what [null|''|'table'|'tables'|'right'|'left'|'inner']
      *
      * @return array gets the join parameters
      * @access public
@@ -1368,7 +1382,8 @@ class DB_QueryTool_Query
      * @param string $where the where clause for the join
      * @param string $type  the join type
      *
-     * @access     public
+     * @return void
+     * @access public
      */
     function addJoin($table, $where, $type = 'default')
     {
@@ -1390,6 +1405,7 @@ class DB_QueryTool_Query
      *
      * @param string $table the table name
      *
+     * @return void
      * @version 2002/07/11
      * @author Wolfram Kriesing <wk@visionp.de>
      * @access public
@@ -1405,7 +1421,7 @@ class DB_QueryTool_Query
     /**
      * gets the table this class is currently working on
      *
-     * @return string  the table name
+     * @return string the table name
      * @version 2002/07/11
      * @author Wolfram Kriesing <wk@visionp.de>
      * @access public
@@ -1423,6 +1439,7 @@ class DB_QueryTool_Query
      *
      * @param string $group the group condition
      *
+     * @return void
      * @version 2002/07/22
      * @author Wolfram Kriesing <wk@visionp.de>
      * @access public
@@ -1460,6 +1477,7 @@ class DB_QueryTool_Query
      *
      * @param string $what fields that shall be selected
      *
+     * @return void
      * @access public
      */
     function setSelect($what = '*')
@@ -1472,14 +1490,14 @@ class DB_QueryTool_Query
 
     /**
      * add a string to the select part of the query
-     *
-     * add a string to the select-part of the query and connects it to an existing
+     * Add a string to the select-part of the query and connects it to an existing
      * string using the $connectString, which by default is a comma.
      * (SELECT xxx FROM - xxx is the select-part of a query)
      *
      * @param string $what          the string that shall be added to the select-part
      * @param string $connectString the string to connect the new string with the existing one
      *
+     * @return void
      * @version 2003/01/08
      * @author Wolfram Kriesing <wk@visionp.de>
      * @access public
@@ -1498,6 +1516,8 @@ class DB_QueryTool_Query
     // {{{ getSelect()
 
     /**
+     * Get the SELECT clause
+     *
      * @return string
      * @access public
      */
@@ -1510,9 +1530,11 @@ class DB_QueryTool_Query
     // {{{ setDontSelect()
 
     /**
+     * Do not select the given column
      *
      * @param string $what column to ignore
      *
+     * @return void
      * @access public
      */
     function setDontSelect($what = '')
@@ -1524,6 +1546,8 @@ class DB_QueryTool_Query
     // {{{ getDontSelect()
 
     /**
+     * Get the column(s) to be ignored
+     *
      * @return string
      * @access public
      */
@@ -1546,7 +1570,7 @@ class DB_QueryTool_Query
      * @author Wolfram Kriesing <wk@visionp.de>
      * @access public
      */
-    function reset($what=array())
+    function reset($what = array())
     {
         if (!sizeof($what)) {
             $what = array(
@@ -1580,6 +1604,7 @@ class DB_QueryTool_Query
      * @param string $option the mode to be set
      * @param mixed  $value the value of the mode
      *
+     * @return void
      * @version 2002/09/17
      * @author Wolfram Kriesing <wk@visionp.de>
      * @access public
@@ -1593,6 +1618,8 @@ class DB_QueryTool_Query
     // {{{ getOption()
 
     /**
+     * Get the option value
+     *
      * @param string $option name of the option to retrieve
      *
      * @return string value of the option
@@ -1661,10 +1688,10 @@ class DB_QueryTool_Query
             return $data;
         }
         switch (gettype($data)) {
-            case 'array':
-                return $this->_quoteArray($data);
-            default:
-                return $this->db->quoteSmart($data);
+        case 'array':
+            return $this->_quoteArray($data);
+        default:
+            return $this->db->quoteSmart($data);
         }
     }
 
@@ -1678,6 +1705,7 @@ class DB_QueryTool_Query
      * @param array  $newData array data whose keys needs checking
      * @param string $method  method name
      *
+     * @return array
      * @version 2002/04/16
      * @author Wolfram Kriesing <wk@visionp.de>
      * @access public
@@ -1690,7 +1718,7 @@ class DB_QueryTool_Query
         }
         foreach ($newData as $colName => $x) {
             if (!isset($meta[$colName])) {
-                $this->_errorLog("$method, column {$this->table}.$colName doesn't exist, value was removed before '$method'",__LINE__);
+                $this->_errorLog("$method, column {$this->table}.$colName doesn't exist, value was removed before '$method'", __LINE__);
                 unset($newData[$colName]);
             } else {
                 // if the current column exists, check the length too, not to write content that is too long
@@ -1716,11 +1744,13 @@ class DB_QueryTool_Query
      * overwrite this method and i.e. print the query $string
      * to see the final query
      *
-     * @param  string $string the query mostly
+     * @param string $string the query mostly
      *
      * @access public
      */
-    function debug($string) {}
+    function debug($string)
+    {
+    }
 
     //
     //
@@ -1735,8 +1765,8 @@ class DB_QueryTool_Query
      * !!!! query COPIED FROM db_oci8.inc - from PHPLIB !!!!
      *
      * @param string $table table name
-     * @return resultSet or false on error
      *
+     * @return resultSet or false on error
      * @version  2001/09
      * @see db_oci8.inc - PHPLIB
      * @access public
@@ -1770,13 +1800,22 @@ class DB_QueryTool_Query
             ////                                          // your own class
             //// $table->show_results($this->db->query(see query vvvvvv))
             ////
-            $res = $this->db->getAll("SELECT T.column_name,T.table_name,T.data_type,".
-                "T.data_length,T.data_precision,T.data_scale,T.nullable,".
-                "T.char_col_decl_length,I.index_name".
-                " FROM ALL_TAB_COLUMNS T,ALL_IND_COLUMNS I".
-                " WHERE T.column_name=I.column_name (+)".
-                " AND T.table_name=I.table_name (+)".
-                " AND T.table_name=UPPER('$table') ORDER BY T.column_id");
+            $query = "SELECT T.column_name,
+                             T.table_name,
+                             T.data_type,
+                             T.data_length,
+                             T.data_precision,
+                             T.data_scale,
+                             T.nullable,
+                             T.char_col_decl_length,
+                             I.index_name
+                        FROM ALL_TAB_COLUMNS T,
+                             ALL_IND_COLUMNS I
+                       WHERE T.column_name = I.column_name (+)
+                         AND T.table_name = I.table_name (+)
+                         AND T.table_name = UPPER('$table')
+                    ORDER BY T.column_id";
+            $res = $this->db->getAll($query);
 
             if (PEAR::isError($res)) {
                 //$this->_errorSet($res->getMessage());
@@ -1873,7 +1912,7 @@ class DB_QueryTool_Query
         // handle left/right/inner joins
         foreach (array('left', 'right', 'inner') as $joinType) {
             if (isset($join[$joinType]) && count($join[$joinType])) {
-                foreach($join[$joinType] as $table => $condition) {
+                foreach ($join[$joinType] as $table => $condition) {
                     // replace the _TABLENAME_COLUMNNAME by TABLENAME.COLUMNNAME
                     // since oracle doesn't work with the _TABLENAME_COLUMNNAME which i think is strange
                     // FIXXME i think this should become deprecated since the setWhere should not be used like this: '_table_column' but 'table.column'
@@ -1936,22 +1975,22 @@ class DB_QueryTool_Query
      * returns the array for the tables given as parameter or if no
      * parameter given for all tables that exist in the tableSpec
      *
-     * @param  boolean $shortNameIndexed if true the table is returned indexed by
-     *                                   the shortName otherwise indexed by the name
-     * @param  array   $tablestable names (not the short names!)
+     * @param boolean $shortNameIndexed if true the table is returned indexed by
+     *                                  the shortName otherwise indexed by the name
+     * @param array   $tablestable      names (not the short names!)
      *
-     * @return array   the tableSpec indexed
+     * @return array the tableSpec indexed
      * @access public
      */
     function getTableSpec($shortNameIndexed = true, $tables = array())
     {
         $newSpec = array();
         foreach ($this->tableSpec as $aSpec) {
-            if (sizeof($tables)==0 || in_array($aSpec['name'],$tables)) {
+            if (0 == sizeof($tables) || in_array($aSpec['name'], $tables)) {
                 if ($shortNameIndexed) {
                     $newSpec[$aSpec['shortName']] = $aSpec;
                 } else {
-                    $newSpec[$aSpec['name']] = $aSpec;
+                    $newSpec[$aSpec['name']]      = $aSpec;
                 }
             }
         }
@@ -1989,7 +2028,7 @@ class DB_QueryTool_Query
         // here we will replace all the '*' and 'table.*' by all the columns that this table
         // contains. we do this so we can easily apply the 'dontSelect' values.
         // and so we can also handle queries like: 'SELECT *,count() FROM ' and 'SELECT table.*,x FROM ' too
-        if (strpos($what, '*') !== false) {
+        if (false !== strpos($what, '*')) {
             // subpattern 1 get all the table names, that are written like this: 'table.*' including '*'
             // for '*' the tablename will be ''
             preg_match_all('/([^,]*)(\.)?\*\s*(,|$)/U', $what, $res);
@@ -2042,7 +2081,7 @@ class DB_QueryTool_Query
                 foreach ($cols as $aTable) {
                     $allCols[] = implode(',', $aTable);
                 }
-                $what = preg_replace('/(^|,)\*($|,)/', '$1'.implode(',',$allCols).'$2', $what);
+                $what = preg_replace('/(^|,)\*($|,)/', '$1'.implode(',', $allCols).'$2', $what);
                 // remove all the 'table.*' since we have selected all anyway (because there was a '*' in the select)
                 $what = preg_replace('/[^,]*(\.)?\*\s*(,|$)/U', '', $what);
             } else {
@@ -2253,10 +2292,10 @@ class DB_QueryTool_Query
     /**
      * Build the "SELECT" query
      *
-     * @param  array   $query               this array contains the elements of the  
-     *                                      query, indexed by their key, which are:
-     *                                      'select','from','where', etc.
-     * @param  boolean $isCalledViaGetCount whether this method is called via getCount() or not
+     * @param array   $query               this array contains the elements of the
+     *                                     query, indexed by their key, which are:
+     *                                     'select','from','where', etc.
+     * @param boolean $isCalledViaGetCount whether this method is called via getCount() or not
      *
      * @return string $querystring or false on error
      * @version 2002/07/11
@@ -2349,6 +2388,7 @@ class DB_QueryTool_Query
     // {{{ execute()
 
     /**
+     * Execute the query
      *
      * @param string $query  query to execute
      * @param string $method method name
@@ -2392,12 +2432,12 @@ class DB_QueryTool_Query
 
     /**
      * Write events to the logfile.
-     *
      * It does some additional work, like time measuring etc. to
      * see some additional info
      *
      * @param string $text text to log
      *
+     * @return void
      * @access public
      */
     function writeLog($text='START')
@@ -2459,7 +2499,7 @@ class DB_QueryTool_Query
      * @param object $result object reference
      *
      * @return mixed [boolean, array or object]
-     * @version    2004/04/28
+     * @version 2004/04/28
      * @access public
      */
     function returnResult($result)
@@ -2484,6 +2524,7 @@ class DB_QueryTool_Query
     // {{{ _makeIndexed()
 
     /**
+     * Make the data indexed
      *
      * @param mixed $data data
      *
@@ -2500,9 +2541,11 @@ class DB_QueryTool_Query
             $evalString = '$val[\''.implode('\'].\',\'.$val[\'', explode(',',$key)).'\']';   //"
 
             $indexedData = array();
-//FIXXME actually we also need to check ONCE if $val is an array, so to say if $data is 2-dimensional
+            //FIXXME actually we also need to check ONCE if $val is an array,
+            //so to say if $data is 2-dimensional
             foreach ($data as $val) {
-                eval("\$keyValue = $evalString;");  // get the actual real (string-)key (string if multiple cols are used as index)
+                // get the actual real (string-)key (string if multiple cols are used as index)
+                eval("\$keyValue = $evalString;");  
                 $indexedData[$keyValue] = $val;
             }
             unset($data);
@@ -2528,9 +2571,8 @@ class DB_QueryTool_Query
      * then the returned dataset will only contain one brother, since the
      * value from the column 'relationtoMe' is used
      * and which 'brother' you get depends on a lot of things, like the sortorder,
-     * how the db saves the data, and whatever else
-     *
-     * you can also set indexes which depend on 2 columns, simply pass the parameters like
+     * how the db saves the data, and whatever else.
+     * You can also set indexes which depend on 2 columns, simply pass the parameters like
      * 'table1.id,table2.id' it will be used as a string for indexing the result
      * and the index will be built using the 2 values given, so a possible
      * index might be '1,2' or '2108,29389' this way you can access data which
@@ -2600,16 +2642,16 @@ class DB_QueryTool_Query
             $type = 'none';
         }
         switch (strtolower($type)) {
-            case 'array':
-                $this->_resultType = 'array';
-                include_once 'DB/QueryTool/Result.php';
-                break;
-            case 'object':
-                $this->_resultType = 'object';
-                include_once 'DB/QueryTool/Result/Object.php';
-                break;
-            default:
-                $this->_resultType = 'none';
+        case 'array':
+            $this->_resultType = 'array';
+            include_once 'DB/QueryTool/Result.php';
+            break;
+        case 'object':
+            $this->_resultType = 'object';
+            include_once 'DB/QueryTool/Result/Object.php';
+            break;
+        default:
+            $this->_resultType = 'none';
         }
     }
 
@@ -2634,6 +2676,7 @@ class DB_QueryTool_Query
     // {{{ setErrorLogCallback()
 
     /**
+     * Set the name of the error log callback function
      *
      * @param string $param callback
      *
@@ -2649,6 +2692,8 @@ class DB_QueryTool_Query
     // {{{ setErrorSetCallback()
 
     /**
+     * Set the name of the error log callback function
+     *
      * @param string $param callback
      *
      * @return void
@@ -2692,6 +2737,7 @@ class DB_QueryTool_Query
     // {{{ _errorSet()
 
     /**
+     * Set the error message and line
      *
      * @param string $msg  message
      * @param string $line line number
@@ -2707,6 +2753,7 @@ class DB_QueryTool_Query
     // {{{ _errorHandler()
 
     /**
+     * Set the error handler
      *
      * @param boolean $logOrSet whether to log or set
      * @param string  $msg      message
@@ -2726,7 +2773,7 @@ class DB_QueryTool_Query
         $msg = get_class($this)."::$msg ($line)";
 
         $logOrSet = ucfirst($logOrSet);
-        $callback = &PEAR::getStaticProperty('DB_QueryTool','_error'.$logOrSet.'Callback');
+        $callback = &PEAR::getStaticProperty('DB_QueryTool', '_error'.$logOrSet.'Callback');
         //var_dump($callback);
         //if ($callback)
         //    call_user_func($callback, $msg);

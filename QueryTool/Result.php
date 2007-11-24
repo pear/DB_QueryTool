@@ -116,18 +116,18 @@ class DB_QueryTool_Result
     // }}}
     // {{{ numRows
 
-	/**
-	 * return the number of rows returned. This is an alias for getCount().
-	 *
-	 * @return integer
-	 * @access public
-	 */
-	function numRows()
-	{
-	    return $this->_count;
-	}
+    /**
+     * return the number of rows returned. This is an alias for getCount().
+     *
+     * @return integer
+     * @access public
+     */
+    function numRows()
+    {
+        return $this->_count;
+    }
 
-	// }}}
+    // }}}
     // {{{ getCount()
 
     /**
@@ -203,8 +203,8 @@ class DB_QueryTool_Result
     function getNext()
     {
         if (!$this->initDone()) {
-    		return $this->getFirst();
-    	}
+            return $this->getFirst();
+        }
         if ($this->hasMore()) {
             $this->_counter++;
             return $this->_data[$this->_dataKeys[$this->_counter]];
@@ -230,44 +230,44 @@ class DB_QueryTool_Result
     }
 
     // }}}
-	// {{{ fetchRow
+    // {{{ fetchRow
 
-	/**
-	 * This function emulates PEAR::DB fetchRow() method.
-	 * With this method, DB_QueryTool can transparently replace PEAR_DB
-	 *
-	 * @return void
-	 * @todo implement fetchmode support?
-	 * @access public
-	 */
-	function fetchRow()
-	{
+    /**
+     * This function emulates PEAR::DB fetchRow() method.
+     * With this method, DB_QueryTool can transparently replace PEAR_DB
+     *
+     * @return void
+     * @todo implement fetchmode support?
+     * @access public
+     */
+    function fetchRow()
+    {
         $arr = $this->getNext();
-    	if (!PEAR::isError($arr)) {
-    	   return $arr;
-    	}
-    	return false;
-	}
+        if (!PEAR::isError($arr)) {
+           return $arr;
+        }
+        return false;
+    }
 
     // }}}
-	// {{{ initDone
+    // {{{ initDone
 
-	/**
-	 * Helper method. Check if $this->_dataKeys has been initialized
-	 *
-	 * @return boolean
-	 * @access private
-	 */
-	function initDone()
-	{
-	    return (
-	        isset($this->_dataKeys) &&
+    /**
+     * Helper method. Check if $this->_dataKeys has been initialized
+     *
+     * @return boolean
+     * @access private
+     */
+    function initDone()
+    {
+        return (
+            isset($this->_dataKeys) &&
             is_array($this->_dataKeys) &&
             count($this->_dataKeys)
         );
-	}
+    }
 
-	// }}}
+    // }}}
 
     //@TODO
     //function getPrevious()
