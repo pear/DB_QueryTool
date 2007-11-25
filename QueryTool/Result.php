@@ -244,7 +244,7 @@ class DB_QueryTool_Result
     {
         $arr = $this->getNext();
         if (!PEAR::isError($arr)) {
-           return $arr;
+            return $arr;
         }
         return false;
     }

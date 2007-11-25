@@ -774,6 +774,7 @@ class DB_QueryTool_Query
      *
      * @param array $data contains an array of new data that shall be saved in the DB
      *                      the key-value pairs have to be the same for all the data!!!
+     *
      * @return mixed the inserted ids on success, or false otherwise
      * @version 2002/07/17
      * @author Wolfram Kriesing <wk@visionp.de>
@@ -1056,10 +1057,10 @@ class DB_QueryTool_Query
      * @author Wolfram Kriesing <wk@visionp.de>
      * @access public
      */
-    function addWhere($where, $condition = 'AND')
+    function addWhere($where, $connectString = 'AND')
     {
         if ($this->getWhere()) {
-            $where = $this->getWhere().' '.$condition.' '.$where;
+            $where = $this->getWhere().' '.$connectString.' '.$where;
         }
         $this->setWhere($where);
     }
@@ -1114,7 +1115,7 @@ class DB_QueryTool_Query
      * @author Wolfram Kriesing <wk@visionp.de>
      * @access public
      */
-    function setOrder($orderCondition='', $desc=false)
+    function setOrder($orderCondition = '', $desc = false)
     {
         $this->_order = $orderCondition .($desc ? ' DESC' : '');
     }
@@ -1602,7 +1603,7 @@ class DB_QueryTool_Query
      * 'raw'   does not quote the data before building the query
      *
      * @param string $option the mode to be set
-     * @param mixed  $value the value of the mode
+     * @param mixed  $value  the value of the mode
      *
      * @return void
      * @version 2002/09/17
@@ -1710,7 +1711,7 @@ class DB_QueryTool_Query
      * @author Wolfram Kriesing <wk@visionp.de>
      * @access public
      */
-    function _checkColumns($newData, $method='unknown')
+    function _checkColumns($newData, $method = 'unknown')
     {
         if (!$meta = $this->metadata()) {
             // if no metadata available, return data as given
@@ -1746,6 +1747,7 @@ class DB_QueryTool_Query
      *
      * @param string $string the query mostly
      *
+     * @return void
      * @access public
      */
     function debug($string)
@@ -1867,7 +1869,8 @@ class DB_QueryTool_Query
      * @see http://pear.php.net/bugs/bug.php?id=9734
      * @access private
      */
-    function _prependTableName($fieldlist, $table) {
+    function _prependTableName($fieldlist, $table)
+    {
         if (!$meta = $this->metadata($table)) {
             return $fieldlist;
         }
@@ -1958,7 +1961,7 @@ class DB_QueryTool_Query
     {
         $tableSpec = $this->getTableSpec(false);
         if (isset($tableSpec[$table]['shortName']) && $tableSpec[$table]['shortName']) {
-        //print "$table ... ".$tableSpec[$table]['shortName'].'<br />';
+            //print "$table ... ".$tableSpec[$table]['shortName'].'<br />';
             return $tableSpec[$table]['shortName'];
         }
 
@@ -1977,7 +1980,7 @@ class DB_QueryTool_Query
      *
      * @param boolean $shortNameIndexed if true the table is returned indexed by
      *                                  the shortName otherwise indexed by the name
-     * @param array   $tablestable      names (not the short names!)
+     * @param array   $tables           table names (not the short names!)
      *
      * @return array the tableSpec indexed
      * @access public
@@ -2116,7 +2119,7 @@ class DB_QueryTool_Query
                 if ($meta = $this->metadata($aTable)) {
                     foreach ($meta as $aCol => $x) {
                         // dont put the 'AS' behind it if there is already one
-                        if (preg_match("/$aTable.$aCol\s*as/i",$what)) {
+                        if (preg_match("/$aTable.$aCol\s*as/i", $what)) {
                             continue;
                         }
                         // this covers a ' table.colName ' surrounded by spaces, and replaces it by ' table.colName AS _table_colName'
@@ -2302,7 +2305,7 @@ class DB_QueryTool_Query
      * @author Wolfram Kriesing <wk@visionp.de>
      * @access private
      */
-    function _buildSelectQuery($query=array(), $isCalledViaGetCount = false)
+    function _buildSelectQuery($query = array(), $isCalledViaGetCount = false)
     {
         /*FIXXXME finish this
         $cacheKey = md5(serialize(????));
@@ -2440,7 +2443,7 @@ class DB_QueryTool_Query
      * @return void
      * @access public
      */
-    function writeLog($text='START')
+    function writeLog($text = 'START')
     {
         //its still really a quicky.... 'refactor' (nice word) that
         if (!isset($this->options['logfile'])) {
@@ -2585,7 +2588,7 @@ class DB_QueryTool_Query
      * @author Wolfram Kriesing <wk@visionp.de>
      * @access public
      */
-    function setIndex($key=null)
+    function setIndex($key = null)
     {
         if ($this->getJoin()) { // is join set?
             // replace TABLENAME.COLUMNNAME by _TABLENAME_COLUMNNAME
@@ -2608,6 +2611,7 @@ class DB_QueryTool_Query
     // {{{ getIndex()
 
     /**
+     * Get the index
      *
      * @return string index
      * @version 2002/07/11
@@ -2719,7 +2723,7 @@ class DB_QueryTool_Query
      * @author Wolfram Kriesing <wk@visionp.de>
      * @access private
      */
-    function _errorLog($msg, $line='unknown')
+    function _errorLog($msg, $line = 'unknown')
     {
         $this->_errorHandler('log', $msg, $line);
         /*
@@ -2744,7 +2748,7 @@ class DB_QueryTool_Query
      *
      * @return void
      */
-    function _errorSet($msg, $line='unknown')
+    function _errorSet($msg, $line = 'unknown')
     {
         $this->_errorHandler('set', $msg, $line);
     }
@@ -2761,7 +2765,7 @@ class DB_QueryTool_Query
      *
      * @return void
      */
-    function _errorHandler($logOrSet, $msg, $line='unknown')
+    function _errorHandler($logOrSet, $msg, $line = 'unknown')
     {
         /* what did i do this for?
         if ($this->getOption('verbose') == true) {
