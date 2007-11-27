@@ -184,7 +184,7 @@ class DB_QueryTool_Result
     {
         if ($this->getCount() > 0) {
             $this->_dataKeys = array_keys($this->_data);
-            $this->_counter = 0;
+            $this->_counter  = 0;
             return $this->_data[$this->_dataKeys[$this->_counter]];
         }
         return new PEAR_Error('There are no elements!');

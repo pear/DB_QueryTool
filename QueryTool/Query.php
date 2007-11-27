@@ -2529,7 +2529,7 @@ class DB_QueryTool_Query
     /**
      * Make the data indexed
      *
-     * @param mixed $data data
+     * @param mixed &$data data
      *
      * @return mixed $data or array $indexedData
      * @version 2002/07/11
@@ -2541,7 +2541,7 @@ class DB_QueryTool_Query
         // we can only return an indexed result if the result has a number of columns
         if (is_array($data) && sizeof($data) && $key = $this->getIndex()) {
             // build the string to evaluate which might be made up out of multiple indexes of a result-row
-            $evalString = '$val[\''.implode('\'].\',\'.$val[\'', explode(',',$key)).'\']';   //"
+            $evalString = '$val[\''.implode('\'].\',\'.$val[\'', explode(',', $key)).'\']';   //"
 
             $indexedData = array();
             //FIXXME actually we also need to check ONCE if $val is an array,
