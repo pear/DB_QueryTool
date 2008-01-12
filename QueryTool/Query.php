@@ -1098,7 +1098,7 @@ class DB_QueryTool_Query
         }
 
         $string = $this->db->quoteSmart('%'.str_replace(' ', '%', strtolower($string)).'%');
-        $this->addWhere("LOWER($column) LIKE $string", $condition);
+        $this->addWhere("LOWER($column) LIKE $string", $connectString);
     }
 
     // }}}
@@ -1917,8 +1917,10 @@ class DB_QueryTool_Query
             if (isset($join[$joinType]) && count($join[$joinType])) {
                 foreach ($join[$joinType] as $table => $condition) {
                     // replace the _TABLENAME_COLUMNNAME by TABLENAME.COLUMNNAME
-                    // since oracle doesn't work with the _TABLENAME_COLUMNNAME which i think is strange
-                    // FIXXME i think this should become deprecated since the setWhere should not be used like this: '_table_column' but 'table.column'
+                    // since oracle doesn't work with the _TABLENAME_COLUMNNAME which
+                    // I think is strange
+                    // FIXXME i think this should become deprecated since the
+                    // setWhere should not be used like this: '_table_column' but 'table.column'
                     $regExp = '/_('.$table.')_([^\s]+)/';
                     $where = preg_replace($regExp, '$1.$2', $condition);
 
@@ -2118,7 +2120,7 @@ class DB_QueryTool_Query
             foreach ($this->getJoin('tables') as $aTable) {
                 if ($meta = $this->metadata($aTable)) {
                     foreach ($meta as $aCol => $x) {
-                        // dont put the 'AS' behind it if there is already one
+                        // don't put the 'AS' behind it if there is already one
                         if (preg_match("/$aTable.$aCol\s*as/i", $what)) {
                             continue;
                         }
@@ -2143,7 +2145,7 @@ class DB_QueryTool_Query
             $column = str_replace(' as ', ' AS ', $column);
             if (strpos($column, ' AS ') !== false) {
                 $column = explode(' AS ', $column);
-                if (strpos($column[0], '(') !== false) {
+                if ((strpos($column[0], '(') !== false) || (strpos($column[0], ')') !== false)) {
                     //do not quote function calls, COUNT(), etc.
                 } elseif (strpos($column[0], '.') !== false) {
                     $column[0] = explode('.', $column[0]);
@@ -2155,7 +2157,7 @@ class DB_QueryTool_Query
                 }
                 $column = implode(' AS ', $column);
             } else {
-                if (strpos($column, '(') !== false) {
+                if ((strpos($column, '(') !== false) || (strpos($column, ')') !== false)) {
                     //do not quote function calls, COUNT(), etc.
                 } elseif (strpos($column, '.') !== false) {
                     $column = explode('.', $column);

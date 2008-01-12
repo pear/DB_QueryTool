@@ -112,6 +112,20 @@ class TestOfDB_QueryTool_GetQueryString extends TestOfDB_QueryTool
         }
         $this->assertEqual($expected, $this->qt->getQueryString());
     }
+    function test_bug12353() {
+        $this->qt =& new DB_QT(TABLE_QUESTION);
+
+        $this->qt->setSelect('_spruch, if(length(_spruch) > 50, concat(left(_spruch, 50), "..."), _spruch) as _kurztext');
+
+        if (DB_TYPE == 'ibase') {
+            $expected = 'SELECT _spruch,if(length(_spruch) > 50,concat(left(_spruch,50),"..."),_spruch) AS _kurztext FROM '.TABLE_QUESTION;
+        } else {
+            $expected = 'SELECT '.$this->qt->_quoteIdentifier('_spruch')
+                       .',if(length(_spruch) > 50,concat(left(_spruch,50),"..."),_spruch) AS _kurztext'
+                       .' FROM '.$this->qt->_quoteIdentifier(TABLE_QUESTION);
+        }
+        $this->assertEqual($expected, $this->qt->getQueryString());
+    }
 }
 
 if (!defined('TEST_RUNNING')) {

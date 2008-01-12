@@ -221,20 +221,12 @@ class TestOfDB_QueryTool_Get extends TestOfDB_QueryTool
 
         $question->autoJoin(TABLE_ANSWER);
         $question->setSelect('MAX(id),'.TABLE_ANSWER.'.id');
-        if (DB_TYPE == 'ibase') {
-            $expected = 'MAX('.TABLE_QUESTION.'.id)';
-        } else {
-            $expected = 'MAX('.TABLE_QUESTION.'.'.$question->db->quoteIdentifier('id').')';
-        }
+        $expected = 'MAX('.TABLE_QUESTION.'.id)';
         $this->assertTrue(strpos($question->_buildSelectQuery(), $expected));
 
         // check '(question)'
         $question->setSelect('LOWER(question),'.TABLE_ANSWER.'.*');
-        if (DB_TYPE == 'ibase') {
-            $expected = 'LOWER('.TABLE_QUESTION.'.question)';
-        } else {
-            $expected = 'LOWER('.TABLE_QUESTION.'.'.$question->db->quoteIdentifier('question').')';
-        }
+        $expected = 'LOWER('.TABLE_QUESTION.'.question)';
         $this->assertTrue(strpos($question->_buildSelectQuery(), $expected));
 
         // check 'id,'
@@ -243,20 +235,12 @@ class TestOfDB_QueryTool_Get extends TestOfDB_QueryTool
 
         // check 'id as qid'
         $question->setSelect('id as qid, '.TABLE_ANSWER.'.*');
-        if (DB_TYPE == 'ibase') {
-            $expected = TABLE_QUESTION.'.id AS qid';
-        } else {
-            $expected = TABLE_QUESTION.'.'.$question->db->quoteIdentifier('id').' AS qid';
-        }
+        $expected = $question->_quoteIdentifier(TABLE_QUESTION).'.'.$question->_quoteIdentifier('id').' AS qid';
         $this->assertTrue(strpos($question->_buildSelectQuery(), $expected));
 
         // check 'id as qid'
         $question->setSelect('LOWER( question ), '.TABLE_ANSWER.'.*');
-        if (DB_TYPE == 'ibase') {
-            $expected = 'LOWER( '.TABLE_QUESTION.'.question )';
-        } else {
-            $expected = 'LOWER( '.TABLE_QUESTION.'.'.$question->db->quoteIdentifier('question').' )';
-        }
+        $expected = 'LOWER( '.TABLE_QUESTION.'.question )';
         $this->assertTrue(strpos($question->_buildSelectQuery(), $expected));
     }
 
