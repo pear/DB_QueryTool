@@ -26,8 +26,8 @@ SQL-Statements and execute them.
   <email>l.alberton@quipo.it</email>
   <active>yes</active>
  </lead>
- <date>2007-11-16</date>
- <time>21:33:51</time>
+ <date>2008-01-12</date>
+ <time>11:45:51</time>
  <version>
   <release>1.1.1</release>
   <api>1.1.1</api>
@@ -123,7 +123,7 @@ SQL-Statements and execute them.
     <release>stable</release>
     <api>stable</api>
    </stability>
-   <date>2007-11-16</date>
+   <date>2008-01-12</date>
    <license uri="http://www.debian.org/misc/bsd.license">BSD</license>
    <notes>* fixed bug #10073: bug with empty() and 0 in _localeSafeImplode()
 * fixed Coding Standards
