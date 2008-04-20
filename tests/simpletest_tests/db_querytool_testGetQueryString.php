@@ -106,7 +106,7 @@ class TestOfDB_QueryTool_GetQueryString extends TestOfDB_QueryTool
                        .' FROM '.TABLE_QUESTION.'  GROUP BY '.TABLE_QUESTION.'.question';
         } else {
             $expected = 'SELECT '.$this->qt->_quoteIdentifier('question')
-                       .',COUNT(DISTINCT id) AS num_questions'
+                       .',COUNT(DISTINCT id) AS '.$this->qt->db->quoteIdentifier('num_questions')
                        .' FROM '.$this->qt->_quoteIdentifier(TABLE_QUESTION)
                        .'  GROUP BY '.$this->qt->_quoteIdentifier(TABLE_QUESTION).'.'.$this->qt->_quoteIdentifier('question');
         }
@@ -121,7 +121,23 @@ class TestOfDB_QueryTool_GetQueryString extends TestOfDB_QueryTool
             $expected = 'SELECT _spruch,if(length(_spruch) > 50,concat(left(_spruch,50),"..."),_spruch) AS _kurztext FROM '.TABLE_QUESTION;
         } else {
             $expected = 'SELECT '.$this->qt->_quoteIdentifier('_spruch')
-                       .',if(length(_spruch) > 50,concat(left(_spruch,50),"..."),_spruch) AS _kurztext'
+                       .',if(length(_spruch) > 50,concat(left(_spruch,50),"..."),_spruch) AS '
+                       .$this->qt->_quoteIdentifier('_kurztext')
+                       .' FROM '.$this->qt->_quoteIdentifier(TABLE_QUESTION);
+        }
+        $this->assertEqual($expected, $this->qt->getQueryString());
+    }
+    function test_bug13694() {
+        $this->qt =& new DB_QT(TABLE_QUESTION);
+        $table = TABLE_QUESTION;
+        $this->qt->setSelect('sum( a ) AS suma, count( CAST ( b AS DATE ) ) AS dateb, CAST( b AS DATE) AS datebgb');
+
+        if (DB_TYPE == 'ibase') {
+            $expected = 'SELECT sum( a ) AS suma,count( CAST ( b AS DATE ) ) AS dateb,CAST( b AS DATE) AS datebgb FROM '.TABLE_QUESTION;
+        } else {
+            $expected = 'SELECT sum( a ) AS '.$this->qt->_quoteIdentifier('suma')
+                       .',count( CAST ( b AS DATE ) ) AS '.$this->qt->_quoteIdentifier('dateb')
+                       .',CAST( b AS DATE) AS '.$this->qt->_quoteIdentifier('datebgb')
                        .' FROM '.$this->qt->_quoteIdentifier(TABLE_QUESTION);
         }
         $this->assertEqual($expected, $this->qt->getQueryString());

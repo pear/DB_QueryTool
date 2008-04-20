@@ -26,20 +26,18 @@ SQL-Statements and execute them.
   <email>l.alberton@quipo.it</email>
   <active>yes</active>
  </lead>
- <date>2008-01-12</date>
+ <date>2008-04-20</date>
  <time>11:45:51</time>
  <version>
-  <release>1.1.2</release>
-  <api>1.1.2</api>
+  <release>1.1.3</release>
+  <api>1.1.3</api>
  </version>
  <stability>
   <release>stable</release>
   <api>stable</api>
  </stability>
  <license uri="http://www.debian.org/misc/bsd.license">BSD</license>
- <notes>* fixed bug #12353: identifier quoting with functions in _buildSelect()
-* fixed bug in addWhereSearch() introduced in the latest release
-* Coding Standards fixes
+ <notes>* fixed bug #13694: quoting identifiers is not working with CAST()
  </notes>
  <contents>
   <dir name="/">
@@ -115,6 +113,20 @@ SQL-Statements and execute them.
  </dependencies>
  <phprelease />
  <changelog>
+  <release>
+   <version>
+    <release>1.1.3</release>
+    <api>1.1.3</api>
+   </version>
+   <stability>
+    <release>stable</release>
+    <api>stable</api>
+   </stability>
+   <date>2008-04-20</date>
+   <license uri="http://www.debian.org/misc/bsd.license">BSD</license>
+   <notes>* fixed bug #13694: quoting identifiers is not working with CAST()
+   </notes>
+  </release>
   <release>
    <version>
     <release>1.1.2</release>

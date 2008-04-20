@@ -2147,6 +2147,23 @@ class DB_QueryTool_Query
                 $column = explode(' AS ', $column);
                 if ((strpos($column[0], '(') !== false) || (strpos($column[0], ')') !== false)) {
                     //do not quote function calls, COUNT(), etc.
+
+                    //do not quote type in CAST(col AS type):
+                    if (!preg_match('/\bCAST\b/', $column[0])) {
+                        $column[1] = $this->_quoteIdentifier($column[1]);
+                    }
+                    $n_cols = count($column);
+                    if ($n_cols > 2) {
+                        //multiple "AS", Example: CAST(col AS type) AS alias
+                        $open_parentheses  = substr_count($column[0], '(') - substr_count($column[0], ')');
+                        $open_parentheses += substr_count($column[1], '(') - substr_count($column[1], ')');
+                        for ($k=2; $k<$n_cols; $k++) {
+                            if (!$open_parentheses) {
+                                $column[$k] = $this->_quoteIdentifier($column[$k]);
+                            }
+                            $open_parentheses += substr_count($column[$k], '(') - substr_count($column[$k], ')');
+                        }
+                    }
                 } elseif (strpos($column[0], '.') !== false) {
                     $column[0] = explode('.', $column[0]);
                     $column[0][0] = $this->_quoteIdentifier($column[0][0]);
