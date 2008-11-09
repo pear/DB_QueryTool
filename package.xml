@@ -26,8 +26,8 @@ SQL-Statements and execute them.
   <email>l.alberton@quipo.it</email>
   <active>yes</active>
  </lead>
- <date>2008-04-20</date>
- <time>11:45:51</time>
+ <date>2008-11-09</date>
+ <time>19:08:51</time>
  <version>
   <release>1.1.3</release>
   <api>1.1.3</api>
@@ -38,6 +38,7 @@ SQL-Statements and execute them.
  </stability>
  <license uri="http://www.debian.org/misc/bsd.license">BSD</license>
  <notes>* fixed bug #13694: quoting identifiers is not working with CAST()
+* fixed bug #14862: Call to undefined method DB_Error::tableinfo() [doconnor]
  </notes>
  <contents>
   <dir name="/">
@@ -122,9 +123,10 @@ SQL-Statements and execute them.
     <release>stable</release>
     <api>stable</api>
    </stability>
-   <date>2008-04-20</date>
+   <date>2008-11-09</date>
    <license uri="http://www.debian.org/misc/bsd.license">BSD</license>
    <notes>* fixed bug #13694: quoting identifiers is not working with CAST()
+* fixed bug #14862: Call to undefined method DB_Error::tableinfo() [doconnor]
    </notes>
   </release>
   <release>

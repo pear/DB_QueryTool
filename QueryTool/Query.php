@@ -1834,6 +1834,9 @@ class DB_QueryTool_Query
             if (!is_object($this->db)) {
                 return false;
             }
+            if (PEAR::isError($this->db)) {
+                return false;
+            }
             $res = $this->db->tableinfo($table);
             if (PEAR::isError($res)) {
                 //var_dump($res);
