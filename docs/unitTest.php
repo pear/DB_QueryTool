@@ -3,7 +3,7 @@
 //  $Id$
 //
 
-!!!!! NOT WORKING YET !!!!
+die('!!!!! NOT WORKING YET !!!!');
 
 ini_set( 'include_path' , ini_get('include_path').':'.realpath('../../..') );
 
