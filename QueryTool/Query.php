@@ -535,10 +535,10 @@ class DB_QueryTool_Query
         }
 
         $query['order'] = ''; // order is not of importance and might freak up
-                              // the special group-handling up there, 
+                              // the special group-handling up there,
                               // since the order-col is not be known
-        /* FIXXME use the following line, but watch out, then it has to be used 
-           in every method, or this value will be used always, simply try calling 
+        /* FIXXME use the following line, but watch out, then it has to be used
+           in every method, or this value will be used always, simply try calling
            getCount and getAll afterwards, getAll will return the count :-)
            if getAll doesn't use setSelect!!!
         */
@@ -747,7 +747,7 @@ class DB_QueryTool_Query
 
         $newData = $this->_checkColumns($newData, 'add');
         $newData = $this->_quoteArray($newData);
-        
+
         //quoting the columns
         $tmpData = array();
         foreach ($newData as $key=>$val) {
@@ -825,7 +825,7 @@ class DB_QueryTool_Query
             );
             return $this->execute($query, 'query') ? $retIds : false;
         }
-        
+
         //Executing for every entry the add method
         foreach ($data as $entity) {
             if ($ret) {
@@ -884,7 +884,7 @@ class DB_QueryTool_Query
 
         $query = 'DELETE FROM '. $this->table .' WHERE '. $whereClause;
         return $this->execute($query, 'query') ? true : false;
-        // i think this method should return the ID's that it removed, 
+        // i think this method should return the ID's that it removed,
         // this way we could simply use the result for further actions that depend
         // on those id ... or? make stuff easier, see ignaz::imail::remove
     }
@@ -1020,7 +1020,7 @@ class DB_QueryTool_Query
     function setWhere($whereCondition = '')
     {
         $this->_where = $whereCondition;
-        //FIXXME parse the where condition and replace ambigious column names, 
+        //FIXXME parse the where condition and replace ambigious column names,
         // such as "name='Deutschland'" with "country.name='Deutschland'"
         // then the users dont have to write that explicitly and can use the same
         // name as in the setOrder i.e. setOrder('name,_net_name,_netPrefix_prefix');
@@ -1235,15 +1235,15 @@ class DB_QueryTool_Query
      */
     function setJoin($table = null, $where = null, $joinType = 'default')
     {
-        //FIXXME make it possible to pass a table name as a string like this too 
-        // 'user u' where u is the string that can be used to refer to this table 
+        //FIXXME make it possible to pass a table name as a string like this too
+        // 'user u' where u is the string that can be used to refer to this table
         // in a where/order or whatever condition
-        // this way it will be possible to join tables with itself, like 
+        // this way it will be possible to join tables with itself, like
         // setJoin(array('user u','user u1'))
-        // this wouldnt work yet, but for doing so we would need to change the 
+        // this wouldnt work yet, but for doing so we would need to change the
         // _build methods too!!! because they use getJoin('tables') and this simply
         // returns all the tables in use but don't take care of the mentioned syntax
-        if (is_null($table) || is_null($where)) {   
+        if (is_null($table) || is_null($where)) {
             // remove the join if not sufficient parameters are given
             $this->_join[$joinType] = array();
             return;
@@ -2026,13 +2026,13 @@ class DB_QueryTool_Query
         if (empty($what) && $this->getSelect()) {
             $what = $this->getSelect();
         }
-        
+
         //
         // replace all the '*' by the real column names, and take care of the dontSelect-columns!
         //
         $dontSelect = $this->getDontSelect();
         $dontSelect = $dontSelect ? explode(',', $dontSelect) : array(); // make sure dontSelect is an array
-        
+
         // here we will replace all the '*' and 'table.*' by all the columns that this table
         // contains. we do this so we can easily apply the 'dontSelect' values.
         // and so we can also handle queries like: 'SELECT *,count() FROM ' and 'SELECT table.*,x FROM ' too
@@ -2071,7 +2071,7 @@ class DB_QueryTool_Query
                         if ($aTable == $this->table) {
                             $cols[$aTable][] = $this->table. '.' .$colName . ' AS '. $this->_quoteIdentifier($colName);
                         } else {
-                            //with ibase, don't quote aliases, and prepend the 
+                            //with ibase, don't quote aliases, and prepend the
                             //joined table cols alias with "t_" because an alias
                             //starting with just "_" triggers an "invalid token" error
                             $short_alias = ($this->db->phptype == 'ibase' ? 't_' : '_') . $this->getTableShortName($aTable) .'_'. $colName;
@@ -2485,30 +2485,30 @@ class DB_QueryTool_Query
             $bytesSent = $bytesSent[0]['Value'];
         }
         if ($text === 'START') {
-            $startTime = split(' ', microtime());
+            $startTime = explode(' ', microtime());
             $this->_logData['startTime'] = $startTime[1] + $startTime[0];
         }
         if ($text === 'start query') {
             $this->_logData['startBytesSent'] = $bytesSent;
-            $startTime = split(' ', microtime());
+            $startTime = explode(' ', microtime());
             $this->_logData['startQueryTime'] = $startTime[1] + $startTime[0];
             return;
         }
         if ($text === 'end query') {
             $text .= ' result size: '.((int)$bytesSent-(int)$this->_logData['startBytesSent']).' bytes';
-            $endTime = split(' ', microtime());
+            $endTime = explode(' ', microtime());
             $endTime = $endTime[1] + $endTime[0];
             $text .= ', took: '.(($endTime - $this->_logData['startQueryTime'])).' seconds';
         }
         if (strpos($text, 'query built') === 0) {
-            $endTime = split(' ', microtime());
+            $endTime = explode(' ', microtime());
             $endTime = $endTime[1] + $endTime[0];
             $this->writeLog('query building took: '.(($endTime - $this->_logData['startTime'])).' seconds');
         }
         $this->_logObject->log($text);
 
         if (strpos($text, 'end query') === 0) {
-            $endTime = split(' ', microtime());
+            $endTime = explode(' ', microtime());
             $endTime = $endTime[1] + $endTime[0];
             $text = 'time over all: '.(($endTime - $this->_logData['startTime'])).' seconds';
             $this->_logObject->log($text);
@@ -2570,7 +2570,7 @@ class DB_QueryTool_Query
             //so to say if $data is 2-dimensional
             foreach ($data as $val) {
                 // get the actual real (string-)key (string if multiple cols are used as index)
-                eval("\$keyValue = $evalString;");  
+                eval("\$keyValue = $evalString;");
                 $indexedData[$keyValue] = $val;
             }
             unset($data);
