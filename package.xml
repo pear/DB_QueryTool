@@ -49,14 +49,17 @@ SQL-Statements and execute them.
      <file baseinstalldir="DB" name="pgsql.sql" role="doc" />
     </dir> <!-- /docs/examples -->
    </dir> <!-- /docs -->
-   <dir name="QueryTool">
-    <dir name="Result">
-     <file baseinstalldir="DB" name="Object.php" role="php" />
-    </dir> <!-- /QueryTool/Result -->
-    <file baseinstalldir="DB" name="EasyJoin.php" role="php" />
-    <file baseinstalldir="DB" name="Query.php" role="php" />
-    <file baseinstalldir="DB" name="Result.php" role="php" />
-   </dir> <!-- /QueryTool -->
+   <dir name="DB">
+    <dir name="QueryTool">
+     <dir name="Result">
+      <file name="Object.php" role="php" />
+     </dir>  <!-- /QueryTool/Result -->
+     <file name="EasyJoin.php" role="php" />
+     <file name="Query.php" role="php" />
+     <file name="Result.php" role="php" />
+    </dir>  <!-- /QueryTool -->
+    <file name="QueryTool.php" role="php" />
+   </dir> <!-- /DB -->
    <dir name="tests">
     <dir name="simpletest_tests">
      <file baseinstalldir="DB" name="all_tests.php" role="test" />
@@ -78,19 +81,18 @@ SQL-Statements and execute them.
      <file baseinstalldir="DB" name="simple_include.php" role="test" />
     </dir> <!-- /tests/simpletest_tests -->
     <file baseinstalldir="DB" name="Common.php" role="test" />
-    <file baseinstalldir="DB" name="Get.php" role="test" />
-    <file baseinstalldir="DB" name="GetAll.php" role="test" />
-    <file baseinstalldir="DB" name="GetCount.php" role="test" />
-    <file baseinstalldir="DB" name="GetQueryString.php" role="test" />
-    <file baseinstalldir="DB" name="Having.php" role="test" />
-    <file baseinstalldir="DB" name="index.php" role="test" />
-    <file baseinstalldir="DB" name="Limit.php" role="test" />
-    <file baseinstalldir="DB" name="SetDbInstance.php" role="test" />
+    <file baseinstalldir="DB" name="GetAllTest.php" role="test" />
+    <file baseinstalldir="DB" name="GetCountTest.php" role="test" />
+    <file baseinstalldir="DB" name="GetQueryStringTest.php" role="test" />
+    <file baseinstalldir="DB" name="GetTest.php" role="test" />
+    <file baseinstalldir="DB" name="HavingTest.php" role="test" />
+    <file baseinstalldir="DB" name="LimitTest.php" role="test" />
+    <file baseinstalldir="DB" name="SetDbInstanceTest.php" role="test" />
+    <file baseinstalldir="DB" name="TestCase.php" role="test" />
+    <file baseinstalldir="DB" name="WhereTest.php" role="test" />
+    <file baseinstalldir="DB" name="config.php" role="test" />
     <file baseinstalldir="DB" name="sql.php" role="test" />
-    <file baseinstalldir="DB" name="UnitTest.php" role="test" />
-    <file baseinstalldir="DB" name="Where.php" role="test" />
    </dir> <!-- /tests -->
-   <file baseinstalldir="DB" name="QueryTool.php" role="php" />
   </dir> <!-- / -->
  </contents>
  <dependencies>

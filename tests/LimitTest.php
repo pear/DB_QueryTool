@@ -3,7 +3,9 @@
 //  $Id$
 //
 
-class tests_Limit extends tests_UnitTest
+require_once dirname(__FILE__) . '/TestCase.php';
+
+class tests_LimitTest extends tests_TestCase
 {
     // test if setLimit works
     function test_setLimit()

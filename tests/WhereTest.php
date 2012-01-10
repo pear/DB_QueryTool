@@ -3,7 +3,9 @@
 //  $Id$
 //
 
-class tests_Where extends tests_UnitTest
+require_once dirname(__FILE__) . '/TestCase.php';
+
+class tests_WhereTest extends tests_TestCase
 {
     
     function test_setWhere()

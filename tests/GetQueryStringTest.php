@@ -18,6 +18,8 @@
 // $Id$
 //
 
+require_once dirname(__FILE__) . '/TestCase.php';
+
 /**
 * This class just checks if the query is returned, not if
 * the query was properly rendered. This should be subject to
@@ -25,7 +27,7 @@
 *
 * @package tests
 */
-class tests_GetQueryString extends tests_UnitTest
+class tests_GetQueryStringTest extends tests_TestCase
 {
     function _setup()
     {

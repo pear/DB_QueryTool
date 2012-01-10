@@ -3,7 +3,9 @@
 //  $Id$
 //
 
-class tests_GetCount extends tests_UnitTest
+require_once dirname(__FILE__) . '/TestCase.php';
+
+class tests_GetCountTest extends tests_TestCase
 {
     function _setup($mode)
     {

@@ -3,7 +3,9 @@
 //  $Id$
 //
 
-class tests_Having extends tests_UnitTest
+require_once dirname(__FILE__) . '/TestCase.php';
+
+class tests_HavingTest extends tests_TestCase
 {
     function test_setHaving()
     {   // which company has exactly 2 workers???

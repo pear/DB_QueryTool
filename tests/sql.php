@@ -65,6 +65,4 @@
         )        
     );
         
-    
-
-?>
+    $dbStructure['mysqli'] = $dbStructure['mysql'];

@@ -3,7 +3,12 @@
 //  $Id$
 //
 
-class tests_UnitTest extends PhpUnit_TestCase
+require_once 'PHPUnit/Autoload.php';
+require_once 'DB/QueryTool.php';
+require dirname(__FILE__) . '/config.php';
+require dirname(__FILE__) . '/Common.php';
+
+abstract class tests_TestCase extends PHPUnit_Framework_TestCase
 {
     function setUp()
     {
@@ -11,8 +16,6 @@ class tests_UnitTest extends PhpUnit_TestCase
             $tableObj = new tests_Common($aTable);
             $tableObj->removeAll();
         }
-
-        $this->setLooselyTyped(true);
     }
 
     function tearDown()

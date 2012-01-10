@@ -18,6 +18,8 @@
 // $Id$
 //
 
+require_once dirname(__FILE__) . '/TestCase.php';
+
 /**
 * This class just checks if the query is returned, not if
 * the query was properly rendered. This should be subject to
@@ -25,7 +27,7 @@
 *
 * @package tests
 */
-class tests_SetDbInstance extends tests_UnitTest
+class tests_SetDbInstanceTest extends tests_TestCase
 {
     /**
     * Check if the two instances are the same by comparing
@@ -38,7 +40,7 @@ class tests_SetDbInstance extends tests_UnitTest
     */
     function test_default()
     {
-        $db =& DB::connect(DB_DSN);
+        $db =& DB::connect(unserialize(DB_QUERYTOOL_TEST_DSN));
 
         $qt =& new DB_QueryTool();
         $qt->setDbInstance($db);
@@ -54,7 +56,7 @@ class tests_SetDbInstance extends tests_UnitTest
     */
     function test_oldWay()
     {
-        $qt =& new DB_QueryTool(DB_DSN);
+        $qt =& new DB_QueryTool(unserialize(DB_QUERYTOOL_TEST_DSN));
         $db =& $qt->getDbInstance();
         $this->assertTrue(is_a($db,'db_common'));
     }

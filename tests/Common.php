@@ -3,8 +3,6 @@
 //  $Id$
 //
 
-require_once 'DB/QueryTool.php';
-
 // so we have all errors saved in one place
 // its just due to the strange error handling i implemented here ... gotta change that some day
 $_Common_Errors = array();
@@ -21,7 +19,7 @@ class tests_Common extends DB_QueryTool
         if ($table != null) {
             $this->table = $table;
         }
-        parent::DB_QueryTool( DB_DSN );       
+        parent::DB_QueryTool( unserialize(DB_QUERYTOOL_TEST_DSN) );       
         $this->setErrorSetCallback( array(&$this,'errorSet') );
         $this->setErrorLogCallback( array(&$this,'errorLog') );
     }
