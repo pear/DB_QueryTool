@@ -68,7 +68,7 @@ class tests_GetAllTest extends tests_TestCase
     {
         $this->_setup();
         $this->user->addWhereSearch('name', 'some other name');
-        $this->assertFalse($this->user->getAll());
+        $this->assertEquals(array(), $this->user->getAll());
     }
 }
 
