@@ -32,13 +32,14 @@ class tests_GetQueryStringTest extends tests_TestCase
     function _setup()
     {
         $this->question =& new tests_Common(TABLE_QUESTION);
+        $this->question->setOption('raw', true);
     }
 
     function test_selectAll()
     {
         $this->_setup();
         $this->assertStringEquals(
-                            'SELECT question.id AS "id",question.question AS "question" FROM question'
+                            'SELECT question.id AS id,question.question AS question FROM question'
                             ,$this->question->getQueryString());
     }
 
@@ -47,7 +48,7 @@ class tests_GetQueryStringTest extends tests_TestCase
         $this->_setup();
         $this->question->setWhere('id=1');
         $this->assertStringEquals(
-                            'SELECT question.id AS "id",question.question AS "question" FROM question'.
+                            'SELECT question.id AS id,question.question AS question FROM question'.
                             ' WHERE id=1'
                             ,$this->question->getQueryString());
     }
