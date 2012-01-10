@@ -40,11 +40,11 @@ class tests_SetDbInstanceTest extends tests_TestCase
     */
     function test_default()
     {
-        $db =& DB::connect(unserialize(DB_QUERYTOOL_TEST_DSN));
+        $db = DB::connect(unserialize(DB_QUERYTOOL_TEST_DSN));
 
-        $qt =& new DB_QueryTool();
+        $qt = new DB_QueryTool();
         $qt->setDbInstance($db);
-        $dbActual =& $qt->getDbInstance();
+        $dbActual = $qt->getDbInstance();
         $this->assertEquals($db->fetchmode,$dbActual->fetchmode);
     }
 
@@ -56,8 +56,8 @@ class tests_SetDbInstanceTest extends tests_TestCase
     */
     function test_oldWay()
     {
-        $qt =& new DB_QueryTool(unserialize(DB_QUERYTOOL_TEST_DSN));
-        $db =& $qt->getDbInstance();
+        $qt = new DB_QueryTool(unserialize(DB_QUERYTOOL_TEST_DSN));
+        $db = $qt->getDbInstance();
         $this->assertTrue(is_a($db,'db_common'));
     }
 

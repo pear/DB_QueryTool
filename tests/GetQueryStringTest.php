@@ -31,7 +31,7 @@ class tests_GetQueryStringTest extends tests_TestCase
 {
     function _setup()
     {
-        $this->question =& new tests_Common(TABLE_QUESTION);
+        $this->question = new tests_Common(TABLE_QUESTION);
         $this->question->setOption('raw', true);
     }
 

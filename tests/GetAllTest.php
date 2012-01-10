@@ -9,7 +9,7 @@ class tests_GetAllTest extends tests_TestCase
 {
     function _setup()
     {
-        $this->user =& new tests_Common(TABLE_USER);
+        $this->user = new tests_Common(TABLE_USER);
         $this->user->add(array('name' => 'some name'));
         $this->user->add(array('name' => 'some name1'));
         $this->user->add(array('name' => 'some name2'));
