@@ -102,6 +102,7 @@ class tests_GetTest extends tests_TestCase
         $theAnswer = 'I dont know!';
     
         $question = new tests_Common(TABLE_QUESTION);        
+        $question->setOption('raw', true);
         $newQuest = array(TABLE_QUESTION=>$theQuestion);
         $qid=$question->add($newQuest);
         
@@ -112,23 +113,33 @@ class tests_GetTest extends tests_TestCase
         $question->autoJoin(TABLE_ANSWER);
 //        $question->setSelect('id,'.TABLE_QUESTION.' as question,'.TABLE_ANSWER.' as answer');
         $question->setSelect('MAX(id),'.TABLE_ANSWER.'.id');
-        $this->assertTrue(strpos($question->_buildSelectQuery(),'MAX('.TABLE_QUESTION.'.id)')); 
-    
+        $this->assertStringStartsWith(
+                'SELECT MAX('.TABLE_QUESTION.'.id)',
+                $question->_buildSelectQuery());
+
         // check '(question)'
         $question->setSelect('LOWER(question),'.TABLE_ANSWER.'.*');
-        $this->assertTrue(strpos($question->_buildSelectQuery(),'LOWER('.TABLE_QUESTION.'.question)')); 
+        $this->assertStringStartsWith(
+                'SELECT LOWER('.TABLE_QUESTION.'.question)',
+                $question->_buildSelectQuery());
     
         // check 'id,'
         $question->setSelect('id,'.TABLE_ANSWER.'.*');
-        $this->assertTrue(strpos($question->_buildSelectQuery(),TABLE_QUESTION.'.id')); 
+        $this->assertStringStartsWith(
+                'SELECT '.TABLE_QUESTION.'.id',
+                $question->_buildSelectQuery());
     
         // check 'id as qid'
         $question->setSelect('id as qid,'.TABLE_ANSWER.'.*');
-        $this->assertTrue(strpos($question->_buildSelectQuery(),TABLE_QUESTION.'.id as qid')); 
+        $this->assertStringStartsWith(
+                'SELECT '.TABLE_QUESTION.'.id AS qid',
+                $question->_buildSelectQuery());
     
         // check 'id as qid'
         $question->setSelect('LOWER( question ),'.TABLE_ANSWER.'.*');
-        $this->assertTrue(strpos($question->_buildSelectQuery(),'LOWER( '.TABLE_QUESTION.'.question )')); 
+        $this->assertStringStartsWith(
+                'SELECT LOWER( '.TABLE_QUESTION.'.question )',
+                $question->_buildSelectQuery());
     }    
         
 }
