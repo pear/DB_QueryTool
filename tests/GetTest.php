@@ -35,25 +35,25 @@ class tests_GetTest extends tests_TestCase
     function test_tableEqualsColumn()
     {
         $question = new tests_Common(TABLE_QUESTION);
-        $newData = array(TABLE_QUESTION=>'Why does this not work?');
-        $id=$question->add($newData);
+        $newData = array(TABLE_QUESTION => 'Why does this not work?');
+        $id = $question->add($newData);
 
-        $newData['id']=$id;
-        $this->assertEquals($newData,$question->get($id));
+        $newData['id'] = $id;
+        $this->assertEquals($newData, $question->get($id));
     }
 
     // test if column==table works, using the table TABLE_QUESTION
     function test_tableEqualsColumnGetAll()
     {
         $question = new tests_Common(TABLE_QUESTION);
-        $newData = array(TABLE_QUESTION=>'Why does this not work?');
-        $id=$question->add($newData);
+        $newData = array(TABLE_QUESTION => 'Why does this not work?');
+        $id = $question->add($newData);
 
-        $newData['id']=$id;
+        $newData['id'] = $id;
         $data = $question->getAll();
         // assertEquals doesnt sort arrays recursively, so we have to extract the data :-(
         // we cant do this:     $this->assertEquals(array($newData),$question->getAll());
-        $this->assertEquals($newData,$data[0]);
+        $this->assertEquals($newData, $data[0]);
     }
 
     // test if column==table works, using the table TABLE_QUESTION
@@ -66,15 +66,15 @@ class tests_GetTest extends tests_TestCase
         $theAnswer = 'I dont know!';
 
         $question = new tests_Common(TABLE_QUESTION);
-        $newQuest = array(TABLE_QUESTION=>$theQuestion);
+        $newQuest = array(TABLE_QUESTION => $theQuestion);
         $qid=$question->add($newQuest);
 
         $answer = new tests_Common(TABLE_ANSWER);
-        $newAnswer = array(TABLE_QUESTION.'_id'=>$qid,TABLE_ANSWER=>$theAnswer);
-        $aid=$answer->add($newAnswer);
+        $newAnswer = array(TABLE_QUESTION.'_id' => $qid, TABLE_ANSWER => $theAnswer);
+        $aid = $answer->add($newAnswer);
 
         $question->autoJoin(TABLE_ANSWER);
-        //$newData['id']=$id;
+        //$newData['id'] = $id;
         $data = $question->getAll();
 
         $expected =  array( '_'.TABLE_ANSWER.'_id'=>$aid,
@@ -84,7 +84,7 @@ class tests_GetTest extends tests_TestCase
                             TABLE_QUESTION=>$theQuestion);
         // assertEquals doesnt sort arrays recursively, so we have to extract the data :-(
         // we cant do this:     $this->assertEquals(array($newData),$question->getAll());
-        $this->assertEquals($expected,$data[0]);
+        $this->assertEquals($expected, $data[0]);
     }
 
     /**
@@ -103,15 +103,15 @@ class tests_GetTest extends tests_TestCase
 
         $question = new tests_Common(TABLE_QUESTION);
         $question->setOption('raw', true);
-        $newQuest = array(TABLE_QUESTION=>$theQuestion);
+        $newQuest = array(TABLE_QUESTION => $theQuestion);
         $qid=$question->add($newQuest);
 
         $answer = new tests_Common(TABLE_ANSWER);
-        $newAnswer = array(TABLE_QUESTION.'_id'=>$qid,TABLE_ANSWER=>$theAnswer);
-        $aid=$answer->add($newAnswer);
+        $newAnswer = array(TABLE_QUESTION.'_id' => $qid, TABLE_ANSWER => $theAnswer);
+        $aid = $answer->add($newAnswer);
 
         $question->autoJoin(TABLE_ANSWER);
-//        $question->setSelect('id,'.TABLE_QUESTION.' as question,'.TABLE_ANSWER.' as answer');
+//        $question->setSelect('id, '.TABLE_QUESTION.' as question, '.TABLE_ANSWER.' as answer');
         $question->setSelect('MAX(id),'.TABLE_ANSWER.'.id');
         $this->assertStringStartsWith(
                 'SELECT MAX('.TABLE_QUESTION.'.id)',
@@ -124,24 +124,23 @@ class tests_GetTest extends tests_TestCase
                 $question->_buildSelectQuery());
 
         // check 'id,'
-        $question->setSelect('id,'.TABLE_ANSWER.'.*');
+        $question->setSelect('id, '.TABLE_ANSWER.'.*');
         $this->assertStringStartsWith(
                 'SELECT '.TABLE_QUESTION.'.id',
                 $question->_buildSelectQuery());
 
         // check 'id as qid'
-        $question->setSelect('id as qid,'.TABLE_ANSWER.'.*');
+        $question->setSelect('id as qid, '.TABLE_ANSWER.'.*');
         $this->assertStringStartsWith(
                 'SELECT '.TABLE_QUESTION.'.id AS qid',
                 $question->_buildSelectQuery());
 
         // check 'id as qid'
-        $question->setSelect('LOWER( '.TABLE_QUESTION.' ),'.TABLE_ANSWER.'.*');
+        $question->setSelect('LOWER( '.TABLE_QUESTION.' ), '.TABLE_ANSWER.'.*');
         $this->assertStringStartsWith(
                 'SELECT LOWER( '.TABLE_QUESTION.'.'.TABLE_QUESTION.' )',
                 $question->_buildSelectQuery());
     }
 
 }
-
 ?>

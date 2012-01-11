@@ -24,7 +24,7 @@ class tests_HavingTest extends tests_TestCase
         $user->setGroup('company_id');
         $user->setHaving('count(id) = 2');
 
-		$this->assertEquals(array(), $user->getCol('company_id')); // there are no company with 2 workers
+        $this->assertEquals(array(), $user->getCol('company_id')); // there are no company with 2 workers
 
         $newData = array(   'login'     =>  'rudi',
                             'password'  =>  '0',
@@ -46,7 +46,7 @@ class tests_HavingTest extends tests_TestCase
         $user->setGroup('company_id');
         $user->setHaving('count(id) = 2');
 
-		$this->assertEquals(array(1), $user->getCol('company_id')); // company 1 has exactly 2 workers
+        $this->assertEquals(array(1), $user->getCol('company_id')); // company 1 has exactly 2 workers
 
         $newData = array(   'login'     =>  'lieschen',
                             'password'  =>  '0',
@@ -61,7 +61,7 @@ class tests_HavingTest extends tests_TestCase
         $user->setGroup('company_id');
         $user->setHaving('count(id) = 2');
 
-		$this->assertEquals(array(1, 5), $user->getCol('company_id')); // company 1 and 5 has exactly 2 workers
+        $this->assertEquals(array(1, 5), $user->getCol('company_id')); // company 1 and 5 has exactly 2 workers
     }
 
     function test_addHaving()
@@ -112,15 +112,15 @@ class tests_HavingTest extends tests_TestCase
         $user->setHaving('COUNT(address_id) > 1');
         $user->addHaving('company_id > 1');
 
-		$this->assertEquals(array(5), $user->getCol('company_id')); // first test
+        $this->assertEquals(array(5), $user->getCol('company_id')); // first test
 
-		$user->reset();
+        $user->reset();
 
         $user->setGroup('company_id,address_id');
         $user->addHaving('COUNT(address_id) > 1'); // this is not correct but must also work.
         $user->addHaving('company_id > 1');
 
-		$this->assertEquals(array(5), $user->getCol('company_id')); // second test
+        $this->assertEquals(array(5), $user->getCol('company_id')); // second test
     }
 
     function test_getHaving()
