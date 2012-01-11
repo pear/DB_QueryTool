@@ -11,7 +11,7 @@ class tests_Common extends DB_QueryTool
 {
     var $tableSpec = array(
                         array('name'    =>  TABLE_QUESTION,     'shortName' =>  TABLE_QUESTION)
-                        ,array('name'    =>  TABLE_ANSWER,      'shortName' =>  TABLE_ANSWER) 
+                        ,array('name'    =>  TABLE_ANSWER,      'shortName' =>  TABLE_ANSWER)
                         );
 
     function tests_Common($table=null)
@@ -19,15 +19,15 @@ class tests_Common extends DB_QueryTool
         if ($table != null) {
             $this->table = $table;
         }
-        parent::DB_QueryTool( unserialize(DB_QUERYTOOL_TEST_DSN) );       
+        parent::DB_QueryTool( unserialize(DB_QUERYTOOL_TEST_DSN) );
         $this->setErrorSetCallback( array(&$this,'errorSet') );
         $this->setErrorLogCallback( array(&$this,'errorLog') );
     }
-    
+
     //
     //  just for the error handling
     //
-    
+
     function errorSet($msg)
     {
         $GLOBALS['_Common_Errors'][] = array('set',$msg);
@@ -37,12 +37,12 @@ class tests_Common extends DB_QueryTool
     {
         $GLOBALS['_Common_Errors'][] = array('log',$msg);
     }
-    
+
     function getErrors()
     {
         return $GLOBALS['_Common_Errors'];
     }
-    
+
 }
 
 ?>

@@ -42,7 +42,7 @@ abstract class tests_TestCase extends PHPUnit_Framework_TestCase
     {
         $expected = '~^\s*'.preg_replace('~\s+~','\s*',trim(preg_quote($expected))).'\s*$~i';
         $this->assertRegExp($expected,$actual,$msg);
-    }    
+    }
 
 }
 

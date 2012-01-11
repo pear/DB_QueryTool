@@ -12,7 +12,7 @@
                     ,"DROP TABLE IF EXISTS ".TABLE_QUESTION."_seq;"
                     ,"DROP TABLE IF EXISTS ".TABLE_ANSWER.";"
                     ,"DROP TABLE IF EXISTS ".TABLE_ANSWER."_seq;"
-                    
+
                     ,"CREATE TABLE ".TABLE_ADDRESS." (
                         id int(11) NOT NULL default '0',
                         city varchar(100) NOT NULL default '',
@@ -31,20 +31,20 @@
                         company_id int(11) NOT NULL default '0',
                         PRIMARY KEY  (id)
                     ) TYPE=MyISAM;"
-                    
+
                     ,"CREATE TABLE ".TABLE_QUESTION." (
                         id int(11) NOT NULL default '0',
                         ".TABLE_QUESTION." varchar(255) NOT NULL default '',
                         PRIMARY KEY  (id)
                     ) TYPE=MyISAM;"
-                
+
                     ,"CREATE TABLE ".TABLE_ANSWER." (
                         id int(11) NOT NULL default '0',
                         ".TABLE_ANSWER." varchar(255) NOT NULL default '',
                         ".TABLE_QUESTION."_id int(11) NOT NULL default '0',
                         PRIMARY KEY  (id)
                     ) TYPE=MyISAM;"
-                
+
                 ),
 
             'tearDown'  =>  array(
@@ -62,7 +62,7 @@
         'pgsql' =>  array(
             'setUp' =>  array(),
             'tearDown'=>array()
-        )        
+        )
     );
-        
+
     $dbStructure['mysqli'] = $dbStructure['mysql'];

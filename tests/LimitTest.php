@@ -19,15 +19,15 @@ class tests_LimitTest extends tests_TestCase
     function test_setLimit1()
     {
         $user = new tests_Common(TABLE_USER);
-        
+
         $user->add(array('login'=>1));
         $user->add(array('login'=>2));
         $user->add(array('login'=>3));
         $user->add(array('login'=>4));
-        
+
         $user->setLimit(0,2);
         $this->assertEquals(2,sizeof($user->getAll()));
-    
+
         $user->setLimit(0,3);
         $this->assertEquals(3,sizeof($user->getAll()));
     }
@@ -45,7 +45,7 @@ class tests_LimitTest extends tests_TestCase
         $this->assertEquals(1,sizeof($user->getAll(0,1)));
         $user->setLimit(0,3);
         $this->assertEquals(2,sizeof($user->getAll(0,2)));
-        
+
         $this->assertEquals(3,sizeof($user->getAll()));
     }
 
@@ -62,7 +62,7 @@ class tests_LimitTest extends tests_TestCase
         $this->assertEquals(1,sizeof($user->getCol('id',0,1)));
         $user->setLimit(0,3);
         $this->assertEquals(2,sizeof($user->getCol('id',0,2)));
-        
+
         $this->assertEquals(3,sizeof($user->getCol('id')));
     }
 }
