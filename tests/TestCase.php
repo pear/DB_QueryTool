@@ -10,7 +10,18 @@ require dirname(__FILE__) . '/Common.php';
 
 abstract class tests_TestCase extends PHPUnit_Framework_TestCase
 {
-    function setUp()
+    public static function setUpBeforeClass()
+    {
+        require dirname(__FILE__) . '/sql.php';
+        $querytool = new tests_Common();
+        foreach ($dbStructure[$querytool->db->phptype]['setUp'] as $aQuery) {
+            if (DB::isError($ret=$querytool->db->query($aQuery))) {
+                $this->markTestSkipped($ret->getUserInfo());
+            }
+        }
+    }
+
+    protected function setUp()
     {
         foreach ($GLOBALS['allTables'] as $aTable) {
             $tableObj = new tests_Common($aTable);
@@ -18,21 +29,16 @@ abstract class tests_TestCase extends PHPUnit_Framework_TestCase
         }
     }
 
-    function tearDown()
+    public static function tearDownAfterClass()
     {
-/*        global $dbStructure;
-
-        $querytool = new Common();
+        require dirname(__FILE__) . '/sql.php';
+        $querytool = new tests_Common();
         foreach ($dbStructure[$querytool->db->phptype]['tearDown'] as $aQuery) {
-//print "$aQuery<br><br>";        
-            if (DB::isError($ret=$querytool->db->query($aQuery))) {
-                die($ret->getUserInfo());
-            }
+            $querytool->db->query($aQuery);
         }
-*/        
     }
-    
-    function assertStringEquals($expected,$actual,$msg='')
+
+    protected function assertStringEquals($expected,$actual,$msg='')
     {
         $expected = '~^\s*'.preg_replace('~\s+~','\s*',trim(preg_quote($expected))).'\s*$~i';
         $this->assertRegExp($expected,$actual,$msg);

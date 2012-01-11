@@ -68,27 +68,3 @@ define('TABLE_QUESTION',  'db_querytool_question');
 define('TABLE_ANSWER',    'db_querytool_answer');
 
 $allTables = array(TABLE_USER,TABLE_ADDRESS,TABLE_QUESTION,TABLE_ANSWER);
-
-require_once 'DB.php';
-$db = DB::connect($dsn);
-if (PEAR::isError($db)) {
-    die($db->getMessage(). "\n");
-}
-
-require dirname(__FILE__) . '/sql.php';
-if (empty($dbStructure[$db->phptype]['setup'])) {
-    die("sql.php lacks setup queries for $db->phptype\n");
-}
-
-foreach ($dbStructure[$db->phptype]['setup'] as $query) {
-    $result = $db->query($query);
-    if (DB::isError($result)) {
-        switch ($result->getCode()) {
-            case DB_ERROR_ALREADY_EXISTS:
-                break;
-            default:
-                die('TEST TABLE CREATION ERROR: '
-                        . $result->getDebugInfo() . "\n");
-        }
-    }
-}

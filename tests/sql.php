@@ -3,7 +3,7 @@
 
     $dbStructure = array(
         'mysql' => array(
-            'setup' => array(
+            'setUp' => array(
                     "DROP TABLE IF EXISTS ".TABLE_USER.";"
                     ,"DROP TABLE IF EXISTS ".TABLE_ADDRESS.";"
                     ,"DROP TABLE IF EXISTS ".TABLE_USER."_seq;"
@@ -60,7 +60,7 @@
         ),
 
         'pgsql' =>  array(
-            'setup' =>  array(),
+            'setUp' =>  array(),
             'tearDown'=>array()
         )        
     );
