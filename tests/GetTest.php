@@ -77,11 +77,11 @@ class tests_GetTest extends tests_TestCase
         //$newData['id']=$id;
         $data = $question->getAll();
         
-        $expected =  array( '_answer_id'=>$aid,
-                            '_answer_answer'=>$theAnswer,
-                            '_answer_question_id'=>$qid,
+        $expected =  array( '_'.TABLE_ANSWER.'_id'=>$aid,
+                            '_'.TABLE_ANSWER.'_'.TABLE_ANSWER=>$theAnswer,
+                            '_'.TABLE_ANSWER.'_'.TABLE_QUESTION.'_id'=>$qid,
                             'id'=>$qid,
-                            'question'=>$theQuestion);
+                            TABLE_QUESTION=>$theQuestion);
         // assertEquals doesnt sort arrays recursively, so we have to extract the data :-(
         // we cant do this:     $this->assertEquals(array($newData),$question->getAll());
         $this->assertEquals($expected,$data[0]);
@@ -118,9 +118,9 @@ class tests_GetTest extends tests_TestCase
                 $question->_buildSelectQuery());
 
         // check '(question)'
-        $question->setSelect('LOWER(question),'.TABLE_ANSWER.'.*');
+        $question->setSelect('LOWER('.TABLE_QUESTION.'),'.TABLE_ANSWER.'.*');
         $this->assertStringStartsWith(
-                'SELECT LOWER('.TABLE_QUESTION.'.question)',
+                'SELECT LOWER('.TABLE_QUESTION.'.'.TABLE_QUESTION.')',
                 $question->_buildSelectQuery());
     
         // check 'id,'
@@ -136,9 +136,9 @@ class tests_GetTest extends tests_TestCase
                 $question->_buildSelectQuery());
     
         // check 'id as qid'
-        $question->setSelect('LOWER( question ),'.TABLE_ANSWER.'.*');
+        $question->setSelect('LOWER( '.TABLE_QUESTION.' ),'.TABLE_ANSWER.'.*');
         $this->assertStringStartsWith(
-                'SELECT LOWER( '.TABLE_QUESTION.'.question )',
+                'SELECT LOWER( '.TABLE_QUESTION.'.'.TABLE_QUESTION.' )',
                 $question->_buildSelectQuery());
     }    
         

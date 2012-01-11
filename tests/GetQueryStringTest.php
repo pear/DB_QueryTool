@@ -39,7 +39,7 @@ class tests_GetQueryStringTest extends tests_TestCase
     {
         $this->_setup();
         $this->assertStringEquals(
-                            'SELECT question.id AS id,question.question AS question FROM question'
+                            'SELECT '.TABLE_QUESTION.'.id AS id,'.TABLE_QUESTION.'.'.TABLE_QUESTION.' AS '.TABLE_QUESTION.' FROM '.TABLE_QUESTION
                             ,$this->question->getQueryString());
     }
 
@@ -48,7 +48,7 @@ class tests_GetQueryStringTest extends tests_TestCase
         $this->_setup();
         $this->question->setWhere('id=1');
         $this->assertStringEquals(
-                            'SELECT question.id AS id,question.question AS question FROM question'.
+                            'SELECT '.TABLE_QUESTION.'.id AS id,'.TABLE_QUESTION.'.'.TABLE_QUESTION.' AS '.TABLE_QUESTION.' FROM '.TABLE_QUESTION.
                             ' WHERE id=1'
                             ,$this->question->getQueryString());
     }

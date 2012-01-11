@@ -62,10 +62,10 @@ if (!empty($_ENV['MYSQL_TEST_USER']) && extension_loaded('mysqli')) {
 define('DB_QUERYTOOL_TEST_DSN', serialize($dsn));
 
 
-define('TABLE_USER',      'QueryTool_user');
-define('TABLE_ADDRESS',   'QueryTool_address');
-define('TABLE_QUESTION',  'question');
-define('TABLE_ANSWER',    'answer');
+define('TABLE_USER',      'db_querytool_user');
+define('TABLE_ADDRESS',   'db_querytool_address');
+define('TABLE_QUESTION',  'db_querytool_question');
+define('TABLE_ANSWER',    'db_querytool_answer');
 
 $allTables = array(TABLE_USER,TABLE_ADDRESS,TABLE_QUESTION,TABLE_ANSWER);
 

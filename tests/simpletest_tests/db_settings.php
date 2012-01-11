@@ -9,11 +9,11 @@ if (!in_array($dbtype, $valid_dbms)) {
     $dbtype = 'mysql';
 }
 define('DB_TYPE',        $dbtype);
-define('TABLE_USER',     'querytool_user');
-define('TABLE_ADDRESS',  'querytool_address');
-define('TABLE_QUESTION', 'question');
-define('TABLE_ANSWER',   'answer');
-define('TABLE_TRANSLATION',  'tr');
+define('TABLE_USER',     'db_querytool_user');
+define('TABLE_ADDRESS',  'db_querytool_address');
+define('TABLE_QUESTION', 'db_querytool_question');
+define('TABLE_ANSWER',   'db_querytool_answer');
+define('TABLE_TRANSLATION',  'db_querytool_tr');
 
 switch ($dbtype) {
     case 'pgsql':
